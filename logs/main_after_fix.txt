@@ -1,0 +1,36 @@
+2026-03-24 14:27:23,690 | app.logic.pipeline_runner | INFO | event=pipeline_started | continue_on_post_error=True | max_posts=20 | stop_after_post_errors=None
+2026-03-24 14:27:23,690 | app.scraper.search_scraper | INFO | event=search_started | max_posts=20 | query=iphone 13
+2026-03-24 14:27:23,690 | app.scraper.platform_search_executor | INFO | event=platform_search_started | max_posts=20 | query_text=iphone 13
+2026-03-24 14:27:23,690 | app.scraper.platform_search_executor | INFO | event=platform_search_attempt | attempt=1
+2026-03-24 14:27:23,691 | app.logic.pipeline_runner | ERROR | Pipeline failed
+Traceback (most recent call last):
+  File "c:\Users\Daniel\OneDrive\Desktop\AgentsTests\Facebook-AI-Finder\app\logic\pipeline_runner.py", line 83, in run
+    posts = self._stage_search_posts(request, opts, run_state)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Daniel\OneDrive\Desktop\AgentsTests\Facebook-AI-Finder\app\logic\pipeline_runner.py", line 176, in _stage_search_posts
+    posts = self._scraper.search_posts(request, max_posts=options.max_posts)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Daniel\OneDrive\Desktop\AgentsTests\Facebook-AI-Finder\app\scraper\search_scraper.py", line 19, in search_posts
+    execution = self._executor.execute_search(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Daniel\OneDrive\Desktop\AgentsTests\Facebook-AI-Finder\app\scraper\platform_search_executor.py", line 33, in execute_search
+    with self._facebook_access.authenticated_session() as session:
+  File "C:\Users\Daniel\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "c:\Users\Daniel\OneDrive\Desktop\AgentsTests\Facebook-AI-Finder\app\scraper\facebook_access_adapter.py", line 31, in authenticated_session
+    session = BrowserSessionManager(self._config).open()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Daniel\OneDrive\Desktop\AgentsTests\Facebook-AI-Finder\app\scraper\browser_session_manager.py", line 29, in open
+    self._ensure_supported_user_data_dir(user_data_dir)
+  File "c:\Users\Daniel\OneDrive\Desktop\AgentsTests\Facebook-AI-Finder\app\scraper\browser_session_manager.py", line 101, in _ensure_supported_user_data_dir
+    raise ValueError(
+ValueError: CHROME_USER_DATA_DIR cannot be the default Chrome User Data root for Playwright automation. Set CHROME_USER_DATA_DIR to a dedicated copied profile root (for example: C:/Users/Daniel/OneDrive/Desktop/AgentsTests/Facebook-AI-Finder/data/chrome-user-data).
+2026-03-24 14:27:23,693 | app.logic.pipeline_runner | ERROR | event=pipeline_failed | error=CHROME_USER_DATA_DIR cannot be the default Chrome User Data root for Playwright automation. Set CHROME_USER_DATA_DIR to a dedicated copied profile root (for example: C:/Users/Daniel/OneDrive/Desktop/AgentsTests/Facebook-AI-Finder/data/chrome-user-data).
+2026-03-24 14:27:23,716 | app.logic.pipeline_runner | INFO | event=pipeline_finished | elapsed_seconds=0.003 | processed_posts=0 | status=failed | stop_reason=CHROME_USER_DATA_DIR cannot be the default Chrome User Data root for Playwright automation. Set CHROME_USER_DATA_DIR to a dedicated copied profile root (for example: C:/Users/Daniel/OneDrive/Desktop/AgentsTests/Facebook-AI-Finder/data/chrome-user-data).
+2026-03-24 14:27:23,716 | __main__ | INFO | Pipeline status: failed
+2026-03-24 14:27:23,716 | __main__ | INFO | Progress: 11.11%
+2026-03-24 14:27:23,716 | __main__ | INFO | Post progress: 0 out of 20
+2026-03-24 14:27:23,716 | __main__ | INFO | Runtime seconds: 0.003
+2026-03-24 14:27:23,716 | __main__ | INFO | Total ranked posts: 0
+2026-03-24 14:27:23,716 | __main__ | INFO | Presented results: {'pipeline_notices': ['run_history_saved']}

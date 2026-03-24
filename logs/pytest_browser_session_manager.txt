@@ -1,0 +1,14 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.2, pytest-9.0.2, pluggy-1.6.0 -- c:\Users\Daniel\OneDrive\Desktop\AgentsTests\Facebook-AI-Finder\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: c:\Users\Daniel\OneDrive\Desktop\AgentsTests\Facebook-AI-Finder
+plugins: anyio-4.12.1
+collecting ... collected 5 items
+
+tests/test_browser_session_manager.py::BrowserSessionManagerTests::test_open_rejects_default_chrome_user_data_root PASSED [ 20%]
+tests/test_browser_session_manager.py::BrowserSessionManagerTests::test_open_requires_chrome_profile_directory PASSED [ 40%]
+tests/test_browser_session_manager.py::BrowserSessionManagerTests::test_open_requires_chrome_user_data_dir PASSED [ 60%]
+tests/test_browser_session_manager.py::BrowserSessionManagerTests::test_open_requires_existing_profile_directory PASSED [ 80%]
+tests/test_browser_session_manager.py::BrowserSessionManagerTests::test_open_uses_chrome_persistent_context_with_profile_directory PASSED [100%]
+
+============================== 5 passed in 0.26s ==============================
