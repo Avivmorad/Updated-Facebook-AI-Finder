@@ -35,6 +35,7 @@ logs/*.log
 
 # Browser profile data
 data/browser-profile/
+data/chrome_user_data/
 
 # Temporary files
 tempCodeRunnerFile.py

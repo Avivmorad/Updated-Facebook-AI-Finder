@@ -15,5 +15,12 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
-    except Exception:
+    except ValueError as exc:
+        print(f"SESSION_CONFIG_ERROR: {exc}")
+        print("NOT_LOGGED_IN")
+    except RuntimeError as exc:
+        print(f"SESSION_RUNTIME_ERROR: {exc}")
+        print("NOT_LOGGED_IN")
+    except Exception as exc:  # noqa: BLE001
+        print(f"SESSION_UNKNOWN_ERROR: {exc}")
         print("NOT_LOGGED_IN")

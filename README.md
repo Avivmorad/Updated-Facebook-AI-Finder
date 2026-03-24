@@ -1,7 +1,9 @@
 # Facebook AI Finder
 
 ## Overview
+
 This project runs a resilient pipeline to analyze Facebook Marketplace posts:
+
 1. Search posts
 2. Extract and normalize post data
 3. Run logic analysis
@@ -10,6 +12,7 @@ This project runs a resilient pipeline to analyze Facebook Marketplace posts:
 6. Save run history
 
 ## Resilience and Failure Surfacing
+
 The system is designed to keep running after non-fatal failures.
 
 - Post-level errors:
@@ -26,21 +29,26 @@ The system is designed to keep running after non-fatal failures.
   - Save failures are surfaced in pipeline notices.
 
 ## Logging Design
+
 Logs use structured event messages (`event=... | key=value`) to make troubleshooting easier.
 Important events include pipeline start/end, search fallback, AI fallback, and post-level processing errors.
 
 ## Run Instructions
+
 ### 1. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 2. Configure environment
+
 Set the active AI provider and keys in `.env`.
 
 Current default provider is `Groq`.
 
 Recommended `.env`:
+
 ```env
 AI_PROVIDER=groq
 GROQ_API_KEY=your_new_groq_key_here
@@ -53,12 +61,13 @@ GEMINI_MODEL_NAME=gemini-1.5-flash
 # Facebook access uses an existing Chrome profile only
 FACEBOOK_HOME_URL=https://www.facebook.com/
 FACEBOOK_MARKETPLACE_URL=https://www.facebook.com/marketplace
-CHROME_USER_DATA_DIR=C:/Users/your-user/AppData/Local/Google/Chrome/User Data
+CHROME_USER_DATA_DIR=C:/Users/your-user/path/to/copied/chrome-user-data
 CHROME_PROFILE_DIRECTORY=Default
 HEADLESS=false
 ```
 
 Notes:
+
 - Right now the system should run on `Groq` only.
 - `Gemini` support is prepared for future switching.
 - If `Groq` fails, the system uses local degraded fallback, not another AI provider by default.
@@ -66,12 +75,18 @@ Notes:
 - The scraper requires an existing Chrome profile that is already logged in to Facebook manually.
 
 ### 3. Prepare the Chrome profile manually
+
 Before running the project:
+
 - Open normal Google Chrome yourself.
 - Sign in to Facebook in the Chrome profile you plan to reuse.
+- Copy your Chrome profile to a dedicated automation folder (recommended helper):
+  `python scripts/bootstrap_chrome_profile.py "C:/Users/your-user/AppData/Local/Google/Chrome/User Data/Profile 5"`
+- Set `CHROME_USER_DATA_DIR` to that copied folder (not the default `.../Google/Chrome/User Data`).
 - Close extra Chrome windows that may lock the profile if Playwright cannot attach cleanly.
 
 ### 4. Check the Facebook session
+
 Run the session check script:
 
 ```bash
@@ -79,20 +94,24 @@ python check_facebook_session.py
 ```
 
 It prints exactly one of these results:
+
 - `LOGGED_IN`
-- `NOT_LOGGED_IN`
+- `NOT_LOGGED_IN` (plus an error category like `SESSION_CONFIG_ERROR` when available)
 
 ### 5. Run the pipeline
+
 ```bash
 python main.py
 ```
 
 ### 6. Run tests
+
 ```bash
-python -m unittest discover -s tests -p "test_*.py"
+python -m pytest -q
 ```
 
 ## Notes
+
 - Run history is stored in `data/run_history.json`.
 - To stop on first post failure, set `continue_on_post_error=False` in pipeline options.
 - To switch provider in the future, change `AI_PROVIDER` to `gemini` and set `GEMINI_API_KEY`.

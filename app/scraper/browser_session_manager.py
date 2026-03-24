@@ -1,7 +1,13 @@
 from pathlib import Path
 from typing import Optional
 
-from playwright.sync_api import BrowserContext, Page, Playwright, sync_playwright
+from playwright.sync_api import (
+    BrowserContext,
+    Error as PlaywrightError,
+    Page,
+    Playwright,
+    sync_playwright,
+)
 
 from app.utils.logger import get_logger, log_event
 from config.platform_access_config import PlatformAccessConfig
@@ -135,11 +141,18 @@ class BrowserSessionManager:
 
     def close(self) -> None:
         if self._context is not None:
-            self._context.close()
+            try:
+                self._context.close()
+            except PlaywrightError:
+                # Ignore close failures when context/browser was already closed upstream.
+                pass
             self._context = None
 
         if self._playwright is not None:
-            self._playwright.stop()
+            try:
+                self._playwright.stop()
+            except PlaywrightError:
+                pass
             self._playwright = None
 
         self._page = None

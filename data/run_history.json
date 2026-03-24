@@ -13386,6 +13386,3292 @@
       "request_payload": null,
       "presented_results": {},
       "ranked_posts": []
+    },
+    {
+      "run_id": "run_20260324T1724003490660000_be74faab",
+      "saved_at": "2026-03-24T17:24:00.378456+00:00",
+      "run_state": {
+        "status": "failed",
+        "progress": {
+          "current_stage": "search_posts",
+          "completed_stages": 1,
+          "total_stages": 9,
+          "processed_posts": 0,
+          "max_posts": 20,
+          "percentage": 11.11
+        },
+        "runtime": {
+          "started_at": "2026-03-24T17:24:00.349066+00:00",
+          "finished_at": "2026-03-24T17:24:00.371196+00:00",
+          "elapsed_seconds": 0.022
+        },
+        "stage_results": [
+          {
+            "stage_name": "receive_user_input",
+            "status": "success",
+            "details": {
+              "query": "iphone 13"
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "search_posts",
+            "status": "failed",
+            "details": {},
+            "errors": [
+              "CHROME_USER_DATA_DIR cannot be the default Chrome User Data root for Playwright automation. Set CHROME_USER_DATA_DIR to a dedicated copied profile root (for example: C:/Users/Daniel/OneDrive/Desktop/AgentsTests/Facebook-AI-Finder/data/chrome-user-data)."
+            ]
+          }
+        ],
+        "stop_reason": "CHROME_USER_DATA_DIR cannot be the default Chrome User Data root for Playwright automation. Set CHROME_USER_DATA_DIR to a dedicated copied profile root (for example: C:/Users/Daniel/OneDrive/Desktop/AgentsTests/Facebook-AI-Finder/data/chrome-user-data)."
+      },
+      "request_payload": null,
+      "presented_results": {},
+      "ranked_posts": []
+    },
+    {
+      "run_id": "run_20260324T1725568168470000_9a7fa19e",
+      "saved_at": "2026-03-24T17:25:56.824936+00:00",
+      "run_state": {
+        "status": "failed",
+        "progress": {
+          "current_stage": "search_posts",
+          "completed_stages": 1,
+          "total_stages": 9,
+          "processed_posts": 0,
+          "max_posts": 20,
+          "percentage": 11.11
+        },
+        "runtime": {
+          "started_at": "2026-03-24T17:25:56.816847+00:00",
+          "finished_at": "2026-03-24T17:25:56.820845+00:00",
+          "elapsed_seconds": 0.003
+        },
+        "stage_results": [
+          {
+            "stage_name": "receive_user_input",
+            "status": "success",
+            "details": {
+              "query": "iphone 13"
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "search_posts",
+            "status": "failed",
+            "details": {},
+            "errors": [
+              "CHROME_USER_DATA_DIR cannot be the default Chrome User Data root for Playwright automation. Set CHROME_USER_DATA_DIR to a dedicated copied profile root (for example: C:/Users/Daniel/OneDrive/Desktop/AgentsTests/Facebook-AI-Finder/data/chrome-user-data)."
+            ]
+          }
+        ],
+        "stop_reason": "CHROME_USER_DATA_DIR cannot be the default Chrome User Data root for Playwright automation. Set CHROME_USER_DATA_DIR to a dedicated copied profile root (for example: C:/Users/Daniel/OneDrive/Desktop/AgentsTests/Facebook-AI-Finder/data/chrome-user-data)."
+      },
+      "request_payload": null,
+      "presented_results": {},
+      "ranked_posts": []
+    },
+    {
+      "run_id": "run_20260324T1726442889300000_3e129635",
+      "saved_at": "2026-03-24T17:26:44.298949+00:00",
+      "run_state": {
+        "status": "failed",
+        "progress": {
+          "current_stage": "search_posts",
+          "completed_stages": 1,
+          "total_stages": 9,
+          "processed_posts": 0,
+          "max_posts": 20,
+          "percentage": 11.11
+        },
+        "runtime": {
+          "started_at": "2026-03-24T17:26:44.288930+00:00",
+          "finished_at": "2026-03-24T17:26:44.293434+00:00",
+          "elapsed_seconds": 0.004
+        },
+        "stage_results": [
+          {
+            "stage_name": "receive_user_input",
+            "status": "success",
+            "details": {
+              "query": "iphone 13"
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "search_posts",
+            "status": "failed",
+            "details": {},
+            "errors": [
+              "CHROME_USER_DATA_DIR cannot be the default Chrome User Data root for Playwright automation. Set CHROME_USER_DATA_DIR to a dedicated copied profile root (for example: C:/Users/Daniel/OneDrive/Desktop/AgentsTests/Facebook-AI-Finder/data/chrome-user-data)."
+            ]
+          }
+        ],
+        "stop_reason": "CHROME_USER_DATA_DIR cannot be the default Chrome User Data root for Playwright automation. Set CHROME_USER_DATA_DIR to a dedicated copied profile root (for example: C:/Users/Daniel/OneDrive/Desktop/AgentsTests/Facebook-AI-Finder/data/chrome-user-data)."
+      },
+      "request_payload": null,
+      "presented_results": {},
+      "ranked_posts": []
+    },
+    {
+      "run_id": "run_20260324T1730310815440000_25b44935",
+      "saved_at": "2026-03-24T17:30:31.089888+00:00",
+      "run_state": {
+        "status": "failed",
+        "progress": {
+          "current_stage": "search_posts",
+          "completed_stages": 1,
+          "total_stages": 9,
+          "processed_posts": 0,
+          "max_posts": 20,
+          "percentage": 11.11
+        },
+        "runtime": {
+          "started_at": "2026-03-24T17:30:31.081544+00:00",
+          "finished_at": "2026-03-24T17:30:31.085887+00:00",
+          "elapsed_seconds": 0.004
+        },
+        "stage_results": [
+          {
+            "stage_name": "receive_user_input",
+            "status": "success",
+            "details": {
+              "query": "iphone 13"
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "search_posts",
+            "status": "failed",
+            "details": {},
+            "errors": [
+              "CHROME_USER_DATA_DIR cannot be the default Chrome User Data root for Playwright automation. Set CHROME_USER_DATA_DIR to a dedicated copied profile root (for example: C:/Users/Daniel/OneDrive/Desktop/AgentsTests/Facebook-AI-Finder/data/chrome-user-data)."
+            ]
+          }
+        ],
+        "stop_reason": "CHROME_USER_DATA_DIR cannot be the default Chrome User Data root for Playwright automation. Set CHROME_USER_DATA_DIR to a dedicated copied profile root (for example: C:/Users/Daniel/OneDrive/Desktop/AgentsTests/Facebook-AI-Finder/data/chrome-user-data)."
+      },
+      "request_payload": null,
+      "presented_results": {},
+      "ranked_posts": []
+    },
+    {
+      "run_id": "run_20260324T1732140459830000_4a4ccc34",
+      "saved_at": "2026-03-24T17:32:22.398653+00:00",
+      "run_state": {
+        "status": "completed",
+        "progress": {
+          "current_stage": "present_results",
+          "completed_stages": 9,
+          "total_stages": 9,
+          "processed_posts": 3,
+          "max_posts": 20,
+          "percentage": 100.0
+        },
+        "runtime": {
+          "started_at": "2026-03-24T17:32:14.045983+00:00",
+          "finished_at": "2026-03-24T17:32:22.393108+00:00",
+          "elapsed_seconds": 8.346
+        },
+        "stage_results": [
+          {
+            "stage_name": "receive_user_input",
+            "status": "success",
+            "details": {
+              "query": "iphone 13"
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "search_posts",
+            "status": "success",
+            "details": {
+              "found": 3,
+              "max_posts": 20
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "initial_filtering",
+            "status": "success",
+            "details": {
+              "before": 3,
+              "after": 3
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "open_post",
+            "status": "success",
+            "details": {
+              "successful": 3,
+              "attempted": 3
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "collect_data",
+            "status": "success",
+            "details": {
+              "successful": 3,
+              "attempted": 3
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "logic_analysis",
+            "status": "success",
+            "details": {
+              "successful": 3,
+              "attempted": 3
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "ai_analysis",
+            "status": "success",
+            "details": {
+              "successful": 3,
+              "attempted": 3
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "ranking",
+            "status": "success",
+            "details": {
+              "ranked": 3
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "present_results",
+            "status": "success",
+            "details": {
+              "top_results": 3
+            },
+            "errors": []
+          }
+        ],
+        "stop_reason": null
+      },
+      "request_payload": {
+        "query_text": "iphone 13",
+        "tags": [
+          "apple",
+          "smartphone"
+        ],
+        "secondary_attributes": [
+          "128gb"
+        ],
+        "forbidden_words": [
+          "broken"
+        ],
+        "min_price": 50.0,
+        "max_price": 5000.0,
+        "is_free": false,
+        "post_age": "24h",
+        "require_image": true,
+        "language": "he",
+        "target_regions": [
+          "center"
+        ],
+        "all_country": false,
+        "group_mode": "all_groups",
+        "groups": [],
+        "group_sources": [
+          "user_groups"
+        ],
+        "group_urls": [],
+        "select_all_groups": false
+      },
+      "presented_results": {
+        "total_results": 3,
+        "results_list": [
+          {
+            "result_id": "result_1",
+            "rank": 1,
+            "title": "",
+            "price": null,
+            "location": "",
+            "seller_name": "",
+            "publish_time": "",
+            "final_score": 0.126,
+            "recommendation_code": "SKIP",
+            "short_recommendation": "Low confidence candidate. Primary concerns: The post is very brief., The price is listed as $0.00.",
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:The post is very brief.",
+              "ai:The price is listed as $0.00.",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url"
+            ],
+            "extraction_success": false
+          },
+          {
+            "result_id": "result_2",
+            "rank": 2,
+            "title": "",
+            "price": null,
+            "location": "",
+            "seller_name": "",
+            "publish_time": "",
+            "final_score": 0.126,
+            "recommendation_code": "SKIP",
+            "short_recommendation": "Low confidence candidate. Primary concerns: Seller name is empty, No comments or signals",
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:Seller name is empty",
+              "ai:No comments or signals",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url"
+            ],
+            "extraction_success": false
+          },
+          {
+            "result_id": "result_3",
+            "rank": 3,
+            "title": "",
+            "price": null,
+            "location": "",
+            "seller_name": "",
+            "publish_time": "",
+            "final_score": 0.1204,
+            "recommendation_code": "SKIP",
+            "short_recommendation": "Low confidence candidate. Primary concerns: Price is 0.0, which is likely an error., Seller name is empty., No commen...",
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:Price is 0.0, which is likely an error.",
+              "ai:Seller name is empty.",
+              "ai:No comments or signals available.",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url"
+            ],
+            "extraction_success": false
+          }
+        ],
+        "result_details": [
+          {
+            "result_id": "result_1",
+            "rank": 1,
+            "post": {
+              "collected_post_data": {
+                "post_id": "fallback-1",
+                "title": "iphone 13 fallback #1",
+                "region": "center",
+                "url": "",
+                "snippet": "iphone 13",
+                "price_text": null,
+                "source_platform": "facebook_marketplace",
+                "raw_reference": {
+                  "fallback": true
+                },
+                "raw_post_data": {},
+                "normalized_post_data": {},
+                "description": "iphone 13",
+                "price": 0.0,
+                "has_image": false,
+                "publish_age": null,
+                "post_url": "",
+                "images": [],
+                "seller_name": null,
+                "comments": [],
+                "important_visible_signals": [],
+                "extraction_warnings": [
+                  "Cannot open post without url",
+                  "extraction_error:missing_post_url",
+                  "extraction_error:missing_post_url",
+                  "extraction_failed"
+                ],
+                "extraction_error": "missing_post_url",
+                "extraction_success": false,
+                "seller_rating": 4.5
+              },
+              "raw_post_data": {},
+              "normalized_post_data": {}
+            },
+            "comments": {
+              "count": 0,
+              "items": []
+            },
+            "logic_analysis": {
+              "match_level": "weak_match",
+              "logic_score": 0.195,
+              "completeness_score": 0.65,
+              "warning_flags": [
+                "out_of_price_range",
+                "missing_required_image",
+                "seller_name_quality_issue"
+              ],
+              "suspicious_indicators": [],
+              "duplicate": {
+                "is_duplicate": false,
+                "duplicate_key": "iphone 13 fallback #1||0.0",
+                "matched_keys": []
+              },
+              "seller_signal": {
+                "seller_name": "",
+                "quality": "warning",
+                "indicators": [
+                  "seller_name_missing"
+                ]
+              },
+              "comment_signal": {
+                "positive_count": 0,
+                "negative_count": 0,
+                "indicators": []
+              },
+              "matched_terms": [
+                "iphone 13"
+              ],
+              "missing_fields": [
+                "images",
+                "seller_name"
+              ],
+              "logic_summary": "match=weak_match | matched_terms=iphone 13 | warnings=out_of_price_range,missing_required_image,seller_name_quality_issue | missing=images,seller_name",
+              "in_price_range": false,
+              "has_required_image": false
+            },
+            "ai_analysis": {
+              "relevance_score": 0.0,
+              "ai_summary": "The post is listing an iPhone 13.",
+              "post_meaning": "The post is listing an iPhone 13.",
+              "seller_intent": "Unclear, as the post is very brief.",
+              "reliability_signals": [],
+              "pros": [],
+              "cons": [
+                "The post has no price listed.",
+                "The post has no seller name listed.",
+                "The post has no comments or signals listed.",
+                "The post has no images listed."
+              ],
+              "warning_signs": [
+                "The post is very brief.",
+                "The price is listed as $0.00."
+              ],
+              "recommendation": "skip",
+              "image_product_match": "unclear",
+              "logic_notes": "The post does not provide enough information to make a recommendation.",
+              "raw_ai_response": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unclear, as the post is very brief.\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"The post has no price listed.\", \"The post has no seller name listed.\", \"The post has no comments or signals listed.\", \"The post has no images listed.\"],\n  \"warning_signs\": [\"The post is very brief.\", \"The price is listed as $0.00.\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post does not provide enough information to make a recommendation.\",\n  \"relevance_score\": 0.0\n}",
+              "raw_ai_response_data": {
+                "id": "chatcmpl-d1d0492a-609a-449d-9a2f-9b9dcc6c44be",
+                "choices": [
+                  {
+                    "finish_reason": "stop",
+                    "index": 0,
+                    "logprobs": null,
+                    "message": {
+                      "content": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unclear, as the post is very brief.\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"The post has no price listed.\", \"The post has no seller name listed.\", \"The post has no comments or signals listed.\", \"The post has no images listed.\"],\n  \"warning_signs\": [\"The post is very brief.\", \"The price is listed as $0.00.\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post does not provide enough information to make a recommendation.\",\n  \"relevance_score\": 0.0\n}",
+                      "refusal": null,
+                      "role": "assistant",
+                      "annotations": null,
+                      "audio": null,
+                      "function_call": null,
+                      "tool_calls": null
+                    }
+                  }
+                ],
+                "created": 1774373540,
+                "model": "llama-3.1-8b-instant",
+                "object": "chat.completion",
+                "service_tier": "on_demand",
+                "system_fingerprint": "fp_03e8423237",
+                "usage": {
+                  "completion_tokens": 161,
+                  "prompt_tokens": 573,
+                  "total_tokens": 734,
+                  "completion_tokens_details": null,
+                  "prompt_tokens_details": null,
+                  "queue_time": 0.018851275,
+                  "prompt_time": 0.043069135,
+                  "completion_time": 0.249653587,
+                  "total_time": 0.292722722
+                },
+                "usage_breakdown": null,
+                "x_groq": {
+                  "id": "req_01kmgef4jzf9brdefe2hxfb785",
+                  "seed": 1871101283
+                },
+                "parsed_response": {
+                  "post_meaning": "The post is listing an iPhone 13.",
+                  "seller_intent": "Unclear, as the post is very brief.",
+                  "reliability_signals": [],
+                  "pros": [],
+                  "cons": [
+                    "The post has no price listed.",
+                    "The post has no seller name listed.",
+                    "The post has no comments or signals listed.",
+                    "The post has no images listed."
+                  ],
+                  "warning_signs": [
+                    "The post is very brief.",
+                    "The price is listed as $0.00."
+                  ],
+                  "recommendation": "skip",
+                  "image_product_match": "unclear",
+                  "logic_notes": "The post does not provide enough information to make a recommendation.",
+                  "relevance_score": 0.0
+                },
+                "request_payload": {
+                  "product_query": "iphone 13",
+                  "post_title": "iphone 13 fallback #1",
+                  "post_text": "iphone 13",
+                  "price": 0.0,
+                  "location": "center",
+                  "seller_name": "",
+                  "comments": [],
+                  "signals": [],
+                  "image_urls": []
+                },
+                "attempt": 1
+              },
+              "ai_validation_errors": [],
+              "ai_fallback_used": false,
+              "ai_success": true
+            },
+            "score_breakdown": {
+              "final_score": 0.126,
+              "categories": {
+                "relevance": 0.11699999999999999,
+                "information_completeness": 0.65,
+                "suspicious_risk": 0.6799999999999999,
+                "seller_signal": 0.4,
+                "comments_signal": 0.5,
+                "ai_assessment": 0.1125,
+                "image_product_match": 0.55
+              },
+              "penalties": {
+                "out_of_price_range": 0.15,
+                "missing_required_image": 0.12
+              },
+              "explanations": [
+                "category.relevance=0.117 (w=0.24)",
+                "category.information_completeness=0.650 (w=0.16)",
+                "category.suspicious_risk=0.680 (w=0.14)",
+                "category.seller_signal=0.400 (w=0.12)",
+                "category.comments_signal=0.500 (w=0.10)",
+                "category.ai_assessment=0.113 (w=0.14)",
+                "category.image_product_match=0.550 (w=0.10)",
+                "weighted_score_before_penalties=0.3960",
+                "penalty.out_of_price_range=-0.150",
+                "penalty.missing_required_image=-0.120"
+              ]
+            },
+            "recommendation": {
+              "code": "SKIP",
+              "text": "Low confidence candidate. Primary concerns: The post is very brief., The price is listed as $0.00."
+            },
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:The post is very brief.",
+              "ai:The price is listed as $0.00.",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url",
+              "extraction_failed"
+            ],
+            "extraction": {
+              "success": false,
+              "error": "missing_post_url",
+              "warnings": [
+                "Cannot open post without url",
+                "extraction_error:missing_post_url",
+                "extraction_error:missing_post_url",
+                "extraction_failed"
+              ]
+            }
+          },
+          {
+            "result_id": "result_2",
+            "rank": 2,
+            "post": {
+              "collected_post_data": {
+                "post_id": "fallback-3",
+                "title": "iphone 13 fallback #3",
+                "region": "center",
+                "url": "",
+                "snippet": "iphone 13",
+                "price_text": null,
+                "source_platform": "facebook_marketplace",
+                "raw_reference": {
+                  "fallback": true
+                },
+                "raw_post_data": {},
+                "normalized_post_data": {},
+                "description": "iphone 13",
+                "price": 0.0,
+                "has_image": false,
+                "publish_age": null,
+                "post_url": "",
+                "images": [],
+                "seller_name": null,
+                "comments": [],
+                "important_visible_signals": [],
+                "extraction_warnings": [
+                  "Cannot open post without url",
+                  "extraction_error:missing_post_url",
+                  "extraction_error:missing_post_url",
+                  "extraction_failed"
+                ],
+                "extraction_error": "missing_post_url",
+                "extraction_success": false,
+                "seller_rating": 4.5
+              },
+              "raw_post_data": {},
+              "normalized_post_data": {}
+            },
+            "comments": {
+              "count": 0,
+              "items": []
+            },
+            "logic_analysis": {
+              "match_level": "weak_match",
+              "logic_score": 0.195,
+              "completeness_score": 0.65,
+              "warning_flags": [
+                "out_of_price_range",
+                "missing_required_image",
+                "seller_name_quality_issue"
+              ],
+              "suspicious_indicators": [],
+              "duplicate": {
+                "is_duplicate": false,
+                "duplicate_key": "iphone 13 fallback #3||0.0",
+                "matched_keys": []
+              },
+              "seller_signal": {
+                "seller_name": "",
+                "quality": "warning",
+                "indicators": [
+                  "seller_name_missing"
+                ]
+              },
+              "comment_signal": {
+                "positive_count": 0,
+                "negative_count": 0,
+                "indicators": []
+              },
+              "matched_terms": [
+                "iphone 13"
+              ],
+              "missing_fields": [
+                "images",
+                "seller_name"
+              ],
+              "logic_summary": "match=weak_match | matched_terms=iphone 13 | warnings=out_of_price_range,missing_required_image,seller_name_quality_issue | missing=images,seller_name",
+              "in_price_range": false,
+              "has_required_image": false
+            },
+            "ai_analysis": {
+              "relevance_score": 0.0,
+              "ai_summary": "The post is listing an iPhone 13.",
+              "post_meaning": "The post is listing an iPhone 13.",
+              "seller_intent": "Unknown",
+              "reliability_signals": [],
+              "pros": [],
+              "cons": [
+                "Price is $0.0, which is likely an error"
+              ],
+              "warning_signs": [
+                "Seller name is empty",
+                "No comments or signals"
+              ],
+              "recommendation": "skip",
+              "image_product_match": "unclear",
+              "logic_notes": "No images provided to verify product match.",
+              "raw_ai_response": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unknown\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"Price is $0.0, which is likely an error\"],\n  \"warning_signs\": [\"Seller name is empty\", \"No comments or signals\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"No images provided to verify product match.\",\n  \"relevance_score\": 0.0\n}",
+              "raw_ai_response_data": {
+                "id": "chatcmpl-b0ea9e5d-7641-4e39-8aba-138b775bd43e",
+                "choices": [
+                  {
+                    "finish_reason": "stop",
+                    "index": 0,
+                    "logprobs": null,
+                    "message": {
+                      "content": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unknown\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"Price is $0.0, which is likely an error\"],\n  \"warning_signs\": [\"Seller name is empty\", \"No comments or signals\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"No images provided to verify product match.\",\n  \"relevance_score\": 0.0\n}",
+                      "refusal": null,
+                      "role": "assistant",
+                      "annotations": null,
+                      "audio": null,
+                      "function_call": null,
+                      "tool_calls": null
+                    }
+                  }
+                ],
+                "created": 1774373542,
+                "model": "llama-3.1-8b-instant",
+                "object": "chat.completion",
+                "service_tier": "on_demand",
+                "system_fingerprint": "fp_d9492c3c54",
+                "usage": {
+                  "completion_tokens": 120,
+                  "prompt_tokens": 573,
+                  "total_tokens": 693,
+                  "completion_tokens_details": null,
+                  "prompt_tokens_details": null,
+                  "queue_time": 0.050521374,
+                  "prompt_time": 0.058153309,
+                  "completion_time": 0.194940174,
+                  "total_time": 0.253093483
+                },
+                "usage_breakdown": null,
+                "x_groq": {
+                  "id": "req_01kmgef649f389crx7zncj5sbc",
+                  "seed": 394520843
+                },
+                "parsed_response": {
+                  "post_meaning": "The post is listing an iPhone 13.",
+                  "seller_intent": "Unknown",
+                  "reliability_signals": [],
+                  "pros": [],
+                  "cons": [
+                    "Price is $0.0, which is likely an error"
+                  ],
+                  "warning_signs": [
+                    "Seller name is empty",
+                    "No comments or signals"
+                  ],
+                  "recommendation": "skip",
+                  "image_product_match": "unclear",
+                  "logic_notes": "No images provided to verify product match.",
+                  "relevance_score": 0.0
+                },
+                "request_payload": {
+                  "product_query": "iphone 13",
+                  "post_title": "iphone 13 fallback #3",
+                  "post_text": "iphone 13",
+                  "price": 0.0,
+                  "location": "center",
+                  "seller_name": "",
+                  "comments": [],
+                  "signals": [],
+                  "image_urls": []
+                },
+                "attempt": 1
+              },
+              "ai_validation_errors": [],
+              "ai_fallback_used": false,
+              "ai_success": true
+            },
+            "score_breakdown": {
+              "final_score": 0.126,
+              "categories": {
+                "relevance": 0.11699999999999999,
+                "information_completeness": 0.65,
+                "suspicious_risk": 0.6799999999999999,
+                "seller_signal": 0.4,
+                "comments_signal": 0.5,
+                "ai_assessment": 0.1125,
+                "image_product_match": 0.55
+              },
+              "penalties": {
+                "out_of_price_range": 0.15,
+                "missing_required_image": 0.12
+              },
+              "explanations": [
+                "category.relevance=0.117 (w=0.24)",
+                "category.information_completeness=0.650 (w=0.16)",
+                "category.suspicious_risk=0.680 (w=0.14)",
+                "category.seller_signal=0.400 (w=0.12)",
+                "category.comments_signal=0.500 (w=0.10)",
+                "category.ai_assessment=0.113 (w=0.14)",
+                "category.image_product_match=0.550 (w=0.10)",
+                "weighted_score_before_penalties=0.3960",
+                "penalty.out_of_price_range=-0.150",
+                "penalty.missing_required_image=-0.120"
+              ]
+            },
+            "recommendation": {
+              "code": "SKIP",
+              "text": "Low confidence candidate. Primary concerns: Seller name is empty, No comments or signals"
+            },
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:Seller name is empty",
+              "ai:No comments or signals",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url",
+              "extraction_failed"
+            ],
+            "extraction": {
+              "success": false,
+              "error": "missing_post_url",
+              "warnings": [
+                "Cannot open post without url",
+                "extraction_error:missing_post_url",
+                "extraction_error:missing_post_url",
+                "extraction_failed"
+              ]
+            }
+          },
+          {
+            "result_id": "result_3",
+            "rank": 3,
+            "post": {
+              "collected_post_data": {
+                "post_id": "fallback-2",
+                "title": "iphone 13 fallback #2",
+                "region": "center",
+                "url": "",
+                "snippet": "iphone 13",
+                "price_text": null,
+                "source_platform": "facebook_marketplace",
+                "raw_reference": {
+                  "fallback": true
+                },
+                "raw_post_data": {},
+                "normalized_post_data": {},
+                "description": "iphone 13",
+                "price": 0.0,
+                "has_image": false,
+                "publish_age": null,
+                "post_url": "",
+                "images": [],
+                "seller_name": null,
+                "comments": [],
+                "important_visible_signals": [],
+                "extraction_warnings": [
+                  "Cannot open post without url",
+                  "extraction_error:missing_post_url",
+                  "extraction_error:missing_post_url",
+                  "extraction_failed"
+                ],
+                "extraction_error": "missing_post_url",
+                "extraction_success": false,
+                "seller_rating": 4.5
+              },
+              "raw_post_data": {},
+              "normalized_post_data": {}
+            },
+            "comments": {
+              "count": 0,
+              "items": []
+            },
+            "logic_analysis": {
+              "match_level": "weak_match",
+              "logic_score": 0.195,
+              "completeness_score": 0.65,
+              "warning_flags": [
+                "out_of_price_range",
+                "missing_required_image",
+                "seller_name_quality_issue"
+              ],
+              "suspicious_indicators": [],
+              "duplicate": {
+                "is_duplicate": false,
+                "duplicate_key": "iphone 13 fallback #2||0.0",
+                "matched_keys": []
+              },
+              "seller_signal": {
+                "seller_name": "",
+                "quality": "warning",
+                "indicators": [
+                  "seller_name_missing"
+                ]
+              },
+              "comment_signal": {
+                "positive_count": 0,
+                "negative_count": 0,
+                "indicators": []
+              },
+              "matched_terms": [
+                "iphone 13"
+              ],
+              "missing_fields": [
+                "images",
+                "seller_name"
+              ],
+              "logic_summary": "match=weak_match | matched_terms=iphone 13 | warnings=out_of_price_range,missing_required_image,seller_name_quality_issue | missing=images,seller_name",
+              "in_price_range": false,
+              "has_required_image": false
+            },
+            "ai_analysis": {
+              "relevance_score": 0.0,
+              "ai_summary": "The post is listing an iPhone 13.",
+              "post_meaning": "The post is listing an iPhone 13.",
+              "seller_intent": "Unclear",
+              "reliability_signals": [],
+              "pros": [],
+              "cons": [
+                "Price is 0.0, which is likely an error.",
+                "Seller name is empty."
+              ],
+              "warning_signs": [
+                "Price is 0.0, which is likely an error.",
+                "Seller name is empty.",
+                "No comments or signals available."
+              ],
+              "recommendation": "skip",
+              "image_product_match": "unclear",
+              "logic_notes": "No images available to analyze.",
+              "raw_ai_response": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unclear\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\n    \"Price is 0.0, which is likely an error.\",\n    \"Seller name is empty.\"\n  ],\n  \"warning_signs\": [\n    \"Price is 0.0, which is likely an error.\",\n    \"Seller name is empty.\",\n    \"No comments or signals available.\"\n  ],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"No images available to analyze.\",\n  \"relevance_score\": 0.0\n}",
+              "raw_ai_response_data": {
+                "id": "chatcmpl-8cb38f03-9263-4d24-9a19-443a6fe93eba",
+                "choices": [
+                  {
+                    "finish_reason": "stop",
+                    "index": 0,
+                    "logprobs": null,
+                    "message": {
+                      "content": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unclear\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\n    \"Price is 0.0, which is likely an error.\",\n    \"Seller name is empty.\"\n  ],\n  \"warning_signs\": [\n    \"Price is 0.0, which is likely an error.\",\n    \"Seller name is empty.\",\n    \"No comments or signals available.\"\n  ],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"No images available to analyze.\",\n  \"relevance_score\": 0.0\n}",
+                      "refusal": null,
+                      "role": "assistant",
+                      "annotations": null,
+                      "audio": null,
+                      "function_call": null,
+                      "tool_calls": null
+                    }
+                  }
+                ],
+                "created": 1774373541,
+                "model": "llama-3.1-8b-instant",
+                "object": "chat.completion",
+                "service_tier": "on_demand",
+                "system_fingerprint": "fp_03e8423237",
+                "usage": {
+                  "completion_tokens": 151,
+                  "prompt_tokens": 573,
+                  "total_tokens": 724,
+                  "completion_tokens_details": null,
+                  "prompt_tokens_details": null,
+                  "queue_time": 0.021692974,
+                  "prompt_time": 0.037982776,
+                  "completion_time": 0.175340997,
+                  "total_time": 0.213323773
+                },
+                "usage_breakdown": null,
+                "x_groq": {
+                  "id": "req_01kmgef5cxf2wbqyfwh67pxyh6",
+                  "seed": 972963055
+                },
+                "parsed_response": {
+                  "post_meaning": "The post is listing an iPhone 13.",
+                  "seller_intent": "Unclear",
+                  "reliability_signals": [],
+                  "pros": [],
+                  "cons": [
+                    "Price is 0.0, which is likely an error.",
+                    "Seller name is empty."
+                  ],
+                  "warning_signs": [
+                    "Price is 0.0, which is likely an error.",
+                    "Seller name is empty.",
+                    "No comments or signals available."
+                  ],
+                  "recommendation": "skip",
+                  "image_product_match": "unclear",
+                  "logic_notes": "No images available to analyze.",
+                  "relevance_score": 0.0
+                },
+                "request_payload": {
+                  "product_query": "iphone 13",
+                  "post_title": "iphone 13 fallback #2",
+                  "post_text": "iphone 13",
+                  "price": 0.0,
+                  "location": "center",
+                  "seller_name": "",
+                  "comments": [],
+                  "signals": [],
+                  "image_urls": []
+                },
+                "attempt": 1
+              },
+              "ai_validation_errors": [],
+              "ai_fallback_used": false,
+              "ai_success": true
+            },
+            "score_breakdown": {
+              "final_score": 0.1204,
+              "categories": {
+                "relevance": 0.11699999999999999,
+                "information_completeness": 0.65,
+                "suspicious_risk": 0.64,
+                "seller_signal": 0.4,
+                "comments_signal": 0.5,
+                "ai_assessment": 0.1125,
+                "image_product_match": 0.55
+              },
+              "penalties": {
+                "out_of_price_range": 0.15,
+                "missing_required_image": 0.12
+              },
+              "explanations": [
+                "category.relevance=0.117 (w=0.24)",
+                "category.information_completeness=0.650 (w=0.16)",
+                "category.suspicious_risk=0.640 (w=0.14)",
+                "category.seller_signal=0.400 (w=0.12)",
+                "category.comments_signal=0.500 (w=0.10)",
+                "category.ai_assessment=0.113 (w=0.14)",
+                "category.image_product_match=0.550 (w=0.10)",
+                "weighted_score_before_penalties=0.3904",
+                "penalty.out_of_price_range=-0.150",
+                "penalty.missing_required_image=-0.120"
+              ]
+            },
+            "recommendation": {
+              "code": "SKIP",
+              "text": "Low confidence candidate. Primary concerns: Price is 0.0, which is likely an error., Seller name is empty., No comments or signals available."
+            },
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:Price is 0.0, which is likely an error.",
+              "ai:Seller name is empty.",
+              "ai:No comments or signals available.",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url",
+              "extraction_failed"
+            ],
+            "extraction": {
+              "success": false,
+              "error": "missing_post_url",
+              "warnings": [
+                "Cannot open post without url",
+                "extraction_error:missing_post_url",
+                "extraction_error:missing_post_url",
+                "extraction_failed"
+              ]
+            }
+          }
+        ],
+        "top_results": [
+          {
+            "result_id": "result_1",
+            "rank": 1,
+            "title": "",
+            "price": null,
+            "location": "",
+            "seller_name": "",
+            "publish_time": "",
+            "final_score": 0.126,
+            "recommendation_code": "SKIP",
+            "short_recommendation": "Low confidence candidate. Primary concerns: The post is very brief., The price is listed as $0.00.",
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:The post is very brief.",
+              "ai:The price is listed as $0.00.",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url"
+            ],
+            "extraction_success": false
+          },
+          {
+            "result_id": "result_2",
+            "rank": 2,
+            "title": "",
+            "price": null,
+            "location": "",
+            "seller_name": "",
+            "publish_time": "",
+            "final_score": 0.126,
+            "recommendation_code": "SKIP",
+            "short_recommendation": "Low confidence candidate. Primary concerns: Seller name is empty, No comments or signals",
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:Seller name is empty",
+              "ai:No comments or signals",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url"
+            ],
+            "extraction_success": false
+          },
+          {
+            "result_id": "result_3",
+            "rank": 3,
+            "title": "",
+            "price": null,
+            "location": "",
+            "seller_name": "",
+            "publish_time": "",
+            "final_score": 0.1204,
+            "recommendation_code": "SKIP",
+            "short_recommendation": "Low confidence candidate. Primary concerns: Price is 0.0, which is likely an error., Seller name is empty., No commen...",
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:Price is 0.0, which is likely an error.",
+              "ai:Seller name is empty.",
+              "ai:No comments or signals available.",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url"
+            ],
+            "extraction_success": false
+          }
+        ],
+        "pipeline_notices": []
+      },
+      "ranked_posts": [
+        {
+          "post": {
+            "post_id": "fallback-1",
+            "title": "iphone 13 fallback #1",
+            "region": "center",
+            "url": "",
+            "snippet": "iphone 13",
+            "price_text": null,
+            "source_platform": "facebook_marketplace",
+            "raw_reference": {
+              "fallback": true
+            },
+            "raw_post_data": {},
+            "normalized_post_data": {},
+            "description": "iphone 13",
+            "price": 0.0,
+            "has_image": false,
+            "publish_age": null,
+            "post_url": "",
+            "images": [],
+            "seller_name": null,
+            "comments": [],
+            "important_visible_signals": [],
+            "extraction_warnings": [
+              "Cannot open post without url",
+              "extraction_error:missing_post_url",
+              "extraction_error:missing_post_url",
+              "extraction_failed"
+            ],
+            "extraction_error": "missing_post_url",
+            "extraction_success": false,
+            "seller_rating": 4.5
+          },
+          "logic_analysis": {
+            "match_level": "weak_match",
+            "logic_score": 0.195,
+            "completeness_score": 0.65,
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue"
+            ],
+            "suspicious_indicators": [],
+            "duplicate": {
+              "is_duplicate": false,
+              "duplicate_key": "iphone 13 fallback #1||0.0",
+              "matched_keys": []
+            },
+            "seller_signal": {
+              "seller_name": "",
+              "quality": "warning",
+              "indicators": [
+                "seller_name_missing"
+              ]
+            },
+            "comment_signal": {
+              "positive_count": 0,
+              "negative_count": 0,
+              "indicators": []
+            },
+            "matched_terms": [
+              "iphone 13"
+            ],
+            "missing_fields": [
+              "images",
+              "seller_name"
+            ],
+            "logic_summary": "match=weak_match | matched_terms=iphone 13 | warnings=out_of_price_range,missing_required_image,seller_name_quality_issue | missing=images,seller_name",
+            "in_price_range": false,
+            "has_required_image": false
+          },
+          "ai_analysis": {
+            "relevance_score": 0.0,
+            "ai_summary": "The post is listing an iPhone 13.",
+            "post_meaning": "The post is listing an iPhone 13.",
+            "seller_intent": "Unclear, as the post is very brief.",
+            "reliability_signals": [],
+            "pros": [],
+            "cons": [
+              "The post has no price listed.",
+              "The post has no seller name listed.",
+              "The post has no comments or signals listed.",
+              "The post has no images listed."
+            ],
+            "warning_signs": [
+              "The post is very brief.",
+              "The price is listed as $0.00."
+            ],
+            "recommendation": "skip",
+            "image_product_match": "unclear",
+            "logic_notes": "The post does not provide enough information to make a recommendation.",
+            "raw_ai_response": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unclear, as the post is very brief.\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"The post has no price listed.\", \"The post has no seller name listed.\", \"The post has no comments or signals listed.\", \"The post has no images listed.\"],\n  \"warning_signs\": [\"The post is very brief.\", \"The price is listed as $0.00.\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post does not provide enough information to make a recommendation.\",\n  \"relevance_score\": 0.0\n}",
+            "raw_ai_response_data": {
+              "id": "chatcmpl-d1d0492a-609a-449d-9a2f-9b9dcc6c44be",
+              "choices": [
+                {
+                  "finish_reason": "stop",
+                  "index": 0,
+                  "logprobs": null,
+                  "message": {
+                    "content": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unclear, as the post is very brief.\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"The post has no price listed.\", \"The post has no seller name listed.\", \"The post has no comments or signals listed.\", \"The post has no images listed.\"],\n  \"warning_signs\": [\"The post is very brief.\", \"The price is listed as $0.00.\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post does not provide enough information to make a recommendation.\",\n  \"relevance_score\": 0.0\n}",
+                    "refusal": null,
+                    "role": "assistant",
+                    "annotations": null,
+                    "audio": null,
+                    "function_call": null,
+                    "tool_calls": null
+                  }
+                }
+              ],
+              "created": 1774373540,
+              "model": "llama-3.1-8b-instant",
+              "object": "chat.completion",
+              "service_tier": "on_demand",
+              "system_fingerprint": "fp_03e8423237",
+              "usage": {
+                "completion_tokens": 161,
+                "prompt_tokens": 573,
+                "total_tokens": 734,
+                "completion_tokens_details": null,
+                "prompt_tokens_details": null,
+                "queue_time": 0.018851275,
+                "prompt_time": 0.043069135,
+                "completion_time": 0.249653587,
+                "total_time": 0.292722722
+              },
+              "usage_breakdown": null,
+              "x_groq": {
+                "id": "req_01kmgef4jzf9brdefe2hxfb785",
+                "seed": 1871101283
+              },
+              "parsed_response": {
+                "post_meaning": "The post is listing an iPhone 13.",
+                "seller_intent": "Unclear, as the post is very brief.",
+                "reliability_signals": [],
+                "pros": [],
+                "cons": [
+                  "The post has no price listed.",
+                  "The post has no seller name listed.",
+                  "The post has no comments or signals listed.",
+                  "The post has no images listed."
+                ],
+                "warning_signs": [
+                  "The post is very brief.",
+                  "The price is listed as $0.00."
+                ],
+                "recommendation": "skip",
+                "image_product_match": "unclear",
+                "logic_notes": "The post does not provide enough information to make a recommendation.",
+                "relevance_score": 0.0
+              },
+              "request_payload": {
+                "product_query": "iphone 13",
+                "post_title": "iphone 13 fallback #1",
+                "post_text": "iphone 13",
+                "price": 0.0,
+                "location": "center",
+                "seller_name": "",
+                "comments": [],
+                "signals": [],
+                "image_urls": []
+              },
+              "attempt": 1
+            },
+            "ai_validation_errors": [],
+            "ai_fallback_used": false,
+            "ai_success": true
+          },
+          "scoring": {
+            "final_score": 0.126,
+            "recommendation_code": "SKIP",
+            "recommendation_text": "Low confidence candidate. Primary concerns: The post is very brief., The price is listed as $0.00.",
+            "categories": {
+              "relevance": 0.11699999999999999,
+              "information_completeness": 0.65,
+              "suspicious_risk": 0.6799999999999999,
+              "seller_signal": 0.4,
+              "comments_signal": 0.5,
+              "ai_assessment": 0.1125,
+              "image_product_match": 0.55
+            },
+            "penalties": {
+              "out_of_price_range": 0.15,
+              "missing_required_image": 0.12
+            },
+            "explanations": [
+              "category.relevance=0.117 (w=0.24)",
+              "category.information_completeness=0.650 (w=0.16)",
+              "category.suspicious_risk=0.680 (w=0.14)",
+              "category.seller_signal=0.400 (w=0.12)",
+              "category.comments_signal=0.500 (w=0.10)",
+              "category.ai_assessment=0.113 (w=0.14)",
+              "category.image_product_match=0.550 (w=0.10)",
+              "weighted_score_before_penalties=0.3960",
+              "penalty.out_of_price_range=-0.150",
+              "penalty.missing_required_image=-0.120"
+            ]
+          }
+        },
+        {
+          "post": {
+            "post_id": "fallback-3",
+            "title": "iphone 13 fallback #3",
+            "region": "center",
+            "url": "",
+            "snippet": "iphone 13",
+            "price_text": null,
+            "source_platform": "facebook_marketplace",
+            "raw_reference": {
+              "fallback": true
+            },
+            "raw_post_data": {},
+            "normalized_post_data": {},
+            "description": "iphone 13",
+            "price": 0.0,
+            "has_image": false,
+            "publish_age": null,
+            "post_url": "",
+            "images": [],
+            "seller_name": null,
+            "comments": [],
+            "important_visible_signals": [],
+            "extraction_warnings": [
+              "Cannot open post without url",
+              "extraction_error:missing_post_url",
+              "extraction_error:missing_post_url",
+              "extraction_failed"
+            ],
+            "extraction_error": "missing_post_url",
+            "extraction_success": false,
+            "seller_rating": 4.5
+          },
+          "logic_analysis": {
+            "match_level": "weak_match",
+            "logic_score": 0.195,
+            "completeness_score": 0.65,
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue"
+            ],
+            "suspicious_indicators": [],
+            "duplicate": {
+              "is_duplicate": false,
+              "duplicate_key": "iphone 13 fallback #3||0.0",
+              "matched_keys": []
+            },
+            "seller_signal": {
+              "seller_name": "",
+              "quality": "warning",
+              "indicators": [
+                "seller_name_missing"
+              ]
+            },
+            "comment_signal": {
+              "positive_count": 0,
+              "negative_count": 0,
+              "indicators": []
+            },
+            "matched_terms": [
+              "iphone 13"
+            ],
+            "missing_fields": [
+              "images",
+              "seller_name"
+            ],
+            "logic_summary": "match=weak_match | matched_terms=iphone 13 | warnings=out_of_price_range,missing_required_image,seller_name_quality_issue | missing=images,seller_name",
+            "in_price_range": false,
+            "has_required_image": false
+          },
+          "ai_analysis": {
+            "relevance_score": 0.0,
+            "ai_summary": "The post is listing an iPhone 13.",
+            "post_meaning": "The post is listing an iPhone 13.",
+            "seller_intent": "Unknown",
+            "reliability_signals": [],
+            "pros": [],
+            "cons": [
+              "Price is $0.0, which is likely an error"
+            ],
+            "warning_signs": [
+              "Seller name is empty",
+              "No comments or signals"
+            ],
+            "recommendation": "skip",
+            "image_product_match": "unclear",
+            "logic_notes": "No images provided to verify product match.",
+            "raw_ai_response": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unknown\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"Price is $0.0, which is likely an error\"],\n  \"warning_signs\": [\"Seller name is empty\", \"No comments or signals\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"No images provided to verify product match.\",\n  \"relevance_score\": 0.0\n}",
+            "raw_ai_response_data": {
+              "id": "chatcmpl-b0ea9e5d-7641-4e39-8aba-138b775bd43e",
+              "choices": [
+                {
+                  "finish_reason": "stop",
+                  "index": 0,
+                  "logprobs": null,
+                  "message": {
+                    "content": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unknown\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"Price is $0.0, which is likely an error\"],\n  \"warning_signs\": [\"Seller name is empty\", \"No comments or signals\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"No images provided to verify product match.\",\n  \"relevance_score\": 0.0\n}",
+                    "refusal": null,
+                    "role": "assistant",
+                    "annotations": null,
+                    "audio": null,
+                    "function_call": null,
+                    "tool_calls": null
+                  }
+                }
+              ],
+              "created": 1774373542,
+              "model": "llama-3.1-8b-instant",
+              "object": "chat.completion",
+              "service_tier": "on_demand",
+              "system_fingerprint": "fp_d9492c3c54",
+              "usage": {
+                "completion_tokens": 120,
+                "prompt_tokens": 573,
+                "total_tokens": 693,
+                "completion_tokens_details": null,
+                "prompt_tokens_details": null,
+                "queue_time": 0.050521374,
+                "prompt_time": 0.058153309,
+                "completion_time": 0.194940174,
+                "total_time": 0.253093483
+              },
+              "usage_breakdown": null,
+              "x_groq": {
+                "id": "req_01kmgef649f389crx7zncj5sbc",
+                "seed": 394520843
+              },
+              "parsed_response": {
+                "post_meaning": "The post is listing an iPhone 13.",
+                "seller_intent": "Unknown",
+                "reliability_signals": [],
+                "pros": [],
+                "cons": [
+                  "Price is $0.0, which is likely an error"
+                ],
+                "warning_signs": [
+                  "Seller name is empty",
+                  "No comments or signals"
+                ],
+                "recommendation": "skip",
+                "image_product_match": "unclear",
+                "logic_notes": "No images provided to verify product match.",
+                "relevance_score": 0.0
+              },
+              "request_payload": {
+                "product_query": "iphone 13",
+                "post_title": "iphone 13 fallback #3",
+                "post_text": "iphone 13",
+                "price": 0.0,
+                "location": "center",
+                "seller_name": "",
+                "comments": [],
+                "signals": [],
+                "image_urls": []
+              },
+              "attempt": 1
+            },
+            "ai_validation_errors": [],
+            "ai_fallback_used": false,
+            "ai_success": true
+          },
+          "scoring": {
+            "final_score": 0.126,
+            "recommendation_code": "SKIP",
+            "recommendation_text": "Low confidence candidate. Primary concerns: Seller name is empty, No comments or signals",
+            "categories": {
+              "relevance": 0.11699999999999999,
+              "information_completeness": 0.65,
+              "suspicious_risk": 0.6799999999999999,
+              "seller_signal": 0.4,
+              "comments_signal": 0.5,
+              "ai_assessment": 0.1125,
+              "image_product_match": 0.55
+            },
+            "penalties": {
+              "out_of_price_range": 0.15,
+              "missing_required_image": 0.12
+            },
+            "explanations": [
+              "category.relevance=0.117 (w=0.24)",
+              "category.information_completeness=0.650 (w=0.16)",
+              "category.suspicious_risk=0.680 (w=0.14)",
+              "category.seller_signal=0.400 (w=0.12)",
+              "category.comments_signal=0.500 (w=0.10)",
+              "category.ai_assessment=0.113 (w=0.14)",
+              "category.image_product_match=0.550 (w=0.10)",
+              "weighted_score_before_penalties=0.3960",
+              "penalty.out_of_price_range=-0.150",
+              "penalty.missing_required_image=-0.120"
+            ]
+          }
+        },
+        {
+          "post": {
+            "post_id": "fallback-2",
+            "title": "iphone 13 fallback #2",
+            "region": "center",
+            "url": "",
+            "snippet": "iphone 13",
+            "price_text": null,
+            "source_platform": "facebook_marketplace",
+            "raw_reference": {
+              "fallback": true
+            },
+            "raw_post_data": {},
+            "normalized_post_data": {},
+            "description": "iphone 13",
+            "price": 0.0,
+            "has_image": false,
+            "publish_age": null,
+            "post_url": "",
+            "images": [],
+            "seller_name": null,
+            "comments": [],
+            "important_visible_signals": [],
+            "extraction_warnings": [
+              "Cannot open post without url",
+              "extraction_error:missing_post_url",
+              "extraction_error:missing_post_url",
+              "extraction_failed"
+            ],
+            "extraction_error": "missing_post_url",
+            "extraction_success": false,
+            "seller_rating": 4.5
+          },
+          "logic_analysis": {
+            "match_level": "weak_match",
+            "logic_score": 0.195,
+            "completeness_score": 0.65,
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue"
+            ],
+            "suspicious_indicators": [],
+            "duplicate": {
+              "is_duplicate": false,
+              "duplicate_key": "iphone 13 fallback #2||0.0",
+              "matched_keys": []
+            },
+            "seller_signal": {
+              "seller_name": "",
+              "quality": "warning",
+              "indicators": [
+                "seller_name_missing"
+              ]
+            },
+            "comment_signal": {
+              "positive_count": 0,
+              "negative_count": 0,
+              "indicators": []
+            },
+            "matched_terms": [
+              "iphone 13"
+            ],
+            "missing_fields": [
+              "images",
+              "seller_name"
+            ],
+            "logic_summary": "match=weak_match | matched_terms=iphone 13 | warnings=out_of_price_range,missing_required_image,seller_name_quality_issue | missing=images,seller_name",
+            "in_price_range": false,
+            "has_required_image": false
+          },
+          "ai_analysis": {
+            "relevance_score": 0.0,
+            "ai_summary": "The post is listing an iPhone 13.",
+            "post_meaning": "The post is listing an iPhone 13.",
+            "seller_intent": "Unclear",
+            "reliability_signals": [],
+            "pros": [],
+            "cons": [
+              "Price is 0.0, which is likely an error.",
+              "Seller name is empty."
+            ],
+            "warning_signs": [
+              "Price is 0.0, which is likely an error.",
+              "Seller name is empty.",
+              "No comments or signals available."
+            ],
+            "recommendation": "skip",
+            "image_product_match": "unclear",
+            "logic_notes": "No images available to analyze.",
+            "raw_ai_response": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unclear\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\n    \"Price is 0.0, which is likely an error.\",\n    \"Seller name is empty.\"\n  ],\n  \"warning_signs\": [\n    \"Price is 0.0, which is likely an error.\",\n    \"Seller name is empty.\",\n    \"No comments or signals available.\"\n  ],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"No images available to analyze.\",\n  \"relevance_score\": 0.0\n}",
+            "raw_ai_response_data": {
+              "id": "chatcmpl-8cb38f03-9263-4d24-9a19-443a6fe93eba",
+              "choices": [
+                {
+                  "finish_reason": "stop",
+                  "index": 0,
+                  "logprobs": null,
+                  "message": {
+                    "content": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unclear\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\n    \"Price is 0.0, which is likely an error.\",\n    \"Seller name is empty.\"\n  ],\n  \"warning_signs\": [\n    \"Price is 0.0, which is likely an error.\",\n    \"Seller name is empty.\",\n    \"No comments or signals available.\"\n  ],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"No images available to analyze.\",\n  \"relevance_score\": 0.0\n}",
+                    "refusal": null,
+                    "role": "assistant",
+                    "annotations": null,
+                    "audio": null,
+                    "function_call": null,
+                    "tool_calls": null
+                  }
+                }
+              ],
+              "created": 1774373541,
+              "model": "llama-3.1-8b-instant",
+              "object": "chat.completion",
+              "service_tier": "on_demand",
+              "system_fingerprint": "fp_03e8423237",
+              "usage": {
+                "completion_tokens": 151,
+                "prompt_tokens": 573,
+                "total_tokens": 724,
+                "completion_tokens_details": null,
+                "prompt_tokens_details": null,
+                "queue_time": 0.021692974,
+                "prompt_time": 0.037982776,
+                "completion_time": 0.175340997,
+                "total_time": 0.213323773
+              },
+              "usage_breakdown": null,
+              "x_groq": {
+                "id": "req_01kmgef5cxf2wbqyfwh67pxyh6",
+                "seed": 972963055
+              },
+              "parsed_response": {
+                "post_meaning": "The post is listing an iPhone 13.",
+                "seller_intent": "Unclear",
+                "reliability_signals": [],
+                "pros": [],
+                "cons": [
+                  "Price is 0.0, which is likely an error.",
+                  "Seller name is empty."
+                ],
+                "warning_signs": [
+                  "Price is 0.0, which is likely an error.",
+                  "Seller name is empty.",
+                  "No comments or signals available."
+                ],
+                "recommendation": "skip",
+                "image_product_match": "unclear",
+                "logic_notes": "No images available to analyze.",
+                "relevance_score": 0.0
+              },
+              "request_payload": {
+                "product_query": "iphone 13",
+                "post_title": "iphone 13 fallback #2",
+                "post_text": "iphone 13",
+                "price": 0.0,
+                "location": "center",
+                "seller_name": "",
+                "comments": [],
+                "signals": [],
+                "image_urls": []
+              },
+              "attempt": 1
+            },
+            "ai_validation_errors": [],
+            "ai_fallback_used": false,
+            "ai_success": true
+          },
+          "scoring": {
+            "final_score": 0.1204,
+            "recommendation_code": "SKIP",
+            "recommendation_text": "Low confidence candidate. Primary concerns: Price is 0.0, which is likely an error., Seller name is empty., No comments or signals available.",
+            "categories": {
+              "relevance": 0.11699999999999999,
+              "information_completeness": 0.65,
+              "suspicious_risk": 0.64,
+              "seller_signal": 0.4,
+              "comments_signal": 0.5,
+              "ai_assessment": 0.1125,
+              "image_product_match": 0.55
+            },
+            "penalties": {
+              "out_of_price_range": 0.15,
+              "missing_required_image": 0.12
+            },
+            "explanations": [
+              "category.relevance=0.117 (w=0.24)",
+              "category.information_completeness=0.650 (w=0.16)",
+              "category.suspicious_risk=0.640 (w=0.14)",
+              "category.seller_signal=0.400 (w=0.12)",
+              "category.comments_signal=0.500 (w=0.10)",
+              "category.ai_assessment=0.113 (w=0.14)",
+              "category.image_product_match=0.550 (w=0.10)",
+              "weighted_score_before_penalties=0.3904",
+              "penalty.out_of_price_range=-0.150",
+              "penalty.missing_required_image=-0.120"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "run_id": "run_20260324T1733104743060000_aecb2f0c",
+      "saved_at": "2026-03-24T17:33:18.586721+00:00",
+      "run_state": {
+        "status": "completed",
+        "progress": {
+          "current_stage": "present_results",
+          "completed_stages": 9,
+          "total_stages": 9,
+          "processed_posts": 3,
+          "max_posts": 20,
+          "percentage": 100.0
+        },
+        "runtime": {
+          "started_at": "2026-03-24T17:33:10.474306+00:00",
+          "finished_at": "2026-03-24T17:33:18.581088+00:00",
+          "elapsed_seconds": 8.106
+        },
+        "stage_results": [
+          {
+            "stage_name": "receive_user_input",
+            "status": "success",
+            "details": {
+              "query": "iphone 13"
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "search_posts",
+            "status": "success",
+            "details": {
+              "found": 3,
+              "max_posts": 20
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "initial_filtering",
+            "status": "success",
+            "details": {
+              "before": 3,
+              "after": 3
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "open_post",
+            "status": "success",
+            "details": {
+              "successful": 3,
+              "attempted": 3
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "collect_data",
+            "status": "success",
+            "details": {
+              "successful": 3,
+              "attempted": 3
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "logic_analysis",
+            "status": "success",
+            "details": {
+              "successful": 3,
+              "attempted": 3
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "ai_analysis",
+            "status": "success",
+            "details": {
+              "successful": 3,
+              "attempted": 3
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "ranking",
+            "status": "success",
+            "details": {
+              "ranked": 3
+            },
+            "errors": []
+          },
+          {
+            "stage_name": "present_results",
+            "status": "success",
+            "details": {
+              "top_results": 3
+            },
+            "errors": []
+          }
+        ],
+        "stop_reason": null
+      },
+      "request_payload": {
+        "query_text": "iphone 13",
+        "tags": [
+          "apple",
+          "smartphone"
+        ],
+        "secondary_attributes": [
+          "128gb"
+        ],
+        "forbidden_words": [
+          "broken"
+        ],
+        "min_price": 50.0,
+        "max_price": 5000.0,
+        "is_free": false,
+        "post_age": "24h",
+        "require_image": true,
+        "language": "he",
+        "target_regions": [
+          "center"
+        ],
+        "all_country": false,
+        "group_mode": "all_groups",
+        "groups": [],
+        "group_sources": [
+          "user_groups"
+        ],
+        "group_urls": [],
+        "select_all_groups": false
+      },
+      "presented_results": {
+        "total_results": 3,
+        "results_list": [
+          {
+            "result_id": "result_1",
+            "rank": 1,
+            "title": "",
+            "price": null,
+            "location": "",
+            "seller_name": "",
+            "publish_time": "",
+            "final_score": 0.2181,
+            "recommendation_code": "SKIP",
+            "short_recommendation": "Low confidence candidate. Primary concerns: Price is 0.0, which is likely a mistake or a scam",
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:Price is 0.0, which is likely a mistake or a scam",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url"
+            ],
+            "extraction_success": false
+          },
+          {
+            "result_id": "result_2",
+            "rank": 2,
+            "title": "",
+            "price": null,
+            "location": "",
+            "seller_name": "",
+            "publish_time": "",
+            "final_score": 0.2069,
+            "recommendation_code": "SKIP",
+            "short_recommendation": "Low confidence candidate. Primary concerns: Price is $0.0, which is likely an error., Seller name is empty., No comme...",
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:Price is $0.0, which is likely an error.",
+              "ai:Seller name is empty.",
+              "ai:No comments or signals are present.",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url"
+            ],
+            "extraction_success": false
+          },
+          {
+            "result_id": "result_3",
+            "rank": 3,
+            "title": "",
+            "price": null,
+            "location": "",
+            "seller_name": "",
+            "publish_time": "",
+            "final_score": 0.1092,
+            "recommendation_code": "SKIP",
+            "short_recommendation": "Low confidence candidate. Primary concerns: The post is very brief., The post has no price listed., The post has no s...",
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:The post is very brief.",
+              "ai:The post has no price listed.",
+              "ai:The post has no seller name listed.",
+              "ai:The post has no comments or signals.",
+              "ai:The post has no images to verify the product.",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url"
+            ],
+            "extraction_success": false
+          }
+        ],
+        "result_details": [
+          {
+            "result_id": "result_1",
+            "rank": 1,
+            "post": {
+              "collected_post_data": {
+                "post_id": "fallback-3",
+                "title": "iphone 13 fallback #3",
+                "region": "center",
+                "url": "",
+                "snippet": "iphone 13",
+                "price_text": null,
+                "source_platform": "facebook_marketplace",
+                "raw_reference": {
+                  "fallback": true
+                },
+                "raw_post_data": {},
+                "normalized_post_data": {},
+                "description": "iphone 13",
+                "price": 0.0,
+                "has_image": false,
+                "publish_age": null,
+                "post_url": "",
+                "images": [],
+                "seller_name": null,
+                "comments": [],
+                "important_visible_signals": [],
+                "extraction_warnings": [
+                  "Cannot open post without url",
+                  "extraction_error:missing_post_url",
+                  "extraction_error:missing_post_url",
+                  "extraction_failed"
+                ],
+                "extraction_error": "missing_post_url",
+                "extraction_success": false,
+                "seller_rating": 4.5
+              },
+              "raw_post_data": {},
+              "normalized_post_data": {}
+            },
+            "comments": {
+              "count": 0,
+              "items": []
+            },
+            "logic_analysis": {
+              "match_level": "weak_match",
+              "logic_score": 0.195,
+              "completeness_score": 0.65,
+              "warning_flags": [
+                "out_of_price_range",
+                "missing_required_image",
+                "seller_name_quality_issue"
+              ],
+              "suspicious_indicators": [],
+              "duplicate": {
+                "is_duplicate": false,
+                "duplicate_key": "iphone 13 fallback #3||0.0",
+                "matched_keys": []
+              },
+              "seller_signal": {
+                "seller_name": "",
+                "quality": "warning",
+                "indicators": [
+                  "seller_name_missing"
+                ]
+              },
+              "comment_signal": {
+                "positive_count": 0,
+                "negative_count": 0,
+                "indicators": []
+              },
+              "matched_terms": [
+                "iphone 13"
+              ],
+              "missing_fields": [
+                "images",
+                "seller_name"
+              ],
+              "logic_summary": "match=weak_match | matched_terms=iphone 13 | warnings=out_of_price_range,missing_required_image,seller_name_quality_issue | missing=images,seller_name",
+              "in_price_range": false,
+              "has_required_image": false
+            },
+            "ai_analysis": {
+              "relevance_score": 0.5,
+              "ai_summary": "The post is listing an iPhone 13.",
+              "post_meaning": "The post is listing an iPhone 13.",
+              "seller_intent": "Unknown",
+              "reliability_signals": [],
+              "pros": [],
+              "cons": [
+                "Price is 0.0, which is likely a mistake or a scam"
+              ],
+              "warning_signs": [
+                "Price is 0.0, which is likely a mistake or a scam"
+              ],
+              "recommendation": "skip",
+              "image_product_match": "unclear",
+              "logic_notes": "The post lacks a seller name and image URLs, making it unclear what the post is trying to sell.",
+              "raw_ai_response": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unknown\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"Price is 0.0, which is likely a mistake or a scam\"],\n  \"warning_signs\": [\"Price is 0.0, which is likely a mistake or a scam\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post lacks a seller name and image URLs, making it unclear what the post is trying to sell.\",\n  \"relevance_score\": 0.5\n}",
+              "raw_ai_response_data": {
+                "id": "chatcmpl-c1cf7968-2480-45f7-98f6-2e5355444e0f",
+                "choices": [
+                  {
+                    "finish_reason": "stop",
+                    "index": 0,
+                    "logprobs": null,
+                    "message": {
+                      "content": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unknown\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"Price is 0.0, which is likely a mistake or a scam\"],\n  \"warning_signs\": [\"Price is 0.0, which is likely a mistake or a scam\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post lacks a seller name and image URLs, making it unclear what the post is trying to sell.\",\n  \"relevance_score\": 0.5\n}",
+                      "refusal": null,
+                      "role": "assistant",
+                      "annotations": null,
+                      "audio": null,
+                      "function_call": null,
+                      "tool_calls": null
+                    }
+                  }
+                ],
+                "created": 1774373598,
+                "model": "llama-3.1-8b-instant",
+                "object": "chat.completion",
+                "service_tier": "on_demand",
+                "system_fingerprint": "fp_e09ee421cf",
+                "usage": {
+                  "completion_tokens": 141,
+                  "prompt_tokens": 573,
+                  "total_tokens": 714,
+                  "completion_tokens_details": null,
+                  "prompt_tokens_details": null,
+                  "queue_time": 0.045664024,
+                  "prompt_time": 0.035684752,
+                  "completion_time": 0.20232119,
+                  "total_time": 0.238005942
+                },
+                "usage_breakdown": null,
+                "x_groq": {
+                  "id": "req_01kmgegx0rfn3ta4mxh3a8svwn",
+                  "seed": 60144328
+                },
+                "parsed_response": {
+                  "post_meaning": "The post is listing an iPhone 13.",
+                  "seller_intent": "Unknown",
+                  "reliability_signals": [],
+                  "pros": [],
+                  "cons": [
+                    "Price is 0.0, which is likely a mistake or a scam"
+                  ],
+                  "warning_signs": [
+                    "Price is 0.0, which is likely a mistake or a scam"
+                  ],
+                  "recommendation": "skip",
+                  "image_product_match": "unclear",
+                  "logic_notes": "The post lacks a seller name and image URLs, making it unclear what the post is trying to sell.",
+                  "relevance_score": 0.5
+                },
+                "request_payload": {
+                  "product_query": "iphone 13",
+                  "post_title": "iphone 13 fallback #3",
+                  "post_text": "iphone 13",
+                  "price": 0.0,
+                  "location": "center",
+                  "seller_name": "",
+                  "comments": [],
+                  "signals": [],
+                  "image_urls": []
+                },
+                "attempt": 1
+              },
+              "ai_validation_errors": [],
+              "ai_fallback_used": false,
+              "ai_success": true
+            },
+            "score_breakdown": {
+              "final_score": 0.2181,
+              "categories": {
+                "relevance": 0.317,
+                "information_completeness": 0.65,
+                "suspicious_risk": 0.72,
+                "seller_signal": 0.4,
+                "comments_signal": 0.5,
+                "ai_assessment": 0.3875,
+                "image_product_match": 0.55
+              },
+              "penalties": {
+                "out_of_price_range": 0.15,
+                "missing_required_image": 0.12
+              },
+              "explanations": [
+                "category.relevance=0.317 (w=0.24)",
+                "category.information_completeness=0.650 (w=0.16)",
+                "category.suspicious_risk=0.720 (w=0.14)",
+                "category.seller_signal=0.400 (w=0.12)",
+                "category.comments_signal=0.500 (w=0.10)",
+                "category.ai_assessment=0.388 (w=0.14)",
+                "category.image_product_match=0.550 (w=0.10)",
+                "weighted_score_before_penalties=0.4881",
+                "penalty.out_of_price_range=-0.150",
+                "penalty.missing_required_image=-0.120"
+              ]
+            },
+            "recommendation": {
+              "code": "SKIP",
+              "text": "Low confidence candidate. Primary concerns: Price is 0.0, which is likely a mistake or a scam"
+            },
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:Price is 0.0, which is likely a mistake or a scam",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url",
+              "extraction_failed"
+            ],
+            "extraction": {
+              "success": false,
+              "error": "missing_post_url",
+              "warnings": [
+                "Cannot open post without url",
+                "extraction_error:missing_post_url",
+                "extraction_error:missing_post_url",
+                "extraction_failed"
+              ]
+            }
+          },
+          {
+            "result_id": "result_2",
+            "rank": 2,
+            "post": {
+              "collected_post_data": {
+                "post_id": "fallback-1",
+                "title": "iphone 13 fallback #1",
+                "region": "center",
+                "url": "",
+                "snippet": "iphone 13",
+                "price_text": null,
+                "source_platform": "facebook_marketplace",
+                "raw_reference": {
+                  "fallback": true
+                },
+                "raw_post_data": {},
+                "normalized_post_data": {},
+                "description": "iphone 13",
+                "price": 0.0,
+                "has_image": false,
+                "publish_age": null,
+                "post_url": "",
+                "images": [],
+                "seller_name": null,
+                "comments": [],
+                "important_visible_signals": [],
+                "extraction_warnings": [
+                  "Cannot open post without url",
+                  "extraction_error:missing_post_url",
+                  "extraction_error:missing_post_url",
+                  "extraction_failed"
+                ],
+                "extraction_error": "missing_post_url",
+                "extraction_success": false,
+                "seller_rating": 4.5
+              },
+              "raw_post_data": {},
+              "normalized_post_data": {}
+            },
+            "comments": {
+              "count": 0,
+              "items": []
+            },
+            "logic_analysis": {
+              "match_level": "weak_match",
+              "logic_score": 0.195,
+              "completeness_score": 0.65,
+              "warning_flags": [
+                "out_of_price_range",
+                "missing_required_image",
+                "seller_name_quality_issue"
+              ],
+              "suspicious_indicators": [],
+              "duplicate": {
+                "is_duplicate": false,
+                "duplicate_key": "iphone 13 fallback #1||0.0",
+                "matched_keys": []
+              },
+              "seller_signal": {
+                "seller_name": "",
+                "quality": "warning",
+                "indicators": [
+                  "seller_name_missing"
+                ]
+              },
+              "comment_signal": {
+                "positive_count": 0,
+                "negative_count": 0,
+                "indicators": []
+              },
+              "matched_terms": [
+                "iphone 13"
+              ],
+              "missing_fields": [
+                "images",
+                "seller_name"
+              ],
+              "logic_summary": "match=weak_match | matched_terms=iphone 13 | warnings=out_of_price_range,missing_required_image,seller_name_quality_issue | missing=images,seller_name",
+              "in_price_range": false,
+              "has_required_image": false
+            },
+            "ai_analysis": {
+              "relevance_score": 0.5,
+              "ai_summary": "The post is a listing for an iPhone 13.",
+              "post_meaning": "The post is a listing for an iPhone 13.",
+              "seller_intent": "Unknown",
+              "reliability_signals": [],
+              "pros": [],
+              "cons": [
+                "Price is $0.0, which is likely an error.",
+                "Seller name is empty."
+              ],
+              "warning_signs": [
+                "Price is $0.0, which is likely an error.",
+                "Seller name is empty.",
+                "No comments or signals are present."
+              ],
+              "recommendation": "skip",
+              "image_product_match": "unclear",
+              "logic_notes": "The post title and text match the product query, but the price and seller name are unknown.",
+              "raw_ai_response": "{\n  \"post_meaning\": \"The post is a listing for an iPhone 13.\",\n  \"seller_intent\": \"Unknown\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\n    \"Price is $0.0, which is likely an error.\",\n    \"Seller name is empty.\"\n  ],\n  \"warning_signs\": [\n    \"Price is $0.0, which is likely an error.\",\n    \"Seller name is empty.\",\n    \"No comments or signals are present.\"\n  ],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post title and text match the product query, but the price and seller name are unknown.\",\n  \"relevance_score\": 0.5\n}",
+              "raw_ai_response_data": {
+                "id": "chatcmpl-627158d6-a48b-4716-af37-bade4c2dec09",
+                "choices": [
+                  {
+                    "finish_reason": "stop",
+                    "index": 0,
+                    "logprobs": null,
+                    "message": {
+                      "content": "{\n  \"post_meaning\": \"The post is a listing for an iPhone 13.\",\n  \"seller_intent\": \"Unknown\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\n    \"Price is $0.0, which is likely an error.\",\n    \"Seller name is empty.\"\n  ],\n  \"warning_signs\": [\n    \"Price is $0.0, which is likely an error.\",\n    \"Seller name is empty.\",\n    \"No comments or signals are present.\"\n  ],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post title and text match the product query, but the price and seller name are unknown.\",\n  \"relevance_score\": 0.5\n}",
+                      "refusal": null,
+                      "role": "assistant",
+                      "annotations": null,
+                      "audio": null,
+                      "function_call": null,
+                      "tool_calls": null
+                    }
+                  }
+                ],
+                "created": 1774373596,
+                "model": "llama-3.1-8b-instant",
+                "object": "chat.completion",
+                "service_tier": "on_demand",
+                "system_fingerprint": "fp_dd2ecd7b1d",
+                "usage": {
+                  "completion_tokens": 166,
+                  "prompt_tokens": 573,
+                  "total_tokens": 739,
+                  "completion_tokens_details": null,
+                  "prompt_tokens_details": null,
+                  "queue_time": 0.045000409,
+                  "prompt_time": 0.040549644,
+                  "completion_time": 0.26382395,
+                  "total_time": 0.304373594
+                },
+                "usage_breakdown": null,
+                "x_groq": {
+                  "id": "req_01kmgegv7wfmvamtfe5desdfcy",
+                  "seed": 720681543
+                },
+                "parsed_response": {
+                  "post_meaning": "The post is a listing for an iPhone 13.",
+                  "seller_intent": "Unknown",
+                  "reliability_signals": [],
+                  "pros": [],
+                  "cons": [
+                    "Price is $0.0, which is likely an error.",
+                    "Seller name is empty."
+                  ],
+                  "warning_signs": [
+                    "Price is $0.0, which is likely an error.",
+                    "Seller name is empty.",
+                    "No comments or signals are present."
+                  ],
+                  "recommendation": "skip",
+                  "image_product_match": "unclear",
+                  "logic_notes": "The post title and text match the product query, but the price and seller name are unknown.",
+                  "relevance_score": 0.5
+                },
+                "request_payload": {
+                  "product_query": "iphone 13",
+                  "post_title": "iphone 13 fallback #1",
+                  "post_text": "iphone 13",
+                  "price": 0.0,
+                  "location": "center",
+                  "seller_name": "",
+                  "comments": [],
+                  "signals": [],
+                  "image_urls": []
+                },
+                "attempt": 1
+              },
+              "ai_validation_errors": [],
+              "ai_fallback_used": false,
+              "ai_success": true
+            },
+            "score_breakdown": {
+              "final_score": 0.2069,
+              "categories": {
+                "relevance": 0.317,
+                "information_completeness": 0.65,
+                "suspicious_risk": 0.64,
+                "seller_signal": 0.4,
+                "comments_signal": 0.5,
+                "ai_assessment": 0.3875,
+                "image_product_match": 0.55
+              },
+              "penalties": {
+                "out_of_price_range": 0.15,
+                "missing_required_image": 0.12
+              },
+              "explanations": [
+                "category.relevance=0.317 (w=0.24)",
+                "category.information_completeness=0.650 (w=0.16)",
+                "category.suspicious_risk=0.640 (w=0.14)",
+                "category.seller_signal=0.400 (w=0.12)",
+                "category.comments_signal=0.500 (w=0.10)",
+                "category.ai_assessment=0.388 (w=0.14)",
+                "category.image_product_match=0.550 (w=0.10)",
+                "weighted_score_before_penalties=0.4769",
+                "penalty.out_of_price_range=-0.150",
+                "penalty.missing_required_image=-0.120"
+              ]
+            },
+            "recommendation": {
+              "code": "SKIP",
+              "text": "Low confidence candidate. Primary concerns: Price is $0.0, which is likely an error., Seller name is empty., No comments or signals are present."
+            },
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:Price is $0.0, which is likely an error.",
+              "ai:Seller name is empty.",
+              "ai:No comments or signals are present.",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url",
+              "extraction_failed"
+            ],
+            "extraction": {
+              "success": false,
+              "error": "missing_post_url",
+              "warnings": [
+                "Cannot open post without url",
+                "extraction_error:missing_post_url",
+                "extraction_error:missing_post_url",
+                "extraction_failed"
+              ]
+            }
+          },
+          {
+            "result_id": "result_3",
+            "rank": 3,
+            "post": {
+              "collected_post_data": {
+                "post_id": "fallback-2",
+                "title": "iphone 13 fallback #2",
+                "region": "center",
+                "url": "",
+                "snippet": "iphone 13",
+                "price_text": null,
+                "source_platform": "facebook_marketplace",
+                "raw_reference": {
+                  "fallback": true
+                },
+                "raw_post_data": {},
+                "normalized_post_data": {},
+                "description": "iphone 13",
+                "price": 0.0,
+                "has_image": false,
+                "publish_age": null,
+                "post_url": "",
+                "images": [],
+                "seller_name": null,
+                "comments": [],
+                "important_visible_signals": [],
+                "extraction_warnings": [
+                  "Cannot open post without url",
+                  "extraction_error:missing_post_url",
+                  "extraction_error:missing_post_url",
+                  "extraction_failed"
+                ],
+                "extraction_error": "missing_post_url",
+                "extraction_success": false,
+                "seller_rating": 4.5
+              },
+              "raw_post_data": {},
+              "normalized_post_data": {}
+            },
+            "comments": {
+              "count": 0,
+              "items": []
+            },
+            "logic_analysis": {
+              "match_level": "weak_match",
+              "logic_score": 0.195,
+              "completeness_score": 0.65,
+              "warning_flags": [
+                "out_of_price_range",
+                "missing_required_image",
+                "seller_name_quality_issue"
+              ],
+              "suspicious_indicators": [],
+              "duplicate": {
+                "is_duplicate": false,
+                "duplicate_key": "iphone 13 fallback #2||0.0",
+                "matched_keys": []
+              },
+              "seller_signal": {
+                "seller_name": "",
+                "quality": "warning",
+                "indicators": [
+                  "seller_name_missing"
+                ]
+              },
+              "comment_signal": {
+                "positive_count": 0,
+                "negative_count": 0,
+                "indicators": []
+              },
+              "matched_terms": [
+                "iphone 13"
+              ],
+              "missing_fields": [
+                "images",
+                "seller_name"
+              ],
+              "logic_summary": "match=weak_match | matched_terms=iphone 13 | warnings=out_of_price_range,missing_required_image,seller_name_quality_issue | missing=images,seller_name",
+              "in_price_range": false,
+              "has_required_image": false
+            },
+            "ai_analysis": {
+              "relevance_score": 0.0,
+              "ai_summary": "The post is listing an iPhone 13.",
+              "post_meaning": "The post is listing an iPhone 13.",
+              "seller_intent": "Unclear, as the post is very brief.",
+              "reliability_signals": [],
+              "pros": [],
+              "cons": [
+                "The post has no price listed.",
+                "The post has no seller name listed.",
+                "The post has no comments or signals.",
+                "The post has no images to verify the product."
+              ],
+              "warning_signs": [
+                "The post is very brief.",
+                "The post has no price listed.",
+                "The post has no seller name listed.",
+                "The post has no comments or signals.",
+                "The post has no images to verify the product."
+              ],
+              "recommendation": "skip",
+              "image_product_match": "unclear",
+              "logic_notes": "The post is very brief and lacks essential information to make a purchase decision.",
+              "raw_ai_response": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unclear, as the post is very brief.\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"The post has no price listed.\", \"The post has no seller name listed.\", \"The post has no comments or signals.\", \"The post has no images to verify the product.\"],\n  \"warning_signs\": [\"The post is very brief.\", \"The post has no price listed.\", \"The post has no seller name listed.\", \"The post has no comments or signals.\", \"The post has no images to verify the product.\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post is very brief and lacks essential information to make a purchase decision.\",\n  \"relevance_score\": 0.0\n}",
+              "raw_ai_response_data": {
+                "id": "chatcmpl-7e18a628-0b34-4ea3-a7fa-632eb2135526",
+                "choices": [
+                  {
+                    "finish_reason": "stop",
+                    "index": 0,
+                    "logprobs": null,
+                    "message": {
+                      "content": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unclear, as the post is very brief.\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"The post has no price listed.\", \"The post has no seller name listed.\", \"The post has no comments or signals.\", \"The post has no images to verify the product.\"],\n  \"warning_signs\": [\"The post is very brief.\", \"The post has no price listed.\", \"The post has no seller name listed.\", \"The post has no comments or signals.\", \"The post has no images to verify the product.\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post is very brief and lacks essential information to make a purchase decision.\",\n  \"relevance_score\": 0.0\n}",
+                      "refusal": null,
+                      "role": "assistant",
+                      "annotations": null,
+                      "audio": null,
+                      "function_call": null,
+                      "tool_calls": null
+                    }
+                  }
+                ],
+                "created": 1774373597,
+                "model": "llama-3.1-8b-instant",
+                "object": "chat.completion",
+                "service_tier": "on_demand",
+                "system_fingerprint": "fp_8639719ff2",
+                "usage": {
+                  "completion_tokens": 192,
+                  "prompt_tokens": 573,
+                  "total_tokens": 765,
+                  "completion_tokens_details": null,
+                  "prompt_tokens_details": null,
+                  "queue_time": 0.018663383,
+                  "prompt_time": 0.043774738,
+                  "completion_time": 0.284024417,
+                  "total_time": 0.327799155
+                },
+                "usage_breakdown": null,
+                "x_groq": {
+                  "id": "req_01kmgegw34femtt3ww6g00b2me",
+                  "seed": 1599827550
+                },
+                "parsed_response": {
+                  "post_meaning": "The post is listing an iPhone 13.",
+                  "seller_intent": "Unclear, as the post is very brief.",
+                  "reliability_signals": [],
+                  "pros": [],
+                  "cons": [
+                    "The post has no price listed.",
+                    "The post has no seller name listed.",
+                    "The post has no comments or signals.",
+                    "The post has no images to verify the product."
+                  ],
+                  "warning_signs": [
+                    "The post is very brief.",
+                    "The post has no price listed.",
+                    "The post has no seller name listed.",
+                    "The post has no comments or signals.",
+                    "The post has no images to verify the product."
+                  ],
+                  "recommendation": "skip",
+                  "image_product_match": "unclear",
+                  "logic_notes": "The post is very brief and lacks essential information to make a purchase decision.",
+                  "relevance_score": 0.0
+                },
+                "request_payload": {
+                  "product_query": "iphone 13",
+                  "post_title": "iphone 13 fallback #2",
+                  "post_text": "iphone 13",
+                  "price": 0.0,
+                  "location": "center",
+                  "seller_name": "",
+                  "comments": [],
+                  "signals": [],
+                  "image_urls": []
+                },
+                "attempt": 1
+              },
+              "ai_validation_errors": [],
+              "ai_fallback_used": false,
+              "ai_success": true
+            },
+            "score_breakdown": {
+              "final_score": 0.1092,
+              "categories": {
+                "relevance": 0.11699999999999999,
+                "information_completeness": 0.65,
+                "suspicious_risk": 0.56,
+                "seller_signal": 0.4,
+                "comments_signal": 0.5,
+                "ai_assessment": 0.1125,
+                "image_product_match": 0.55
+              },
+              "penalties": {
+                "out_of_price_range": 0.15,
+                "missing_required_image": 0.12
+              },
+              "explanations": [
+                "category.relevance=0.117 (w=0.24)",
+                "category.information_completeness=0.650 (w=0.16)",
+                "category.suspicious_risk=0.560 (w=0.14)",
+                "category.seller_signal=0.400 (w=0.12)",
+                "category.comments_signal=0.500 (w=0.10)",
+                "category.ai_assessment=0.113 (w=0.14)",
+                "category.image_product_match=0.550 (w=0.10)",
+                "weighted_score_before_penalties=0.3792",
+                "penalty.out_of_price_range=-0.150",
+                "penalty.missing_required_image=-0.120"
+              ]
+            },
+            "recommendation": {
+              "code": "SKIP",
+              "text": "Low confidence candidate. Primary concerns: The post is very brief., The post has no price listed., The post has no seller name listed."
+            },
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:The post is very brief.",
+              "ai:The post has no price listed.",
+              "ai:The post has no seller name listed.",
+              "ai:The post has no comments or signals.",
+              "ai:The post has no images to verify the product.",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url",
+              "extraction_failed"
+            ],
+            "extraction": {
+              "success": false,
+              "error": "missing_post_url",
+              "warnings": [
+                "Cannot open post without url",
+                "extraction_error:missing_post_url",
+                "extraction_error:missing_post_url",
+                "extraction_failed"
+              ]
+            }
+          }
+        ],
+        "top_results": [
+          {
+            "result_id": "result_1",
+            "rank": 1,
+            "title": "",
+            "price": null,
+            "location": "",
+            "seller_name": "",
+            "publish_time": "",
+            "final_score": 0.2181,
+            "recommendation_code": "SKIP",
+            "short_recommendation": "Low confidence candidate. Primary concerns: Price is 0.0, which is likely a mistake or a scam",
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:Price is 0.0, which is likely a mistake or a scam",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url"
+            ],
+            "extraction_success": false
+          },
+          {
+            "result_id": "result_2",
+            "rank": 2,
+            "title": "",
+            "price": null,
+            "location": "",
+            "seller_name": "",
+            "publish_time": "",
+            "final_score": 0.2069,
+            "recommendation_code": "SKIP",
+            "short_recommendation": "Low confidence candidate. Primary concerns: Price is $0.0, which is likely an error., Seller name is empty., No comme...",
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:Price is $0.0, which is likely an error.",
+              "ai:Seller name is empty.",
+              "ai:No comments or signals are present.",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url"
+            ],
+            "extraction_success": false
+          },
+          {
+            "result_id": "result_3",
+            "rank": 3,
+            "title": "",
+            "price": null,
+            "location": "",
+            "seller_name": "",
+            "publish_time": "",
+            "final_score": 0.1092,
+            "recommendation_code": "SKIP",
+            "short_recommendation": "Low confidence candidate. Primary concerns: The post is very brief., The post has no price listed., The post has no s...",
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue",
+              "ai:The post is very brief.",
+              "ai:The post has no price listed.",
+              "ai:The post has no seller name listed.",
+              "ai:The post has no comments or signals.",
+              "ai:The post has no images to verify the product.",
+              "Cannot open post without url",
+              "extraction_error:missing_post_url"
+            ],
+            "extraction_success": false
+          }
+        ],
+        "pipeline_notices": []
+      },
+      "ranked_posts": [
+        {
+          "post": {
+            "post_id": "fallback-3",
+            "title": "iphone 13 fallback #3",
+            "region": "center",
+            "url": "",
+            "snippet": "iphone 13",
+            "price_text": null,
+            "source_platform": "facebook_marketplace",
+            "raw_reference": {
+              "fallback": true
+            },
+            "raw_post_data": {},
+            "normalized_post_data": {},
+            "description": "iphone 13",
+            "price": 0.0,
+            "has_image": false,
+            "publish_age": null,
+            "post_url": "",
+            "images": [],
+            "seller_name": null,
+            "comments": [],
+            "important_visible_signals": [],
+            "extraction_warnings": [
+              "Cannot open post without url",
+              "extraction_error:missing_post_url",
+              "extraction_error:missing_post_url",
+              "extraction_failed"
+            ],
+            "extraction_error": "missing_post_url",
+            "extraction_success": false,
+            "seller_rating": 4.5
+          },
+          "logic_analysis": {
+            "match_level": "weak_match",
+            "logic_score": 0.195,
+            "completeness_score": 0.65,
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue"
+            ],
+            "suspicious_indicators": [],
+            "duplicate": {
+              "is_duplicate": false,
+              "duplicate_key": "iphone 13 fallback #3||0.0",
+              "matched_keys": []
+            },
+            "seller_signal": {
+              "seller_name": "",
+              "quality": "warning",
+              "indicators": [
+                "seller_name_missing"
+              ]
+            },
+            "comment_signal": {
+              "positive_count": 0,
+              "negative_count": 0,
+              "indicators": []
+            },
+            "matched_terms": [
+              "iphone 13"
+            ],
+            "missing_fields": [
+              "images",
+              "seller_name"
+            ],
+            "logic_summary": "match=weak_match | matched_terms=iphone 13 | warnings=out_of_price_range,missing_required_image,seller_name_quality_issue | missing=images,seller_name",
+            "in_price_range": false,
+            "has_required_image": false
+          },
+          "ai_analysis": {
+            "relevance_score": 0.5,
+            "ai_summary": "The post is listing an iPhone 13.",
+            "post_meaning": "The post is listing an iPhone 13.",
+            "seller_intent": "Unknown",
+            "reliability_signals": [],
+            "pros": [],
+            "cons": [
+              "Price is 0.0, which is likely a mistake or a scam"
+            ],
+            "warning_signs": [
+              "Price is 0.0, which is likely a mistake or a scam"
+            ],
+            "recommendation": "skip",
+            "image_product_match": "unclear",
+            "logic_notes": "The post lacks a seller name and image URLs, making it unclear what the post is trying to sell.",
+            "raw_ai_response": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unknown\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"Price is 0.0, which is likely a mistake or a scam\"],\n  \"warning_signs\": [\"Price is 0.0, which is likely a mistake or a scam\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post lacks a seller name and image URLs, making it unclear what the post is trying to sell.\",\n  \"relevance_score\": 0.5\n}",
+            "raw_ai_response_data": {
+              "id": "chatcmpl-c1cf7968-2480-45f7-98f6-2e5355444e0f",
+              "choices": [
+                {
+                  "finish_reason": "stop",
+                  "index": 0,
+                  "logprobs": null,
+                  "message": {
+                    "content": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unknown\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"Price is 0.0, which is likely a mistake or a scam\"],\n  \"warning_signs\": [\"Price is 0.0, which is likely a mistake or a scam\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post lacks a seller name and image URLs, making it unclear what the post is trying to sell.\",\n  \"relevance_score\": 0.5\n}",
+                    "refusal": null,
+                    "role": "assistant",
+                    "annotations": null,
+                    "audio": null,
+                    "function_call": null,
+                    "tool_calls": null
+                  }
+                }
+              ],
+              "created": 1774373598,
+              "model": "llama-3.1-8b-instant",
+              "object": "chat.completion",
+              "service_tier": "on_demand",
+              "system_fingerprint": "fp_e09ee421cf",
+              "usage": {
+                "completion_tokens": 141,
+                "prompt_tokens": 573,
+                "total_tokens": 714,
+                "completion_tokens_details": null,
+                "prompt_tokens_details": null,
+                "queue_time": 0.045664024,
+                "prompt_time": 0.035684752,
+                "completion_time": 0.20232119,
+                "total_time": 0.238005942
+              },
+              "usage_breakdown": null,
+              "x_groq": {
+                "id": "req_01kmgegx0rfn3ta4mxh3a8svwn",
+                "seed": 60144328
+              },
+              "parsed_response": {
+                "post_meaning": "The post is listing an iPhone 13.",
+                "seller_intent": "Unknown",
+                "reliability_signals": [],
+                "pros": [],
+                "cons": [
+                  "Price is 0.0, which is likely a mistake or a scam"
+                ],
+                "warning_signs": [
+                  "Price is 0.0, which is likely a mistake or a scam"
+                ],
+                "recommendation": "skip",
+                "image_product_match": "unclear",
+                "logic_notes": "The post lacks a seller name and image URLs, making it unclear what the post is trying to sell.",
+                "relevance_score": 0.5
+              },
+              "request_payload": {
+                "product_query": "iphone 13",
+                "post_title": "iphone 13 fallback #3",
+                "post_text": "iphone 13",
+                "price": 0.0,
+                "location": "center",
+                "seller_name": "",
+                "comments": [],
+                "signals": [],
+                "image_urls": []
+              },
+              "attempt": 1
+            },
+            "ai_validation_errors": [],
+            "ai_fallback_used": false,
+            "ai_success": true
+          },
+          "scoring": {
+            "final_score": 0.2181,
+            "recommendation_code": "SKIP",
+            "recommendation_text": "Low confidence candidate. Primary concerns: Price is 0.0, which is likely a mistake or a scam",
+            "categories": {
+              "relevance": 0.317,
+              "information_completeness": 0.65,
+              "suspicious_risk": 0.72,
+              "seller_signal": 0.4,
+              "comments_signal": 0.5,
+              "ai_assessment": 0.3875,
+              "image_product_match": 0.55
+            },
+            "penalties": {
+              "out_of_price_range": 0.15,
+              "missing_required_image": 0.12
+            },
+            "explanations": [
+              "category.relevance=0.317 (w=0.24)",
+              "category.information_completeness=0.650 (w=0.16)",
+              "category.suspicious_risk=0.720 (w=0.14)",
+              "category.seller_signal=0.400 (w=0.12)",
+              "category.comments_signal=0.500 (w=0.10)",
+              "category.ai_assessment=0.388 (w=0.14)",
+              "category.image_product_match=0.550 (w=0.10)",
+              "weighted_score_before_penalties=0.4881",
+              "penalty.out_of_price_range=-0.150",
+              "penalty.missing_required_image=-0.120"
+            ]
+          }
+        },
+        {
+          "post": {
+            "post_id": "fallback-1",
+            "title": "iphone 13 fallback #1",
+            "region": "center",
+            "url": "",
+            "snippet": "iphone 13",
+            "price_text": null,
+            "source_platform": "facebook_marketplace",
+            "raw_reference": {
+              "fallback": true
+            },
+            "raw_post_data": {},
+            "normalized_post_data": {},
+            "description": "iphone 13",
+            "price": 0.0,
+            "has_image": false,
+            "publish_age": null,
+            "post_url": "",
+            "images": [],
+            "seller_name": null,
+            "comments": [],
+            "important_visible_signals": [],
+            "extraction_warnings": [
+              "Cannot open post without url",
+              "extraction_error:missing_post_url",
+              "extraction_error:missing_post_url",
+              "extraction_failed"
+            ],
+            "extraction_error": "missing_post_url",
+            "extraction_success": false,
+            "seller_rating": 4.5
+          },
+          "logic_analysis": {
+            "match_level": "weak_match",
+            "logic_score": 0.195,
+            "completeness_score": 0.65,
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue"
+            ],
+            "suspicious_indicators": [],
+            "duplicate": {
+              "is_duplicate": false,
+              "duplicate_key": "iphone 13 fallback #1||0.0",
+              "matched_keys": []
+            },
+            "seller_signal": {
+              "seller_name": "",
+              "quality": "warning",
+              "indicators": [
+                "seller_name_missing"
+              ]
+            },
+            "comment_signal": {
+              "positive_count": 0,
+              "negative_count": 0,
+              "indicators": []
+            },
+            "matched_terms": [
+              "iphone 13"
+            ],
+            "missing_fields": [
+              "images",
+              "seller_name"
+            ],
+            "logic_summary": "match=weak_match | matched_terms=iphone 13 | warnings=out_of_price_range,missing_required_image,seller_name_quality_issue | missing=images,seller_name",
+            "in_price_range": false,
+            "has_required_image": false
+          },
+          "ai_analysis": {
+            "relevance_score": 0.5,
+            "ai_summary": "The post is a listing for an iPhone 13.",
+            "post_meaning": "The post is a listing for an iPhone 13.",
+            "seller_intent": "Unknown",
+            "reliability_signals": [],
+            "pros": [],
+            "cons": [
+              "Price is $0.0, which is likely an error.",
+              "Seller name is empty."
+            ],
+            "warning_signs": [
+              "Price is $0.0, which is likely an error.",
+              "Seller name is empty.",
+              "No comments or signals are present."
+            ],
+            "recommendation": "skip",
+            "image_product_match": "unclear",
+            "logic_notes": "The post title and text match the product query, but the price and seller name are unknown.",
+            "raw_ai_response": "{\n  \"post_meaning\": \"The post is a listing for an iPhone 13.\",\n  \"seller_intent\": \"Unknown\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\n    \"Price is $0.0, which is likely an error.\",\n    \"Seller name is empty.\"\n  ],\n  \"warning_signs\": [\n    \"Price is $0.0, which is likely an error.\",\n    \"Seller name is empty.\",\n    \"No comments or signals are present.\"\n  ],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post title and text match the product query, but the price and seller name are unknown.\",\n  \"relevance_score\": 0.5\n}",
+            "raw_ai_response_data": {
+              "id": "chatcmpl-627158d6-a48b-4716-af37-bade4c2dec09",
+              "choices": [
+                {
+                  "finish_reason": "stop",
+                  "index": 0,
+                  "logprobs": null,
+                  "message": {
+                    "content": "{\n  \"post_meaning\": \"The post is a listing for an iPhone 13.\",\n  \"seller_intent\": \"Unknown\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\n    \"Price is $0.0, which is likely an error.\",\n    \"Seller name is empty.\"\n  ],\n  \"warning_signs\": [\n    \"Price is $0.0, which is likely an error.\",\n    \"Seller name is empty.\",\n    \"No comments or signals are present.\"\n  ],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post title and text match the product query, but the price and seller name are unknown.\",\n  \"relevance_score\": 0.5\n}",
+                    "refusal": null,
+                    "role": "assistant",
+                    "annotations": null,
+                    "audio": null,
+                    "function_call": null,
+                    "tool_calls": null
+                  }
+                }
+              ],
+              "created": 1774373596,
+              "model": "llama-3.1-8b-instant",
+              "object": "chat.completion",
+              "service_tier": "on_demand",
+              "system_fingerprint": "fp_dd2ecd7b1d",
+              "usage": {
+                "completion_tokens": 166,
+                "prompt_tokens": 573,
+                "total_tokens": 739,
+                "completion_tokens_details": null,
+                "prompt_tokens_details": null,
+                "queue_time": 0.045000409,
+                "prompt_time": 0.040549644,
+                "completion_time": 0.26382395,
+                "total_time": 0.304373594
+              },
+              "usage_breakdown": null,
+              "x_groq": {
+                "id": "req_01kmgegv7wfmvamtfe5desdfcy",
+                "seed": 720681543
+              },
+              "parsed_response": {
+                "post_meaning": "The post is a listing for an iPhone 13.",
+                "seller_intent": "Unknown",
+                "reliability_signals": [],
+                "pros": [],
+                "cons": [
+                  "Price is $0.0, which is likely an error.",
+                  "Seller name is empty."
+                ],
+                "warning_signs": [
+                  "Price is $0.0, which is likely an error.",
+                  "Seller name is empty.",
+                  "No comments or signals are present."
+                ],
+                "recommendation": "skip",
+                "image_product_match": "unclear",
+                "logic_notes": "The post title and text match the product query, but the price and seller name are unknown.",
+                "relevance_score": 0.5
+              },
+              "request_payload": {
+                "product_query": "iphone 13",
+                "post_title": "iphone 13 fallback #1",
+                "post_text": "iphone 13",
+                "price": 0.0,
+                "location": "center",
+                "seller_name": "",
+                "comments": [],
+                "signals": [],
+                "image_urls": []
+              },
+              "attempt": 1
+            },
+            "ai_validation_errors": [],
+            "ai_fallback_used": false,
+            "ai_success": true
+          },
+          "scoring": {
+            "final_score": 0.2069,
+            "recommendation_code": "SKIP",
+            "recommendation_text": "Low confidence candidate. Primary concerns: Price is $0.0, which is likely an error., Seller name is empty., No comments or signals are present.",
+            "categories": {
+              "relevance": 0.317,
+              "information_completeness": 0.65,
+              "suspicious_risk": 0.64,
+              "seller_signal": 0.4,
+              "comments_signal": 0.5,
+              "ai_assessment": 0.3875,
+              "image_product_match": 0.55
+            },
+            "penalties": {
+              "out_of_price_range": 0.15,
+              "missing_required_image": 0.12
+            },
+            "explanations": [
+              "category.relevance=0.317 (w=0.24)",
+              "category.information_completeness=0.650 (w=0.16)",
+              "category.suspicious_risk=0.640 (w=0.14)",
+              "category.seller_signal=0.400 (w=0.12)",
+              "category.comments_signal=0.500 (w=0.10)",
+              "category.ai_assessment=0.388 (w=0.14)",
+              "category.image_product_match=0.550 (w=0.10)",
+              "weighted_score_before_penalties=0.4769",
+              "penalty.out_of_price_range=-0.150",
+              "penalty.missing_required_image=-0.120"
+            ]
+          }
+        },
+        {
+          "post": {
+            "post_id": "fallback-2",
+            "title": "iphone 13 fallback #2",
+            "region": "center",
+            "url": "",
+            "snippet": "iphone 13",
+            "price_text": null,
+            "source_platform": "facebook_marketplace",
+            "raw_reference": {
+              "fallback": true
+            },
+            "raw_post_data": {},
+            "normalized_post_data": {},
+            "description": "iphone 13",
+            "price": 0.0,
+            "has_image": false,
+            "publish_age": null,
+            "post_url": "",
+            "images": [],
+            "seller_name": null,
+            "comments": [],
+            "important_visible_signals": [],
+            "extraction_warnings": [
+              "Cannot open post without url",
+              "extraction_error:missing_post_url",
+              "extraction_error:missing_post_url",
+              "extraction_failed"
+            ],
+            "extraction_error": "missing_post_url",
+            "extraction_success": false,
+            "seller_rating": 4.5
+          },
+          "logic_analysis": {
+            "match_level": "weak_match",
+            "logic_score": 0.195,
+            "completeness_score": 0.65,
+            "warning_flags": [
+              "out_of_price_range",
+              "missing_required_image",
+              "seller_name_quality_issue"
+            ],
+            "suspicious_indicators": [],
+            "duplicate": {
+              "is_duplicate": false,
+              "duplicate_key": "iphone 13 fallback #2||0.0",
+              "matched_keys": []
+            },
+            "seller_signal": {
+              "seller_name": "",
+              "quality": "warning",
+              "indicators": [
+                "seller_name_missing"
+              ]
+            },
+            "comment_signal": {
+              "positive_count": 0,
+              "negative_count": 0,
+              "indicators": []
+            },
+            "matched_terms": [
+              "iphone 13"
+            ],
+            "missing_fields": [
+              "images",
+              "seller_name"
+            ],
+            "logic_summary": "match=weak_match | matched_terms=iphone 13 | warnings=out_of_price_range,missing_required_image,seller_name_quality_issue | missing=images,seller_name",
+            "in_price_range": false,
+            "has_required_image": false
+          },
+          "ai_analysis": {
+            "relevance_score": 0.0,
+            "ai_summary": "The post is listing an iPhone 13.",
+            "post_meaning": "The post is listing an iPhone 13.",
+            "seller_intent": "Unclear, as the post is very brief.",
+            "reliability_signals": [],
+            "pros": [],
+            "cons": [
+              "The post has no price listed.",
+              "The post has no seller name listed.",
+              "The post has no comments or signals.",
+              "The post has no images to verify the product."
+            ],
+            "warning_signs": [
+              "The post is very brief.",
+              "The post has no price listed.",
+              "The post has no seller name listed.",
+              "The post has no comments or signals.",
+              "The post has no images to verify the product."
+            ],
+            "recommendation": "skip",
+            "image_product_match": "unclear",
+            "logic_notes": "The post is very brief and lacks essential information to make a purchase decision.",
+            "raw_ai_response": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unclear, as the post is very brief.\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"The post has no price listed.\", \"The post has no seller name listed.\", \"The post has no comments or signals.\", \"The post has no images to verify the product.\"],\n  \"warning_signs\": [\"The post is very brief.\", \"The post has no price listed.\", \"The post has no seller name listed.\", \"The post has no comments or signals.\", \"The post has no images to verify the product.\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post is very brief and lacks essential information to make a purchase decision.\",\n  \"relevance_score\": 0.0\n}",
+            "raw_ai_response_data": {
+              "id": "chatcmpl-7e18a628-0b34-4ea3-a7fa-632eb2135526",
+              "choices": [
+                {
+                  "finish_reason": "stop",
+                  "index": 0,
+                  "logprobs": null,
+                  "message": {
+                    "content": "{\n  \"post_meaning\": \"The post is listing an iPhone 13.\",\n  \"seller_intent\": \"Unclear, as the post is very brief.\",\n  \"reliability_signals\": [],\n  \"pros\": [],\n  \"cons\": [\"The post has no price listed.\", \"The post has no seller name listed.\", \"The post has no comments or signals.\", \"The post has no images to verify the product.\"],\n  \"warning_signs\": [\"The post is very brief.\", \"The post has no price listed.\", \"The post has no seller name listed.\", \"The post has no comments or signals.\", \"The post has no images to verify the product.\"],\n  \"recommendation\": \"skip\",\n  \"image_product_match\": \"unclear\",\n  \"logic_notes\": \"The post is very brief and lacks essential information to make a purchase decision.\",\n  \"relevance_score\": 0.0\n}",
+                    "refusal": null,
+                    "role": "assistant",
+                    "annotations": null,
+                    "audio": null,
+                    "function_call": null,
+                    "tool_calls": null
+                  }
+                }
+              ],
+              "created": 1774373597,
+              "model": "llama-3.1-8b-instant",
+              "object": "chat.completion",
+              "service_tier": "on_demand",
+              "system_fingerprint": "fp_8639719ff2",
+              "usage": {
+                "completion_tokens": 192,
+                "prompt_tokens": 573,
+                "total_tokens": 765,
+                "completion_tokens_details": null,
+                "prompt_tokens_details": null,
+                "queue_time": 0.018663383,
+                "prompt_time": 0.043774738,
+                "completion_time": 0.284024417,
+                "total_time": 0.327799155
+              },
+              "usage_breakdown": null,
+              "x_groq": {
+                "id": "req_01kmgegw34femtt3ww6g00b2me",
+                "seed": 1599827550
+              },
+              "parsed_response": {
+                "post_meaning": "The post is listing an iPhone 13.",
+                "seller_intent": "Unclear, as the post is very brief.",
+                "reliability_signals": [],
+                "pros": [],
+                "cons": [
+                  "The post has no price listed.",
+                  "The post has no seller name listed.",
+                  "The post has no comments or signals.",
+                  "The post has no images to verify the product."
+                ],
+                "warning_signs": [
+                  "The post is very brief.",
+                  "The post has no price listed.",
+                  "The post has no seller name listed.",
+                  "The post has no comments or signals.",
+                  "The post has no images to verify the product."
+                ],
+                "recommendation": "skip",
+                "image_product_match": "unclear",
+                "logic_notes": "The post is very brief and lacks essential information to make a purchase decision.",
+                "relevance_score": 0.0
+              },
+              "request_payload": {
+                "product_query": "iphone 13",
+                "post_title": "iphone 13 fallback #2",
+                "post_text": "iphone 13",
+                "price": 0.0,
+                "location": "center",
+                "seller_name": "",
+                "comments": [],
+                "signals": [],
+                "image_urls": []
+              },
+              "attempt": 1
+            },
+            "ai_validation_errors": [],
+            "ai_fallback_used": false,
+            "ai_success": true
+          },
+          "scoring": {
+            "final_score": 0.1092,
+            "recommendation_code": "SKIP",
+            "recommendation_text": "Low confidence candidate. Primary concerns: The post is very brief., The post has no price listed., The post has no seller name listed.",
+            "categories": {
+              "relevance": 0.11699999999999999,
+              "information_completeness": 0.65,
+              "suspicious_risk": 0.56,
+              "seller_signal": 0.4,
+              "comments_signal": 0.5,
+              "ai_assessment": 0.1125,
+              "image_product_match": 0.55
+            },
+            "penalties": {
+              "out_of_price_range": 0.15,
+              "missing_required_image": 0.12
+            },
+            "explanations": [
+              "category.relevance=0.117 (w=0.24)",
+              "category.information_completeness=0.650 (w=0.16)",
+              "category.suspicious_risk=0.560 (w=0.14)",
+              "category.seller_signal=0.400 (w=0.12)",
+              "category.comments_signal=0.500 (w=0.10)",
+              "category.ai_assessment=0.113 (w=0.14)",
+              "category.image_product_match=0.550 (w=0.10)",
+              "weighted_score_before_penalties=0.3792",
+              "penalty.out_of_price_range=-0.150",
+              "penalty.missing_required_image=-0.120"
+            ]
+          }
+        }
+      ]
     }
   ]
 }
