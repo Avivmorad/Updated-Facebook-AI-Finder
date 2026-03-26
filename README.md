@@ -115,6 +115,43 @@ If you need a dedicated Chrome profile copy for Playwright, use:
 python scripts/bootstrap_chrome_profile.py "C:/Users/You/AppData/Local/Google/Chrome/User Data/Profile 5"
 ```
 
+## Easy Run Mode
+
+If you want one file to run the project and one file to control the basic behavior:
+
+- Edit `start_settings.py`
+- Run:
+
+```bash
+python start.py
+```
+
+The main toggle is:
+
+```python
+DEBUGGING = True
+```
+
+When `DEBUGGING = True`, the terminal prints a human-readable step-by-step trace of what the program is doing, what succeeded, what was skipped, and what problems appeared.
+
+## Manual Test Mode
+
+If you want the fastest possible test flow, edit `manual_test_settings.py` and then run:
+
+```bash
+python manual_test.py
+```
+
+This mode is meant for quick manual testing. You only edit a few simple fields such as:
+
+```python
+QUERY = "iphone 13"
+MAX_POSTS = 10
+DEBUGGING = True
+```
+
+This saves time because you do not need to type CLI arguments or edit the regular startup flow each time.
+
 ## Input
 
 The active runtime input is a single query:
@@ -157,6 +194,8 @@ Launcher:
 python run_app.py --mode file
 python run_app.py --mode test
 python run_app.py --mode doctor
+python run_app.py --mode start
+python run_app.py --mode manual-test
 ```
 
 ## Tests

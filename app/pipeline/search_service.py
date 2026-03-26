@@ -3,6 +3,7 @@ from typing import Any, Dict, List
 from app.browser.groups_feed_scanner import GroupsFeedScanner
 from app.domain.input import UserQuery
 from app.extraction.post_extractor import PostExtractor
+from app.utils.debugging import debug_info, debug_warning
 from app.utils.logger import get_logger, log_event
 
 
@@ -20,13 +21,16 @@ class SearchService:
 
         for warning in execution.warnings:
             logger.warning("Search warning: %s", warning)
+            debug_warning(f"Search warning: {warning}")
 
         if execution.fatal_error:
             logger.error("Search fatal error: %s", execution.fatal_error)
+            debug_warning(f"I could not finish scanning the groups feed. Reason: {execution.fatal_error}")
             return []
 
         items = [item.to_dict() for item in execution.items][:max_posts]
         log_event(logger, 20, "search_finished", found=len(items), attempts=execution.attempts)
+        debug_info(f"Finished feed scanning after {execution.attempts} attempt(s).")
         return items
 
     def open_post(self, post_summary: Dict[str, Any]) -> Dict[str, Any]:

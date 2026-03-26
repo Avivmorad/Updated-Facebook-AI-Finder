@@ -14,12 +14,14 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
         )
 
         stream_handler = logging.StreamHandler()
+        stream_handler.setLevel(logging.WARNING)
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
 
         log_dir = Path("logs")
         log_dir.mkdir(parents=True, exist_ok=True)
         file_handler = logging.FileHandler(log_dir / "app.log", encoding="utf-8")
+        file_handler.setLevel(logging.INFO)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 

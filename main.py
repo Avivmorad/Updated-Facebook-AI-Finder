@@ -2,13 +2,14 @@ import argparse
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from dotenv import load_dotenv
 
 from app.config.startup_validation import validate_startup_config
 from app.domain.pipeline import PipelineOptions, RunStatus
 from app.pipeline.runner import PipelineRunner
+from app.utils.debugging import configure_debugging, debug_info, debug_step, debug_warning
 from app.utils.logger import get_logger
 
 
@@ -28,10 +29,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--query", help="Search query text")
     parser.add_argument("--max-posts", type=int, default=20)
     parser.add_argument("--output-json", help="Optional path for saving run result JSON")
+    parser.add_argument("--debugging", action="store_true", help="Print a detailed human-readable run trace to the terminal")
     return parser.parse_args()
 
 
-def build_runtime_input(args: argparse.Namespace) -> Dict[str, Any]:
+def build_runtime_input(args: argparse.Namespace) -> Tuple[Dict[str, Any], str]:
     modes_selected = [bool(args.demo), bool(args.interactive), bool(args.input_file), bool(args.query)]
     selected_modes_count = sum(modes_selected)
     if selected_modes_count > 1:
@@ -40,20 +42,20 @@ def build_runtime_input(args: argparse.Namespace) -> Dict[str, Any]:
     if selected_modes_count == 0:
         return load_default_input_or_demo()
     if args.demo:
-        return build_demo_input()
+        return build_demo_input(), "demo"
     if args.interactive:
-        return build_interactive_input()
+        return build_interactive_input(), "interactive"
     if args.input_file:
-        return load_input_from_file(args.input_file)
-    return {"query": args.query}
+        return load_input_from_file(args.input_file), f"file:{args.input_file}"
+    return {"query": args.query}, "query"
 
 
-def load_default_input_or_demo() -> Dict[str, Any]:
+def load_default_input_or_demo() -> Tuple[Dict[str, Any], str]:
     default_input_path = Path("data") / "sample_search_input.json"
     if default_input_path.exists():
         logger.info("No input mode selected. Using default input file: %s", default_input_path)
-        return load_input_from_file(str(default_input_path))
-    return build_demo_input()
+        return load_input_from_file(str(default_input_path)), f"default-file:{default_input_path}"
+    return build_demo_input(), "default-demo"
 
 
 def build_interactive_input() -> Dict[str, Any]:
@@ -103,22 +105,45 @@ def print_summary(result_payload: Dict[str, Any]) -> None:
         )
 
 
-def main() -> int:
-    args = parse_args()
+def run_pipeline_from_input(
+    raw_input: Dict[str, Any],
+    max_posts: int,
+    output_json: Optional[str] = None,
+) -> int:
+    debug_step("Checking startup configuration.")
     warnings = validate_startup_config(require_api_key=True, require_browser_profile=True)
-    for warning in warnings:
-        logger.warning(warning)
+    if warnings:
+        for warning in warnings:
+            logger.warning(warning)
+            debug_warning(f"Startup warning: {warning}")
+    else:
+        debug_info("Startup configuration looks valid.")
 
-    raw_input = build_runtime_input(args)
+    query_text = str(raw_input.get("query") or raw_input.get("main_text") or "").strip()
+    if query_text:
+        debug_info(f'Search query: "{query_text}"')
+    debug_info(f"Maximum posts to inspect in this run: {max_posts}.")
+
     runner = PipelineRunner()
-    result = runner.run(raw_input, PipelineOptions(max_posts=args.max_posts))
+    result = runner.run(raw_input, PipelineOptions(max_posts=max_posts))
     payload = result.to_dict()
-    output_path = save_result_json(payload, args.output_json)
+    output_path = save_result_json(payload, output_json)
+
     print_summary(payload)
+    print(f"Saved JSON report: {output_path}")
+    debug_info(f"Saved the JSON report to: {output_path}")
     logger.info("Saved JSON report to %s", output_path)
 
     status = result.run_state.status
     return 0 if status in {RunStatus.COMPLETED, RunStatus.STOPPED} else 1
+
+
+def main() -> int:
+    args = parse_args()
+    configure_debugging(args.debugging)
+    raw_input, input_source = build_runtime_input(args)
+    debug_step(f"Starting the program using input source: {input_source}.")
+    return run_pipeline_from_input(raw_input=raw_input, max_posts=args.max_posts, output_json=args.output_json)
 
 
 if __name__ == "__main__":

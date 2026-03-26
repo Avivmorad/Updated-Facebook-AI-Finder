@@ -8,6 +8,7 @@ from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from app.browser.facebook_access_adapter import FacebookAccessAdapter, FacebookAuthenticationRequiredError
 from app.config.browser import BrowserConfig
 from app.domain.posts import CandidatePostRef, SearchExecutionResult
+from app.utils.debugging import debug_info, debug_step, debug_warning
 from app.utils.logger import get_logger, log_event
 
 
@@ -22,9 +23,11 @@ class GroupsFeedScanner:
     def execute_search(self, query_text: str, max_posts: int) -> SearchExecutionResult:
         result = SearchExecutionResult()
         log_event(logger, 20, "platform_search_started", query_text=query_text, max_posts=max_posts)
+        debug_step("Opening Facebook with the saved Chrome profile and moving to the groups feed.")
 
         for attempt in range(1, self._config.retries + 2):
             result.attempts = attempt
+            debug_info(f"Groups feed scan attempt {attempt}/{self._config.retries + 1}.")
             try:
                 with self._facebook_access.authenticated_session() as session:
                     page = session.page
@@ -33,19 +36,23 @@ class GroupsFeedScanner:
                     items, warnings = self._scan_results(page, max_posts)
                     result.items = items
                     result.warnings.extend(warnings)
+                    debug_info(f"The groups feed scan collected {len(items)} unique post links.")
                     return result
             except FacebookAuthenticationRequiredError as exc:
                 result.fatal_error = str(exc)
                 result.warnings.append(str(exc))
+                debug_warning("Facebook is not logged in in the configured Chrome profile.")
                 return result
             except (PlaywrightTimeoutError, PlaywrightError, RuntimeError) as exc:
                 message = f"attempt {attempt} failed: {str(exc)}"
                 result.warnings.append(message)
                 logger.warning("Platform search failure: %s", message)
+                debug_warning(f"Feed scan attempt {attempt} failed. I will retry if another attempt is available.")
                 if attempt < self._config.retries + 1:
                     sleep(min(1.5, 0.3 * attempt))
 
         result.fatal_error = "failed_to_scan_groups_feed"
+        debug_warning("I could not complete the groups feed scan after all retries.")
         return result
 
     def _open_platform(self, page: Page) -> None:
@@ -60,9 +67,24 @@ class GroupsFeedScanner:
             raise RuntimeError("groups feed open ended on about:blank")
 
     def _navigate_to_search_area(self, page: Page, query_text: str) -> None:
-        self._try_search_input_navigation(page, query_text)
-        self._try_select_recent_posts(page)
-        self._try_select_last_24_hours(page)
+        searched = self._try_search_input_navigation(page, query_text)
+        recent_selected = self._try_select_recent_posts(page)
+        last_24_selected = self._try_select_last_24_hours(page)
+
+        if searched:
+            debug_info("Entered the search query in Facebook's search area.")
+        else:
+            debug_warning("I could not confirm Facebook's search box, so I continued by scanning the visible feed.")
+
+        if recent_selected:
+            debug_info("Applied Facebook's built-in recent posts filter.")
+        else:
+            debug_warning("I could not confirm Facebook's recent-posts filter. The hard time filter in code will still run later.")
+
+        if last_24_selected:
+            debug_info("Applied Facebook's built-in last-24-hours filter.")
+        else:
+            debug_warning("I could not confirm Facebook's last-24-hours filter. The hard 24-hour filter in code will still run later.")
 
     def _try_select_recent_posts(self, page: Page) -> bool:
         return self._try_select_page_option(
@@ -146,7 +168,7 @@ class GroupsFeedScanner:
         warnings: List[str] = []
         seen_links: Set[str] = set()
 
-        for _ in range(self._config.max_scroll_rounds):
+        for round_index in range(self._config.max_scroll_rounds):
             for card in self._query_result_cards(page):
                 if len(items) >= max_posts:
                     return items, warnings
@@ -174,6 +196,10 @@ class GroupsFeedScanner:
 
             if len(items) >= max_posts:
                 return items, warnings
+
+            debug_info(
+                f"Scroll round {round_index + 1}/{self._config.max_scroll_rounds}: collected {len(items)} unique post links so far."
+            )
 
             if not self._load_more_or_scroll(page):
                 break

@@ -23,7 +23,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Quick launcher for Facebook Groups Post Finder & Matcher")
     parser.add_argument(
         "--mode",
-        choices=["run", "demo", "interactive", "file", "doctor", "doctor-session", "test"],
+        choices=["run", "demo", "interactive", "file", "doctor", "doctor-session", "test", "start", "manual-test"],
         default="run",
         help="What to run",
     )
@@ -45,6 +45,10 @@ def main() -> int:
         return _run([PYTHON, "scripts/doctor.py", "--check-facebook-session"])
     if args.mode == "test":
         return _run([PYTHON, "-m", "pytest", "-q"])
+    if args.mode == "start":
+        return _run([PYTHON, "start.py"])
+    if args.mode == "manual-test":
+        return _run([PYTHON, "manual_test.py"])
     if args.mode == "demo":
         return _run([PYTHON, "main.py", "--demo", "--output-json", args.output_json])
     if args.mode == "interactive":

@@ -9,6 +9,7 @@ from app.ai.response_parser import parse_ai_response
 from app.config.ai import AIConfig
 from app.domain.ai import AIAnalysisEnvelope
 from app.domain.input import UserQuery
+from app.utils.debugging import debug_info, debug_warning
 from app.utils.logger import get_logger, log_event
 
 
@@ -28,6 +29,10 @@ class AIAnalysisService:
         payload = build_ai_request_payload(post_data=post_data, user_query=user_query)
         prompt = build_ai_prompt(payload)
         payload_dict = payload.to_dict()
+        debug_info(
+            f"Sending a post to AI with {len(payload.image_urls)} image(s) and "
+            f"{len(payload.post_text)} characters of text."
+        )
 
         max_attempts = max(1, self._config.retry_attempts + 1)
         last_raw_text = ""
@@ -35,6 +40,7 @@ class AIAnalysisService:
         last_errors: list[str] = []
 
         for attempt in range(1, max_attempts + 1):
+            debug_info(f"AI attempt {attempt}/{max_attempts}.")
             client_result = self._ai_client.generate(prompt)
             last_raw_text = client_result.raw_text
             last_raw_data = dict(client_result.raw_data)
@@ -49,9 +55,13 @@ class AIAnalysisService:
                     max_attempts=max_attempts,
                     error=client_result.error,
                 )
+                debug_warning(f"The AI request failed on attempt {attempt}.")
             else:
                 parsed, validation_errors, parsed_obj = parse_ai_response(client_result.raw_text)
                 if parsed is not None:
+                    debug_info(
+                        f"AI completed successfully. Relevant={parsed.is_relevant}, match_score={parsed.match_score}, confidence={parsed.confidence}."
+                    )
                     return AIAnalysisEnvelope(
                         result=parsed,
                         raw_response_text=client_result.raw_text,
@@ -78,10 +88,12 @@ class AIAnalysisService:
                     max_attempts=max_attempts,
                     errors=";".join(last_errors),
                 )
+                debug_warning(f"The AI responded, but the response format was invalid on attempt {attempt}.")
 
             if attempt < max_attempts:
                 sleep(max(0.0, self._config.retry_backoff_seconds) * attempt)
 
+        debug_warning("The AI analysis failed after all retry attempts.")
         return AIAnalysisEnvelope(
             result=None,
             raw_response_text=last_raw_text,

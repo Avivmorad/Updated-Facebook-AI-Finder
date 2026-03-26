@@ -8,6 +8,7 @@ from app.browser.facebook_access_adapter import FacebookAccessAdapter, FacebookA
 from app.config.browser import BrowserConfig
 from app.domain.posts import PostExtractionResult
 from app.extraction.post_normalizer import normalize_post_data
+from app.utils.debugging import debug_info, debug_warning
 from app.utils.logger import get_logger
 
 
@@ -32,6 +33,7 @@ class PostExtractor:
 
         attempts = max(1, self._config.retries + 1)
         last_error = "post_extraction_failed"
+        debug_info("Opening the post page to extract its text, images, and publish date.")
 
         for attempt in range(1, attempts + 1):
             try:
@@ -43,18 +45,26 @@ class PostExtractor:
                     result.normalized_post_data = normalize_post_data(raw)
                     if attempt > 1:
                         result.warnings.append(f"post_extraction_retry_success:{attempt}")
+                    debug_info(
+                        f"Extraction succeeded. Text={'yes' if result.normalized_post_data.get('post_text') else 'no'}, "
+                        f"images={len(result.normalized_post_data.get('images', []))}, "
+                        f"publish_date={'yes' if result.normalized_post_data.get('publish_date') else 'no'}."
+                    )
                     return result
             except FacebookAuthenticationRequiredError as exc:
                 last_error = str(exc)
                 result.warnings.append("facebook_authentication_required")
+                debug_warning("The saved Chrome profile is not logged in to Facebook, so extraction cannot continue.")
                 break
             except (PlaywrightTimeoutError, PlaywrightError, RuntimeError) as exc:
                 last_error = str(exc)
                 result.warnings.append(f"extraction_attempt_{attempt}_failed")
                 logger.warning("Post extraction attempt %s/%s failed for %s: %s", attempt, attempts, post_link, last_error)
+                debug_warning(f"Post extraction attempt {attempt}/{attempts} failed. I will retry if possible.")
 
         result.success = False
         result.error = last_error
+        debug_warning(f"I could not extract this post. Reason: {last_error}")
         return result
 
     def _open_post_page(self, page: Page, post_link: str) -> None:
