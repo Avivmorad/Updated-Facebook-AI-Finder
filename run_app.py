@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Simple launcher for Facebook Groups Post Finder & Matcher."""
+
+from __future__ import annotations
+
+import argparse
+import subprocess
+import sys
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent
+PYTHON = sys.executable
+
+
+def _run(command: list[str]) -> int:
+    print("\n>>", " ".join(command))
+    completed = subprocess.run(command, cwd=str(ROOT), check=False)
+    return int(completed.returncode)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Quick launcher for Facebook Groups Post Finder & Matcher")
+    parser.add_argument(
+        "--mode",
+        choices=["run", "demo", "interactive", "file", "doctor", "doctor-session", "test"],
+        default="run",
+        help="What to run",
+    )
+    parser.add_argument(
+        "--input-file",
+        default="data/sample_search_input.json",
+        help="Input JSON path for --mode file/run",
+    )
+    parser.add_argument(
+        "--output-json",
+        default="data/reports/latest.json",
+        help="Output JSON path for pipeline modes",
+    )
+    args = parser.parse_args()
+
+    if args.mode == "doctor":
+        return _run([PYTHON, "scripts/doctor.py"])
+    if args.mode == "doctor-session":
+        return _run([PYTHON, "scripts/doctor.py", "--check-facebook-session"])
+    if args.mode == "test":
+        return _run([PYTHON, "-m", "pytest", "-q"])
+    if args.mode == "demo":
+        return _run([PYTHON, "main.py", "--demo", "--output-json", args.output_json])
+    if args.mode == "interactive":
+        return _run([PYTHON, "main.py", "--interactive"])
+    if args.mode == "file":
+        return _run([PYTHON, "main.py", "--input-file", args.input_file, "--output-json", args.output_json])
+
+    return _run([PYTHON, "main.py", "--input-file", args.input_file, "--output-json", args.output_json])
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

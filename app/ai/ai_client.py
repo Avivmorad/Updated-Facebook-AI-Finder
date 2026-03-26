@@ -2,8 +2,8 @@ import os
 from dataclasses import asdict, dataclass
 from typing import Any, Dict, Optional, Protocol
 
-from app.models.ai_models import AIPromptPacket
-from config.ai_analysis_config import AIAnalysisConfig
+from app.config.ai import AIConfig
+from app.domain.ai import AIPromptPacket
 
 try:
     from dotenv import load_dotenv
@@ -30,8 +30,8 @@ class AIClientProtocol(Protocol):
 
 
 class GroqClient:
-    def __init__(self, config: Optional[AIAnalysisConfig] = None) -> None:
-        self._config = config or AIAnalysisConfig()
+    def __init__(self, config: Optional[AIConfig] = None) -> None:
+        self._config = config or AIConfig()
         self._api_key = os.getenv("GROQ_API_KEY", "").strip()
 
     def generate(self, prompt: AIPromptPacket) -> AIClientResult:
@@ -76,8 +76,8 @@ class GroqClient:
 
 
 class GeminiClient:
-    def __init__(self, config: Optional[AIAnalysisConfig] = None) -> None:
-        self._config = config or AIAnalysisConfig()
+    def __init__(self, config: Optional[AIConfig] = None) -> None:
+        self._config = config or AIConfig()
         self._api_key = os.getenv("GEMINI_API_KEY", "").strip()
 
     def generate(self, prompt: AIPromptPacket) -> AIClientResult:
@@ -109,8 +109,8 @@ class GeminiClient:
             return AIClientResult(raw_text="", raw_data={}, error=f"gemini_request_failed: {str(exc)}")
 
 
-def build_default_ai_client(config: Optional[AIAnalysisConfig] = None) -> AIClientProtocol:
-    resolved = config or AIAnalysisConfig()
+def build_default_ai_client(config: Optional[AIConfig] = None) -> AIClientProtocol:
+    resolved = config or AIConfig()
     provider = resolved.provider.strip().lower()
 
     if provider == "groq":

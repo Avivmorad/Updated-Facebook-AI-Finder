@@ -1,119 +1,178 @@
-# Facebook AI Finder
+# Facebook Groups Post Finder & Matcher
+
+## Authoritative Spec
+
+The source of truth for this repository is:
+
+- `AGENTS.md`
+- `SYSTEM_DESIGN.md`
+- `PROJECT_DEVELOPMENT_PHASES.md`
+- `TASKS.md`
+
+If any older docs or legacy notes conflict with those files, follow the four root spec files.
 
 ## Overview
 
-This project runs a resilient pipeline to analyze Facebook Marketplace posts:
+This project is a minimal AI-powered matcher for Facebook groups posts.
 
-1. Search posts
-2. Extract and normalize post data
-3. Run logic analysis
-4. Run AI analysis
-5. Rank and present results
-6. Save run history
+It:
 
-## Resilience and Failure Surfacing
+1. Opens Facebook using an existing Chrome profile
+2. Scans the groups feed for candidate post links
+3. Opens each post and extracts only:
+   - post text
+   - images
+   - publish date
+   - post link
+4. Applies a hard 24-hour filter
+5. Sends the post to AI for:
+   - relevance
+   - match score
+   - detected item
+   - match reason
+   - confidence
+6. Keeps only relevant posts
+7. Ranks them by AI `match_score`
 
-The system is designed to keep running after non-fatal failures.
+The project does not implement seller analysis, comment analysis, risk logic, marketplace logic, or fake fallback results.
 
-- Post-level errors:
-  - The pipeline continues when `continue_on_post_error=True`.
-  - Non-fatal errors are surfaced in `presented_results.pipeline_notices`.
-- AI failures:
-  - AI requests use bounded retries.
-  - If retries fail or parsing fails, AI fallback is used and marked in analysis output.
-- Scraping failures:
-  - Search and extraction use bounded retries and timeout controls.
-  - Fallback results/data are returned when needed, with warnings.
-- History failures:
-  - History save/load errors are logged.
-  - Save failures are surfaced in pipeline notices.
+## Project Structure
 
-## Logging Design
+```text
+app/
+  ai/            AI client, prompt, payload, parser, and retry service
+  browser/       Chrome session handling and Facebook groups feed scanning
+  config/        Runtime configuration and startup validation
+  domain/        Shared data contracts used across the pipeline
+  extraction/    Post extraction and normalization
+  pipeline/      Query validation, time filter, search flow, and orchestration
+  presentation/  Result formatting and run-history persistence
+  ranking/       Match-score sorting
+  utils/         Shared logger
 
-Logs use structured event messages (`event=... | key=value`) to make troubleshooting easier.
-Important events include pipeline start/end, search fallback, AI fallback, and post-level processing errors.
+scripts/
+  doctor.py                    Environment and session diagnostics
+  bootstrap_chrome_profile.py  Safe Chrome profile copy helper
 
-## Run Instructions
+tests/
+  ai/
+  config/
+  extraction/
+  pipeline/
+  presentation/
+  ranking/
+```
 
-### 1. Install dependencies
+## Requirements
+
+- Python 3.10+
+- Google Chrome installed
+- Playwright runtime installed
+- A copied Chrome profile root, not the default Chrome User Data root
+
+## Installation
 
 ```bash
 pip install -r requirements.txt
+pip install -r requirements-dev.txt
+playwright install
 ```
 
-### 2. Configure environment
+## Configuration
 
-Set the active AI provider and keys in `.env`.
-
-Current default provider is `Groq`.
-
-Recommended `.env`:
+Required environment variables:
 
 ```env
 AI_PROVIDER=groq
-GROQ_API_KEY=your_new_groq_key_here
-GROQ_MODEL_NAME=llama-3.1-8b-instant
+GROQ_API_KEY=your_groq_key
+CHROME_USER_DATA_DIR=C:/path/to/copied/chrome_user_data
+CHROME_PROFILE_DIRECTORY=Default
+```
 
-# Future option if you switch providers later
+Optional environment variables:
+
+```env
+GROQ_MODEL_NAME=llama-3.1-8b-instant
 GEMINI_API_KEY=
 GEMINI_MODEL_NAME=gemini-1.5-flash
-
-# Facebook access uses an existing Chrome profile only
 FACEBOOK_HOME_URL=https://www.facebook.com/
-FACEBOOK_MARKETPLACE_URL=https://www.facebook.com/marketplace
-CHROME_USER_DATA_DIR=C:/Users/your-user/path/to/copied/chrome-user-data
-CHROME_PROFILE_DIRECTORY=Default
+FACEBOOK_GROUPS_FEED_URL=https://www.facebook.com/groups/feed/
 HEADLESS=false
+AI_TIMEOUT_SECONDS=20
+AI_RETRY_ATTEMPTS=2
+AI_RETRY_BACKOFF_SECONDS=0.4
+AI_MAX_OUTPUT_TOKENS=700
+AI_TEMPERATURE=0.2
+FB_TIMEOUT_MS=15000
+FB_RETRIES=2
+FB_MAX_SCROLL_ROUNDS=8
+FB_SCROLL_PAUSE_MS=800
 ```
 
-Notes:
-
-- Right now the system should run on `Groq` only.
-- `Gemini` support is prepared for future switching.
-- If `Groq` fails, the system uses local degraded fallback, not another AI provider by default.
-- Facebook access does not perform automatic login.
-- The scraper requires an existing Chrome profile that is already logged in to Facebook manually.
-
-### 3. Prepare the Chrome profile manually
-
-Before running the project:
-
-- Open normal Google Chrome yourself.
-- Sign in to Facebook in the Chrome profile you plan to reuse.
-- Copy your Chrome profile to a dedicated automation folder (recommended helper):
-  `python scripts/bootstrap_chrome_profile.py "C:/Users/your-user/AppData/Local/Google/Chrome/User Data/Profile 5"`
-- Set `CHROME_USER_DATA_DIR` to that copied folder (not the default `.../Google/Chrome/User Data`).
-- Close extra Chrome windows that may lock the profile if Playwright cannot attach cleanly.
-
-### 4. Check the Facebook session
-
-Run the session check script:
+If you need a dedicated Chrome profile copy for Playwright, use:
 
 ```bash
-python check_facebook_session.py
+python scripts/bootstrap_chrome_profile.py "C:/Users/You/AppData/Local/Google/Chrome/User Data/Profile 5"
 ```
 
-It prints exactly one of these results:
+## Input
 
-- `LOGGED_IN`
-- `NOT_LOGGED_IN` (plus an error category like `SESSION_CONFIG_ERROR` when available)
+The active runtime input is a single query:
 
-### 5. Run the pipeline
+```json
+{
+  "query": "iphone 13"
+}
+```
+
+## Run
+
+JSON input file mode:
 
 ```bash
-python main.py
+python main.py --input-file data/sample_search_input.json --output-json data/reports/latest.json
 ```
 
-### 6. Run tests
+CLI query mode:
 
 ```bash
-python -m pytest -q
+python main.py --query "iphone 13" --output-json data/reports/latest.json
 ```
+
+Interactive mode:
+
+```bash
+python main.py --interactive
+```
+
+Demo mode:
+
+```bash
+python main.py --demo
+```
+
+Launcher:
+
+```bash
+python run_app.py --mode file
+python run_app.py --mode test
+python run_app.py --mode doctor
+```
+
+## Tests
+
+```bash
+pytest -q
+```
+
+## Outputs
+
+- Console summary of top matches
+- Optional JSON report via `--output-json`
+- Run history persisted in `data/run_history.json`
 
 ## Notes
 
-- Run history is stored in `data/run_history.json`.
-- To stop on first post failure, set `continue_on_post_error=False` in pipeline options.
-- To switch provider in the future, change `AI_PROVIDER` to `gemini` and set `GEMINI_API_KEY`.
-- After regenerating your Groq key, paste it into `GROQ_API_KEY` in `.env`.
-- `bootstrap_facebook_session.py` is deprecated and intentionally no longer performs login automation.
+- Facebook login must already exist in the configured Chrome profile.
+- No automatic login is performed.
+- If extraction or AI analysis fails for a post, that post is skipped and the run continues.

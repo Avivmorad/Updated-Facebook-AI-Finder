@@ -23,7 +23,7 @@ htmlcov/
 
 # Logs
 *.log
-logs/*.log
+logs/
 
 # Environment files
 .env
@@ -36,6 +36,11 @@ logs/*.log
 # Browser profile data
 data/browser-profile/
 data/chrome_user_data/
+data/reports/
+data/run_history.json
+data/facebook-storage-state.json
+data/saved_searches.json
+data/search_inputs/
 
 # Temporary files
 tempCodeRunnerFile.py

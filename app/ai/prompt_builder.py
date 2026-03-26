@@ -1,34 +1,26 @@
 import json
 from typing import Any, Dict
 
-from app.models.ai_models import AIPromptPacket, AIRequestPayload
+from app.domain.ai import AIPromptPacket, AIRequestPayload
 
 
 def build_ai_prompt(payload: AIRequestPayload) -> AIPromptPacket:
     expected_schema = expected_ai_response_schema()
 
     system_prompt = (
-        "You are an assistant that analyzes a marketplace post. "
+        "You analyze a Facebook groups post against a user query. "
         "Return only valid JSON using the exact schema provided. "
-        "Do not include markdown, comments, or extra keys. "
-        "MVP rule: do not infer physical condition from images; "
-        "only judge whether image content appears to match the product listing context."
+        "Do not include markdown or extra keys. "
+        "You are allowed to judge relevance and match quality only."
     )
 
     user_prompt = (
-        "Analyze this marketplace post and return JSON.\\n"
-        "Fields to analyze:\\n"
-        "- post meaning\\n"
-        "- seller intent\\n"
-        "- reliability signals\\n"
-        "- pros\\n"
-        "- cons\\n"
-        "- warning signs\\n"
-        "- recommendation\\n"
-        "- whether images seem to match the product\\n\\n"
-        "INPUT_PAYLOAD:\\n"
+        "Analyze this Facebook groups post and return JSON.\n"
+        "Determine whether the post is relevant to the user query, what item the post appears to offer, "
+        "why it matches or does not match, the match score, and your confidence.\n\n"
+        "INPUT_PAYLOAD:\n"
         + json.dumps(payload.to_dict(), ensure_ascii=True, indent=2)
-        + "\\n\\nEXPECTED_SCHEMA:\\n"
+        + "\n\nEXPECTED_SCHEMA:\n"
         + json.dumps(expected_schema, ensure_ascii=True, indent=2)
     )
 
@@ -43,28 +35,18 @@ def expected_ai_response_schema() -> Dict[str, Any]:
     return {
         "type": "object",
         "required": [
-            "post_meaning",
-            "seller_intent",
-            "reliability_signals",
-            "pros",
-            "cons",
-            "warning_signs",
-            "recommendation",
-            "image_product_match",
-            "logic_notes",
-            "relevance_score",
+            "is_relevant",
+            "match_score",
+            "detected_item",
+            "match_reason",
+            "confidence",
         ],
         "properties": {
-            "post_meaning": {"type": "string"},
-            "seller_intent": {"type": "string"},
-            "reliability_signals": {"type": "array", "items": {"type": "string"}},
-            "pros": {"type": "array", "items": {"type": "string"}},
-            "cons": {"type": "array", "items": {"type": "string"}},
-            "warning_signs": {"type": "array", "items": {"type": "string"}},
-            "recommendation": {"type": "string", "enum": ["buy", "consider", "skip"]},
-            "image_product_match": {"type": "string", "enum": ["match", "mismatch", "unclear"]},
-            "logic_notes": {"type": "string"},
-            "relevance_score": {"type": "number", "minimum": 0, "maximum": 1},
+            "is_relevant": {"type": "boolean"},
+            "match_score": {"type": "number", "minimum": 0, "maximum": 100},
+            "detected_item": {"type": "string"},
+            "match_reason": {"type": "string"},
+            "confidence": {"type": "number", "minimum": 0, "maximum": 100},
         },
         "additionalProperties": False,
     }
