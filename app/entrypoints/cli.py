@@ -109,6 +109,7 @@ def run_pipeline_from_input(
     raw_input: Dict[str, Any],
     max_posts: int,
     output_json: Optional[str] = None,
+    pipeline_options: Optional[PipelineOptions] = None,
 ) -> int:
     debug_step("Checking startup configuration.")
     warnings = validate_startup_config(require_api_key=True, require_browser_profile=True)
@@ -119,13 +120,15 @@ def run_pipeline_from_input(
     else:
         debug_info("Startup configuration looks valid.")
 
+    options = pipeline_options or PipelineOptions(max_posts=max_posts)
+
     query_text = str(raw_input.get("query") or raw_input.get("main_text") or "").strip()
     if query_text:
         debug_info(f'Search query: "{query_text}"')
-    debug_info(f"Maximum posts to inspect in this run: {max_posts}.")
+    debug_info(f"Maximum posts to inspect in this run: {options.max_posts}.")
 
     runner = PipelineRunner()
-    result = runner.run(raw_input, PipelineOptions(max_posts=max_posts))
+    result = runner.run(raw_input, options)
     payload = result.to_dict()
     output_path = save_result_json(payload, output_json)
 

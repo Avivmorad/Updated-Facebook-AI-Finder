@@ -105,7 +105,7 @@ def _check_paths_writable() -> Tuple[List[str], List[str]]:
     errors: List[str] = []
     warnings: List[str] = []
 
-    for target in [Path("logs"), Path("data")]:
+    for target in [Path("data"), Path("data") / "logs"]:
         try:
             target.mkdir(parents=True, exist_ok=True)
             marker = target / ".doctor_write_test"

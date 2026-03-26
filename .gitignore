@@ -23,7 +23,7 @@ htmlcov/
 
 # Logs
 *.log
-logs/
+data/logs/
 
 # Environment files
 .env

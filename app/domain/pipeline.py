@@ -90,6 +90,7 @@ class PipelineOptions:
     max_posts: int = 20
     continue_on_post_error: bool = True
     stop_after_post_errors: Optional[int] = None
+    save_run_history: bool = True
 
 
 @dataclass

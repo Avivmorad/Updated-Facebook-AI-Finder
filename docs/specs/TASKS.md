@@ -9,9 +9,9 @@ Do not skip ahead unless the current task is completed or blocked.
 
 ## Global Rules
 
-- Follow AGENTS.md strictly
-- Follow SYSTEM_DESIGN.md strictly
-- Follow PROJECT_DEVELOPMENT_PHASES.md strictly
+- Follow docs/specs/AGENTS.md strictly
+- Follow docs/specs/SYSTEM_DESIGN.md strictly
+- Follow docs/specs/PROJECT_DEVELOPMENT_PHASES.md strictly
 - Do not implement anything outside scope
 - Do not add seller logic
 - Do not add comment logic
@@ -38,7 +38,7 @@ Create a clean Python project structure for the system.
 
 ### Definition of Done
 - Project runs without crashing
-- `main.py` or equivalent entry point exists
+- `start.py` or equivalent entry point exists
 - `.env.example` exists
 - Logging works
 - Core folders exist

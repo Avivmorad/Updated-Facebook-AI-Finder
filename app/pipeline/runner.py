@@ -102,7 +102,7 @@ class PipelineRunner:
             run_state.runtime.finished_at = _utc_now_iso()
             run_state.runtime.elapsed_seconds = round(elapsed, 3)
 
-            if result is not None:
+            if result is not None and opts.save_run_history:
                 try:
                     self._history_store.save_run(result)
                 except Exception as exc:  # noqa: BLE001

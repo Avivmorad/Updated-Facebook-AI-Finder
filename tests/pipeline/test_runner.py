@@ -1,5 +1,6 @@
 from app.domain.ai import AIAnalysisEnvelope, AIMatchResult
 from app.domain.input import UserQuery
+from app.domain.pipeline import PipelineOptions
 from app.pipeline.runner import PipelineRunner
 
 
@@ -50,7 +51,11 @@ class _FakeAIService:
 
 
 class _FakeHistoryStore:
+    def __init__(self):
+        self.saved_runs = 0
+
     def save_run(self, result):
+        self.saved_runs += 1
         return "run_1"
 
     def load_runs(self, limit=None):
@@ -72,3 +77,18 @@ def test_pipeline_runner_returns_ranked_relevant_results():
     assert result.presented_results["total_results"] == 1
     assert result.ranked_posts[0]["match_score"] == 91.0
     assert result.presented_results["results_list"][0]["post_link"] == "https://www.facebook.com/groups/1/posts/2"
+
+
+def test_pipeline_runner_can_skip_run_history_save():
+    runner = PipelineRunner(query_service=_FakeQueryService())
+    runner._search_service = _FakeScraper()
+    runner._ai_service = _FakeAIService()
+    runner._history_store = _FakeHistoryStore()
+
+    result = runner.run(
+        {"query": "iphone 13"},
+        PipelineOptions(max_posts=5, save_run_history=False),
+    )
+
+    assert result.run_state.status.value == "completed"
+    assert runner._history_store.saved_runs == 0

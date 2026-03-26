@@ -137,9 +137,9 @@ The AI must return structured output:
 10. Development Workflow
 Before making changes:
 Read:
-SYSTEM_DESIGN.md
-PROJECT_DEVELOPMENT_PHASES.md
-AGENTS.md
+docs/specs/SYSTEM_DESIGN.md
+docs/specs/PROJECT_DEVELOPMENT_PHASES.md
+docs/specs/AGENTS.md
 Understand current code structure
 While developing:
 Make small, focused changes

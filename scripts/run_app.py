@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 PYTHON = sys.executable
 
 
@@ -23,7 +23,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Quick launcher for Facebook Groups Post Finder & Matcher")
     parser.add_argument(
         "--mode",
-        choices=["run", "demo", "interactive", "file", "doctor", "doctor-session", "test", "start", "manual-test"],
+        choices=["run", "demo", "interactive", "file", "doctor", "doctor-session", "test", "start"],
         default="run",
         help="What to run",
     )
@@ -44,19 +44,17 @@ def main() -> int:
     if args.mode == "doctor-session":
         return _run([PYTHON, "scripts/doctor.py", "--check-facebook-session"])
     if args.mode == "test":
-        return _run([PYTHON, "-m", "pytest", "-q"])
+        return _run([PYTHON, "-m", "pytest", "-c", "tests/pytest.ini", "-q"])
     if args.mode == "start":
         return _run([PYTHON, "start.py"])
-    if args.mode == "manual-test":
-        return _run([PYTHON, "manual_test.py"])
     if args.mode == "demo":
-        return _run([PYTHON, "main.py", "--demo", "--output-json", args.output_json])
+        return _run([PYTHON, "-m", "app.entrypoints.cli", "--demo", "--output-json", args.output_json])
     if args.mode == "interactive":
-        return _run([PYTHON, "main.py", "--interactive"])
+        return _run([PYTHON, "-m", "app.entrypoints.cli", "--interactive"])
     if args.mode == "file":
-        return _run([PYTHON, "main.py", "--input-file", args.input_file, "--output-json", args.output_json])
+        return _run([PYTHON, "-m", "app.entrypoints.cli", "--input-file", args.input_file, "--output-json", args.output_json])
 
-    return _run([PYTHON, "main.py", "--input-file", args.input_file, "--output-json", args.output_json])
+    return _run([PYTHON, "-m", "app.entrypoints.cli", "--input-file", args.input_file, "--output-json", args.output_json])
 
 
 if __name__ == "__main__":
