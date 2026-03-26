@@ -34,6 +34,7 @@ def _env_float(name: str, default: float) -> float:
 class AIConfig:
     provider: str = field(default_factory=lambda: _env_text("AI_PROVIDER", "groq").lower())
     groq_model_name: str = field(default_factory=lambda: _env_text("GROQ_MODEL_NAME", "llama-3.1-8b-instant"))
+    groq_vision_model_name: str = field(default_factory=lambda: _env_text("GROQ_VISION_MODEL_NAME", ""))
     gemini_model_name: str = field(default_factory=lambda: _env_text("GEMINI_MODEL_NAME", "gemini-1.5-flash"))
     timeout_seconds: int = field(default_factory=lambda: _env_int("AI_TIMEOUT_SECONDS", 20))
     retry_attempts: int = field(

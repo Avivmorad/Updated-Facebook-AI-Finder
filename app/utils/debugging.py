@@ -124,10 +124,10 @@ def debug_result(code: str, message: str) -> None:
 
 def debug_app_error(error: AppError, *, include_technical_details: bool = True) -> None:
     debug_error(error.code, error.summary_he)
-    debug_info(error.code, f"סיבה: {error.cause_he}")
-    debug_info(error.code, f"מה לעשות: {error.action_he}")
+    debug_info(error.code, f"Cause: {error.cause_he}")
+    debug_info(error.code, f"Action: {error.action_he}")
     if include_technical_details and error.technical_details:
-        debug_info(error.code, f"פרטים טכניים: {error.technical_details}")
+        debug_info(error.code, f"Technical details: {error.technical_details}")
 
 
 def _emit(kind: str, code: str, message: str) -> None:
@@ -138,7 +138,7 @@ def _emit(kind: str, code: str, message: str) -> None:
     normalized_message = str(message).strip() or "-"
     timestamp = datetime.now().strftime("%H:%M:%S")
     line = f"[DEBUG {timestamp}] {kind} {normalized_code} | {normalized_message}"
-    print(line, flush=True)
+    _safe_print(line)
 
     writer = _trace_writer
     if writer is None:
@@ -150,9 +150,9 @@ def _emit(kind: str, code: str, message: str) -> None:
         _logger.warning("Failed to write debug trace line; continuing with terminal output only.")
         warn_line = (
             f"[DEBUG {timestamp}] WARN ERR_DEBUG_TRACE_SAVE_FAILED | "
-            "הכתיבה לקובץ debug trace נכשלה, ממשיך להדפיס לטרמינל בלבד."
+            "Failed writing debug trace file, continuing with terminal output only."
         )
-        print(warn_line, flush=True)
+        _safe_print(warn_line)
 
 
 def _close_writer() -> None:
@@ -161,3 +161,11 @@ def _close_writer() -> None:
     if _trace_writer is not None:
         _trace_writer.close()
     _trace_writer = None
+
+
+def _safe_print(line: str) -> None:
+    try:
+        print(line, flush=True)
+    except UnicodeEncodeError:
+        escaped = line.encode("ascii", "backslashreplace").decode("ascii")
+        print(escaped, flush=True)

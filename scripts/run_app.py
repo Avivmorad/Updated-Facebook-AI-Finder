@@ -19,11 +19,35 @@ def _run(command: list[str]) -> int:
     return int(completed.returncode)
 
 
+def _run_live_gate(output_json: str) -> int:
+    commands = [
+        [PYTHON, "-m", "pytest", "-c", "tests/pytest.ini", "-q"],
+        [PYTHON, "scripts/doctor.py"],
+        [PYTHON, "scripts/doctor.py", "--check-facebook-session"],
+        [PYTHON, "start.py"],
+    ]
+    for command in commands:
+        code = _run(command)
+        if code != 0:
+            return code
+
+    reports_dir = ROOT / "data" / "reports"
+    trace_file = ROOT / "data" / "logs" / "debug_trace.txt"
+    has_report = reports_dir.exists() and any(reports_dir.glob("*.json"))
+    if not has_report:
+        print("[FAIL] Live gate expected at least one JSON report in data/reports")
+        return 1
+    if not trace_file.exists():
+        print("[FAIL] Live gate expected debug trace file at data/logs/debug_trace.txt")
+        return 1
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Quick launcher for Facebook Groups Post Finder & Matcher")
     parser.add_argument(
         "--mode",
-        choices=["run", "demo", "interactive", "file", "doctor", "doctor-session", "test", "start"],
+        choices=["run", "demo", "interactive", "file", "doctor", "doctor-session", "test", "start", "verify-live"],
         default="run",
         help="What to run",
     )
@@ -44,7 +68,9 @@ def main() -> int:
     if args.mode == "doctor-session":
         return _run([PYTHON, "scripts/doctor.py", "--check-facebook-session"])
     if args.mode == "test":
-        return _run([PYTHON, "-m", "pytest", "-c", "tests/pytest.ini", "-q"])
+        return _run_live_gate(args.output_json)
+    if args.mode == "verify-live":
+        return _run_live_gate(args.output_json)
     if args.mode == "start":
         return _run([PYTHON, "start.py"])
     if args.mode == "demo":

@@ -22,7 +22,7 @@ class SearchService:
 
         for warning in execution.warnings:
             logger.warning("Search warning: %s", warning)
-            debug_warning("DBG_SEARCH_WARNING", f"אזהרת סריקה: {warning}")
+            debug_warning("DBG_SEARCH_WARNING", f"Scan warning: {warning}")
 
         if execution.fatal_error:
             logger.error("Search fatal error: %s", execution.fatal_error)
@@ -35,7 +35,7 @@ class SearchService:
 
         items = [item.to_dict() for item in execution.items][:max_posts]
         log_event(logger, 20, "search_finished", found=len(items), attempts=execution.attempts)
-        debug_info("DBG_SEARCH_DONE", f"סריקת הפיד הסתיימה לאחר {execution.attempts} ניסיון/ניסיונות.")
+        debug_info("DBG_SEARCH_DONE", f"Feed scan completed after {execution.attempts} attempt(s).")
         return items
 
     def open_post(self, post_summary: Dict[str, Any]) -> Dict[str, Any]:
@@ -49,10 +49,9 @@ class SearchService:
     def collect_post_data(self, opened_post: Dict[str, Any]) -> Dict[str, Any]:
         extraction = self._post_extractor.extract_post(opened_post)
         normalized = dict(extraction.normalized_post_data)
-        preview_publish_date = str(opened_post.get("preview_text") or "").strip()
-        if preview_publish_date and not str(normalized.get("publish_date") or "").strip():
-            normalized["publish_date"] = preview_publish_date
-            debug_info("DBG_PUBLISH_FALLBACK", "לא נמצא publish_date בעמוד, נעשה fallback לתאריך מה-preview בפיד.")
+        raw_screenshot_path = str(extraction.raw_post_data.get("post_screenshot_path") or "").strip()
+        normalized_screenshot_path = str(normalized.get("post_screenshot_path") or "").strip()
+        post_screenshot_path = normalized_screenshot_path or raw_screenshot_path
 
         return {
             "post_id": opened_post.get("post_id", ""),
@@ -60,6 +59,7 @@ class SearchService:
             "post_text": normalized.get("post_text", ""),
             "images": normalized.get("images", []),
             "publish_date": normalized.get("publish_date", ""),
+            "post_screenshot_path": post_screenshot_path,
             "raw_post_data": extraction.raw_post_data,
             "normalized_post_data": normalized,
             "extraction_warnings": extraction.warnings,

@@ -9,6 +9,10 @@ class AIMatchResult:
     detected_item: str
     match_reason: str
     confidence: float
+    is_recent_24h: bool
+    publish_date_observed: str
+    publish_date_reason: str
+    publish_date_confidence: float
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -47,6 +51,9 @@ class AIRequestPayload:
     query: str
     post_text: str
     image_urls: List[str] = field(default_factory=list)
+    publish_date_text: str = ""
+    parser_time_reason: str = ""
+    post_screenshot_path: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

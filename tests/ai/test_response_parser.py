@@ -9,7 +9,11 @@ def test_parse_ai_response_accepts_spec_schema():
           "match_score": 91,
           "detected_item": "iPhone 13",
           "match_reason": "The post explicitly offers an iPhone 13.",
-          "confidence": 88
+          "confidence": 88,
+          "is_recent_24h": true,
+          "publish_date_observed": "2 hours ago",
+          "publish_date_reason": "Timestamp visible in screenshot",
+          "publish_date_confidence": 94
         }
         """
     )
@@ -18,6 +22,7 @@ def test_parse_ai_response_accepts_spec_schema():
     assert parsed is not None
     assert parsed.is_relevant is True
     assert parsed.match_score == 91.0
+    assert parsed.is_recent_24h is True
 
 
 def test_parse_ai_response_rejects_unexpected_field():
@@ -29,6 +34,10 @@ def test_parse_ai_response_rejects_unexpected_field():
           "detected_item": "iPhone 13",
           "match_reason": "match",
           "confidence": 88,
+          "is_recent_24h": true,
+          "publish_date_observed": "2 hours ago",
+          "publish_date_reason": "Visible in screenshot",
+          "publish_date_confidence": 93,
           "warning_signs": []
         }
         """

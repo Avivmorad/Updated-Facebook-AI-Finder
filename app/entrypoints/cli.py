@@ -52,9 +52,9 @@ def build_runtime_input(args: argparse.Namespace) -> Tuple[Dict[str, Any], str]:
     if selected_modes_count > 1:
         raise make_app_error(
             code="ERR_INPUT_MODE_INVALID",
-            summary_he="נבחרו כמה מצבי קלט יחד",
-            cause_he="אפשר לבחור רק מקור קלט אחד בכל ריצה",
-            action_he="בחר רק אחד: --demo או --interactive או --input-file או --query",
+            summary_he="Multiple input modes were selected",
+            cause_he="Only one input source can be used per run",
+            action_he="Choose exactly one: --demo, --interactive, --input-file, or --query",
         )
 
     if selected_modes_count == 0:
@@ -102,9 +102,9 @@ def load_input_from_file(path: str) -> Dict[str, Any]:
     if not isinstance(payload, dict):
         raise make_app_error(
             code="ERR_INPUT_JSON_INVALID",
-            summary_he="קובץ הקלט חייב להכיל אובייקט JSON",
-            cause_he="הקובץ נטען אבל הטיפוס העליון אינו object",
-            action_he='עדכן את הקובץ כך שייראה למשל כך: {"query":"iphone 13"}',
+            summary_he="Input file must contain a JSON object",
+            cause_he="Top-level JSON value is not an object",
+            action_he='Use a payload like: {"query":"iphone 13"}',
             technical_details=f"path={input_path}",
         )
     return payload
@@ -147,21 +147,21 @@ def run_pipeline_from_input(
     output_json: Optional[str] = None,
     pipeline_options: Optional[PipelineOptions] = None,
 ) -> int:
-    debug_step("DBG_STARTUP_CHECK", "בודק הגדרות התחלה לפני תחילת הריצה.")
+    debug_step("DBG_STARTUP_CHECK", "Checking startup configuration before run.")
     warnings = validate_startup_config(require_api_key=True, require_browser_profile=True)
     if warnings:
         for warning in warnings:
             logger.warning(warning)
-            debug_warning("DBG_STARTUP_WARN", f"אזהרת התחלה: {warning}")
+            debug_warning("DBG_STARTUP_WARN", f"Startup warning: {warning}")
     else:
-        debug_found("DBG_STARTUP_OK", "הגדרות התחלה נראות תקינות.")
+        debug_found("DBG_STARTUP_OK", "Startup configuration looks valid.")
 
     options = pipeline_options or PipelineOptions(max_posts=max_posts)
 
     query_text = str(raw_input.get("query") or raw_input.get("main_text") or "").strip()
     if query_text:
-        debug_info("DBG_QUERY_VALUE", f'שאילתת החיפוש: "{query_text}"')
-    debug_info("DBG_MAX_POSTS", f"מקסימום פוסטים לבדיקה בריצה: {options.max_posts}.")
+        debug_info("DBG_QUERY_VALUE", f'Search query: "{query_text}"')
+    debug_info("DBG_MAX_POSTS", f"Maximum posts to inspect in this run: {options.max_posts}.")
 
     runner = PipelineRunner()
     result = runner.run(raw_input, options)
@@ -170,11 +170,11 @@ def run_pipeline_from_input(
 
     print_summary(payload)
     print(f"Saved JSON report: {output_path}")
-    debug_result("DBG_OUTPUT_SAVED", f"קובץ התוצאות נשמר אל: {output_path}")
+    debug_result("DBG_OUTPUT_SAVED", f"Result JSON file saved to: {output_path}")
     if is_debugging_enabled():
         trace_path = get_debug_trace_file_path()
         if trace_path:
-            debug_result("DBG_TRACE_FILE", f"קובץ debug trace נשמר אל: {trace_path}")
+            debug_result("DBG_TRACE_FILE", f"Debug trace file saved to: {trace_path}")
     logger.info("Saved JSON report to %s", output_path)
 
     status = result.run_state.status
@@ -187,15 +187,15 @@ def main() -> int:
 
     try:
         raw_input, input_source = build_runtime_input(args)
-        debug_step("DBG_CLI_START", f"הפעלת CLI עם מקור קלט: {input_source}.")
+        debug_step("DBG_CLI_START", f"Starting CLI run with input source: {input_source}.")
         return run_pipeline_from_input(raw_input=raw_input, max_posts=args.max_posts, output_json=args.output_json)
     except Exception as exc:  # noqa: BLE001
         app_error = normalize_app_error(
             exc,
             default_code="ERR_PIPELINE_UNEXPECTED",
-            default_summary_he="הרצת CLI הופסקה בגלל שגיאה",
-            default_cause_he="נזרקה חריגה שלא טופלה ספציפית",
-            default_action_he="בדוק debug trace ו-app.log ונסה שוב",
+            default_summary_he="CLI run stopped because of an error",
+            default_cause_he="An exception was raised without explicit handling",
+            default_action_he="Check debug trace and app.log, then retry",
         )
         debug_app_error(app_error)
         return 1

@@ -23,6 +23,7 @@ class _FakeScraper:
             "post_text": "Selling iPhone 13",
             "images": ["https://img/1"],
             "publish_date": "2 hours ago",
+            "post_screenshot_path": "data/tmp/post_screenshots/post_1.png",
             "raw_post_data": {},
             "normalized_post_data": {
                 "post_link": opened_post["post_link"],
@@ -45,9 +46,39 @@ class _FakeAIService:
                 detected_item="iPhone 13",
                 match_reason="The post explicitly offers an iPhone 13.",
                 confidence=88,
+                is_recent_24h=True,
+                publish_date_observed="2 hours ago",
+                publish_date_reason="Timestamp visible in screenshot",
+                publish_date_confidence=96,
             ),
             success=True,
         )
+
+
+class _FakeAIServiceNotRecent:
+    def analyze(self, post_data, user_query):
+        return AIAnalysisEnvelope(
+            result=AIMatchResult(
+                is_relevant=True,
+                match_score=91,
+                detected_item="iPhone 13",
+                match_reason="The post explicitly offers an iPhone 13.",
+                confidence=88,
+                is_recent_24h=False,
+                publish_date_observed="3 days ago",
+                publish_date_reason="Timestamp in screenshot appears old",
+                publish_date_confidence=95,
+            ),
+            success=True,
+        )
+
+
+class _FakeOldDateScraper(_FakeScraper):
+    def collect_post_data(self, opened_post):
+        payload = super().collect_post_data(opened_post)
+        payload["publish_date"] = "2 days ago"
+        payload["normalized_post_data"]["publish_date"] = "2 days ago"
+        return payload
 
 
 class _FakeHistoryStore:
@@ -92,3 +123,27 @@ def test_pipeline_runner_can_skip_run_history_save():
 
     assert result.run_state.status.value == "completed"
     assert runner._history_store.saved_runs == 0
+
+
+def test_pipeline_runner_keeps_post_when_ai_marks_recent_even_if_parser_hint_is_old():
+    runner = PipelineRunner(query_service=_FakeQueryService())
+    runner._search_service = _FakeOldDateScraper()
+    runner._ai_service = _FakeAIService()
+    runner._history_store = _FakeHistoryStore()
+
+    result = runner.run({"query": "iphone 13"})
+
+    assert result.run_state.status.value == "completed"
+    assert result.presented_results["total_results"] == 1
+
+
+def test_pipeline_runner_rejects_post_when_ai_marks_not_recent():
+    runner = PipelineRunner(query_service=_FakeQueryService())
+    runner._search_service = _FakeScraper()
+    runner._ai_service = _FakeAIServiceNotRecent()
+    runner._history_store = _FakeHistoryStore()
+
+    result = runner.run({"query": "iphone 13"})
+
+    assert result.run_state.status.value == "completed"
+    assert result.presented_results["total_results"] == 0

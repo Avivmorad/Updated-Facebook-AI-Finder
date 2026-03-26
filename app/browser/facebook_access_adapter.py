@@ -42,7 +42,7 @@ class FacebookAccessAdapter:
             session.close()
 
     def open_facebook(self, page: Page) -> None:
-        debug_step("DBG_FACEBOOK_HOME", "עובר לעמוד הבית של פייסבוק.")
+        debug_step("DBG_FACEBOOK_HOME", "Opening Facebook home page.")
         current_url = str(getattr(page, "url", "") or "").strip()
         log_event(
             logger,
@@ -83,12 +83,12 @@ class FacebookAccessAdapter:
                 technical_details="facebook_navigation_ended_on_about_blank",
             )
         page.wait_for_timeout(1200)
-        debug_found("DBG_FACEBOOK_HOME_OK", "עמוד הבית של פייסבוק נפתח בהצלחה.")
+        debug_found("DBG_FACEBOOK_HOME_OK", "Facebook home page opened successfully.")
 
     def ensure_logged_in(self, page: Page) -> None:
         result = self.get_login_check_result(page)
         if result.is_logged_in:
-            debug_found("DBG_FACEBOOK_LOGIN_OK", "המערכת זיהתה שהמשתמש מחובר לפייסבוק.")
+            debug_found("DBG_FACEBOOK_LOGIN_OK", "Facebook login is active in the selected profile.")
             return
         raise FacebookAuthenticationRequiredError(
             app_error=make_app_error(
@@ -104,7 +104,7 @@ class FacebookAccessAdapter:
         return self._login_state_detector.is_logged_in_to_facebook(page)
 
     def navigate(self, page: Page, url: str) -> None:
-        debug_step("DBG_FACEBOOK_NAVIGATE", f"מנווט לכתובת: {url}")
+        debug_step("DBG_FACEBOOK_NAVIGATE", f"Navigating to URL: {url}")
         current_url = str(getattr(page, "url", "") or "").strip()
         log_event(logger, 20, "facebook_navigation_requested", current_url=current_url, target_url=url)
         try:
@@ -135,4 +135,4 @@ class FacebookAccessAdapter:
                 code="ERR_GROUPS_FEED_OPEN_FAILED" if "/groups/feed" in url else "ERR_FACEBOOK_HOME_OPEN_FAILED",
                 technical_details=f"url={url} ended_on=about:blank",
             )
-        debug_found("DBG_FACEBOOK_NAVIGATE_OK", f"הניווט לכתובת הושלם: {url}")
+        debug_found("DBG_FACEBOOK_NAVIGATE_OK", f"Navigation completed: {url}")

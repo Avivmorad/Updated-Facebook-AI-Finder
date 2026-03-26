@@ -1,8 +1,11 @@
 from datetime import datetime, timezone
+import shutil
+from pathlib import Path
 from time import perf_counter
 from typing import Any, Dict, List, Optional
 
 from app.ai.ai_service import AIAnalysisService
+from app.config.browser import BrowserConfig
 from app.domain.input import UserQuery
 from app.domain.pipeline import (
     PipelineOptions,
@@ -72,7 +75,8 @@ class PipelineRunner:
         )
 
         log_event(logger, 20, "pipeline_started", max_posts=opts.max_posts)
-        debug_step("DBG_PIPELINE_START", "מתחיל ריצה חדשה של ה-pipeline.")
+        debug_step("DBG_PIPELINE_START", "Starting a new pipeline run.")
+        self._reset_screenshot_workspace()
         start = perf_counter()
 
         try:
@@ -92,17 +96,17 @@ class PipelineRunner:
             debug_result(
                 "DBG_PIPELINE_DONE",
                 (
-                    f"ה-pipeline הושלם. נבדקו {run_state.progress.processed_posts} פוסטים, "
-                    f"נשמרו {len(ranked_posts)} תוצאות."
+                    f"Pipeline completed. Processed {run_state.progress.processed_posts} posts, "
+                    f"kept {len(ranked_posts)} result(s)."
                 ),
             )
         except Exception as exc:  # noqa: BLE001
             app_error = normalize_app_error(
                 exc,
                 default_code="ERR_PIPELINE_UNEXPECTED",
-                default_summary_he="צינור העיבוד הופסק בגלל שגיאה",
-                default_cause_he="נזרקה חריגה שלא סווגה מראש",
-                default_action_he="בדוק debug trace ו-app.log ונסה שוב",
+                default_summary_he="Pipeline stopped due to an unexpected error",
+                default_cause_he="An internal exception was raised without explicit mapping",
+                default_action_he="Check debug trace and app.log, then retry",
             )
             logger.exception("Pipeline failed")
             log_event(logger, 40, "pipeline_failed", error=app_error.code)
@@ -129,9 +133,9 @@ class PipelineRunner:
                     history_error = normalize_app_error(
                         exc,
                         default_code="ERR_RUN_HISTORY_SAVE_FAILED",
-                        default_summary_he="שמירת היסטוריית ריצות נכשלה",
-                        default_cause_he="אירעה שגיאה בזמן כתיבת run_history.json",
-                        default_action_he="בדוק הרשאות כתיבה בתיקיית data",
+                        default_summary_he="Failed to save run history",
+                        default_cause_he="An error occurred while writing run_history.json",
+                        default_action_he="Check write permissions in the data directory",
                     )
                     logger.warning("Failed to save run history: %s", str(history_error))
                     debug_app_error(history_error)
@@ -149,9 +153,9 @@ class PipelineRunner:
             debug_result(
                 "DBG_PIPELINE_SUMMARY",
                 (
-                    f"סטטוס סיום: {run_state.status.value} | "
-                    f"זמן כולל: {run_state.runtime.elapsed_seconds} שניות | "
-                    f"שגיאות פוסט: {len(post_error_messages)}"
+                    f"Final status: {run_state.status.value} | "
+                    f"Elapsed: {run_state.runtime.elapsed_seconds}s | "
+                    f"Post errors: {len(post_error_messages)}"
                 ),
             )
 
@@ -169,7 +173,7 @@ class PipelineRunner:
         run_state: PipelineRunState,
     ) -> UserQuery:
         run_state.progress.current_stage = "receive_user_input"
-        debug_step("DBG_STAGE_1_INPUT", "שלב 1/8: בדיקת תקינות קלט משתמש.")
+        debug_step("DBG_STAGE_1_INPUT", "Stage 1/8: validating user input.")
         user_query, errors = self._query_service.validate_and_build(raw_user_input)
         if errors or user_query is None:
             raise self._build_input_error(errors)
@@ -179,7 +183,7 @@ class PipelineRunner:
             stage_name="receive_user_input",
             details={"query": user_query.query},
         )
-        debug_found("DBG_INPUT_OK", f'קלט תקין. השאילתה שנקלטה: "{user_query.query}".')
+        debug_found("DBG_INPUT_OK", f'Input is valid. Accepted query: "{user_query.query}".')
         return user_query
 
     def _stage_search_posts(
@@ -189,7 +193,7 @@ class PipelineRunner:
         run_state: PipelineRunState,
     ) -> List[Dict[str, Any]]:
         run_state.progress.current_stage = "search_posts"
-        debug_step("DBG_STAGE_2_SEARCH", "שלב 2/8: סריקת פיד הקבוצות למציאת פוסטים מועמדים.")
+        debug_step("DBG_STAGE_2_SEARCH", "Stage 2/8: scanning groups feed for candidate posts.")
         posts = self._search_service.search_posts(user_query, max_posts=options.max_posts)
         self._mark_stage_success(
             run_state,
@@ -197,7 +201,7 @@ class PipelineRunner:
             details={"found": len(posts), "max_posts": options.max_posts},
         )
         if posts:
-            debug_found("DBG_SEARCH_RESULTS", f"נמצאו {len(posts)} פוסטים מועמדים לבדיקה.")
+            debug_found("DBG_SEARCH_RESULTS", f"Found {len(posts)} candidate post(s) to inspect.")
         else:
             missing_error = make_app_error(code="ERR_NO_POST_LINKS_FOUND")
             debug_missing(missing_error.code, missing_error.summary_he)
@@ -219,30 +223,31 @@ class PipelineRunner:
         time_filter_rejected = 0
         ai_success = 0
         ai_rejected = 0
+        ai_not_recent_rejected = 0
         time_rejected_reasons: Dict[str, int] = {}
         target_posts = min(len(posts), options.max_posts)
 
         if posts:
             debug_step(
                 "DBG_STAGE_3_6_PROCESS",
-                f"שלבים 3-6/8: עיבוד עד {target_posts} פוסטים (פתיחה, חילוץ, סינון זמן, ניתוח AI).",
+                f"Stages 3-6/8: processing up to {target_posts} posts (open, extract, time-filter, AI).",
             )
-            debug_info("DBG_CANDIDATES_COUNT", f"מספר פוסטים מועמדים שהתקבלו לסבב עיבוד: {target_posts}.")
+            debug_info("DBG_CANDIDATES_COUNT", f"Candidate posts queued for processing: {target_posts}.")
         else:
-            debug_missing("DBG_NO_CANDIDATES", "אין פוסטים מועמדים לעיבוד בשלבים 3-6.")
+            debug_missing("DBG_NO_CANDIDATES", "No candidate posts available for stages 3-6.")
 
         for index, post in enumerate(posts[: options.max_posts]):
             if self._should_stop(options, run_state, post_errors):
                 run_state.status = RunStatus.STOPPED
                 if run_state.stop_reason is None:
                     run_state.stop_reason = "stop_condition_reached"
-                debug_warning("DBG_RUN_STOPPED", "הריצה נעצרה מוקדם לפי תנאי עצירה שהוגדרו.")
+                debug_warning("DBG_RUN_STOPPED", "Run stopped early due to configured stop condition.")
                 break
 
             run_state.progress.processed_posts = index + 1
-            post_label = f"פוסט {index + 1}/{target_posts}"
+            post_label = f"Post {index + 1}/{target_posts}"
             post_link = str(post.get("post_link") or "").strip()
-            debug_step("DBG_POST_OPEN", f"{post_label}: פותח פוסט לבדיקה. לינק: {post_link or 'לא קיים'}")
+            debug_step("DBG_POST_OPEN", f"{post_label}: opening for inspection. Link: {post_link or 'missing'}")
 
             try:
                 opened = self._search_service.open_post(post)
@@ -259,26 +264,34 @@ class PipelineRunner:
                 debug_info(
                     "DBG_POST_EXTRACT_DATA",
                     (
-                        f"{post_label}: טקסט={'כן' if collected.get('post_text') else 'לא'}, "
-                        f"תמונות={len(collected.get('images', []))}, "
-                        f"תאריך={'כן' if collected.get('publish_date') else 'לא'}."
+                        f"{post_label}: text={'yes' if collected.get('post_text') else 'no'}, "
+                        f"images={len(collected.get('images', []))}, "
+                        f"publish_date={'yes' if collected.get('publish_date') else 'no'}."
                     ),
                 )
 
                 recent_posts, rejected = self._time_filter.filter_posts_with_diagnostics([collected], user_query)
-                if not recent_posts:
+                if recent_posts:
+                    time_filter_retained += 1
+                    collected["parser_time_reason"] = "recent"
+                    debug_found("DBG_POST_TIME_PARSE", f"{post_label}: parser hint says publish date appears recent.")
+                else:
                     time_filter_rejected += 1
                     reason = str(rejected[0].get("reason") if rejected else "").strip()
                     normalized_reason = reason or "unknown"
                     time_rejected_reasons[normalized_reason] = time_rejected_reasons.get(normalized_reason, 0) + 1
-                    filter_error = self._build_time_filter_error(reason)
-                    debug_missing(filter_error.code, f"{post_label}: {filter_error.summary_he}.")
-                    continue
-                time_filter_retained += 1
-                debug_found("DBG_POST_TIME_OK", f"{post_label}: הפוסט עבר את פילטר 24 השעות.")
+                    collected["parser_time_reason"] = normalized_reason
+                    debug_warning(
+                        "DBG_POST_TIME_PARSE",
+                        f"{post_label}: parser hint says not recent ({normalized_reason}). AI date decision will be used.",
+                    )
 
-                debug_step("DBG_POST_AI_SEND", f"{post_label}: שולח פוסט לניתוח AI.")
-                envelope = self._ai_service.analyze(post_data=recent_posts[0], user_query=user_query)
+                screenshot_path = str(collected.get("post_screenshot_path") or "").strip()
+                if not screenshot_path:
+                    raise make_app_error(code="ERR_POST_SCREENSHOT_MISSING")
+
+                debug_step("DBG_POST_AI_SEND", f"{post_label}: sending post to AI analysis.")
+                envelope = self._ai_service.analyze(post_data=collected, user_query=user_query)
                 if not envelope.success or envelope.result is None:
                     ai_error_code = self._infer_ai_failure_code(envelope.validation_errors)
                     raise make_app_error(
@@ -293,24 +306,31 @@ class PipelineRunner:
                     "ai_success": envelope.success,
                 }
                 ai_success += 1
+                if not bool(ai_match.get("is_recent_24h", False)):
+                    ai_not_recent_rejected += 1
+                    not_recent = make_app_error(code="ERR_AI_MARKED_NOT_RECENT")
+                    debug_missing(not_recent.code, f"{post_label}: {not_recent.summary_he}.")
+                    continue
+                debug_found("DBG_POST_TIME_OK", f"{post_label}: AI marked post as within 24 hours.")
+
                 if not bool(ai_match.get("is_relevant", False)):
                     ai_rejected += 1
                     not_relevant = make_app_error(code="ERR_AI_MARKED_NOT_RELEVANT")
                     debug_missing(not_relevant.code, f"{post_label}: {not_relevant.summary_he}.")
                     continue
 
-                relevant_posts.append({"post": recent_posts[0], "ai_match": ai_match})
+                relevant_posts.append({"post": collected, "ai_match": ai_match})
                 debug_found(
                     "DBG_POST_AI_KEEP",
-                    f"{post_label}: הפוסט נשמר עם ציון התאמה {ai_match.get('match_score', 0)}.",
+                    f"{post_label}: kept with match score {ai_match.get('match_score', 0)}.",
                 )
             except Exception as exc:  # noqa: BLE001
                 app_error = normalize_app_error(
                     exc,
                     default_code="ERR_PIPELINE_UNEXPECTED",
-                    default_summary_he="עיבוד פוסט נכשל",
-                    default_cause_he="אירעה שגיאה לא צפויה בעת עיבוד הפוסט",
-                    default_action_he="המערכת תדלג לפוסט הבא אם CONTINUE_ON_POST_ERROR פעיל",
+                    default_summary_he="Post processing failed",
+                    default_cause_he="An unexpected error occurred while processing a post",
+                    default_action_he="Pipeline will skip to next post when continue_on_post_error is enabled",
                 )
                 post_errors += 1
                 post_error_messages.append(app_error.code)
@@ -320,7 +340,7 @@ class PipelineRunner:
                 if not options.continue_on_post_error:
                     run_state.status = RunStatus.STOPPED
                     run_state.stop_reason = "post_error_and_continue_disabled"
-                    debug_warning("DBG_STOP_ON_POST_ERROR", "עוצר ריצה כי CONTINUE_ON_POST_ERROR=False.")
+                    debug_warning("DBG_STOP_ON_POST_ERROR", "Stopping run because CONTINUE_ON_POST_ERROR=False.")
                     break
 
         self._mark_stage_success(
@@ -337,9 +357,9 @@ class PipelineRunner:
             run_state,
             stage_name="time_filter",
             details={
-                "retained": time_filter_retained,
-                "rejected": time_filter_rejected,
-                "rejected_reasons": time_rejected_reasons,
+                "parser_recent": time_filter_retained,
+                "parser_not_recent": time_filter_rejected,
+                "parser_rejected_reasons": time_rejected_reasons,
                 "attempted": collect_success,
             },
         )
@@ -350,14 +370,16 @@ class PipelineRunner:
                 "successful": ai_success,
                 "relevant": len(relevant_posts),
                 "ai_rejected": ai_rejected,
-                "attempted": time_filter_retained,
+                "ai_not_recent_rejected": ai_not_recent_rejected,
+                "attempted": collect_success,
             },
         )
         debug_result(
             "DBG_POSTS_SUMMARY",
             (
-                f"סיכום עיבוד פוסטים: מועמדים={target_posts}, נפתחו={open_success}, חולצו={collect_success}, "
-                f"נפסלו בזמן={time_filter_rejected}, נפסלו ב-AI={ai_rejected}, נשמרו כתוצאות={len(relevant_posts)}."
+                f"Post processing summary: candidates={target_posts}, opened={open_success}, extracted={collect_success}, "
+                f"parser_not_recent={time_filter_rejected}, ai_not_recent={ai_not_recent_rejected}, "
+                f"ai_rejected={ai_rejected}, kept={len(relevant_posts)}."
             ),
         )
 
@@ -369,10 +391,10 @@ class PipelineRunner:
         run_state: PipelineRunState,
     ) -> List[Dict[str, Any]]:
         run_state.progress.current_stage = "ranking"
-        debug_step("DBG_STAGE_7_RANK", "שלב 7/8: מדרג פוסטים לפי match_score של ה-AI בלבד.")
+        debug_step("DBG_STAGE_7_RANK", "Stage 7/8: ranking by AI match_score only.")
         ranked = self._ranker.rank(relevant_posts)
         self._mark_stage_success(run_state, stage_name="ranking", details={"ranked": len(ranked)})
-        debug_found("DBG_RANK_DONE", f"דירוג הושלם. מספר תוצאות מדורגות: {len(ranked)}.")
+        debug_found("DBG_RANK_DONE", f"Ranking complete. Ranked results: {len(ranked)}.")
         return ranked
 
     def _stage_present_results(
@@ -381,14 +403,14 @@ class PipelineRunner:
         run_state: PipelineRunState,
     ) -> Dict[str, Any]:
         run_state.progress.current_stage = "present_results"
-        debug_step("DBG_STAGE_8_PRESENT", "שלב 8/8: הכנת תצוגת תוצאות סופית ו-JSON.")
+        debug_step("DBG_STAGE_8_PRESENT", "Stage 8/8: preparing final output and JSON payload.")
         presented = self._presenter.present(ranked_posts)
         self._mark_stage_success(
             run_state,
             stage_name="present_results",
             details={"top_results": len(presented.get("top_results", []))},
         )
-        debug_result("DBG_PRESENT_DONE", f"הוכנו {presented.get('total_results', 0)} תוצאות להצגה.")
+        debug_result("DBG_PRESENT_DONE", f"Prepared {presented.get('total_results', 0)} result(s) for presentation.")
         return presented
 
     def _mark_stage_success(
@@ -452,15 +474,39 @@ class PipelineRunner:
 
     def _infer_ai_failure_code(self, validation_errors: List[str]) -> str:
         for item in validation_errors:
+            if item == "ERR_POST_SCREENSHOT_MISSING":
+                return "ERR_POST_SCREENSHOT_MISSING"
+            if item == "ERR_POST_SCREENSHOT_CAPTURE_FAILED":
+                return "ERR_POST_SCREENSHOT_CAPTURE_FAILED"
             if item == "ERR_AI_RESPONSE_EMPTY":
                 return "ERR_AI_RESPONSE_EMPTY"
             if item == "ERR_AI_RESPONSE_INVALID_JSON":
                 return "ERR_AI_RESPONSE_INVALID_JSON"
             if item == "ERR_AI_RESPONSE_SCHEMA_INVALID":
                 return "ERR_AI_RESPONSE_SCHEMA_INVALID"
+            if item == "ERR_AI_VISION_MODEL_MISSING":
+                return "ERR_AI_VISION_MODEL_MISSING"
+            if item == "ERR_AI_VISION_MODEL_DECOMMISSIONED":
+                return "ERR_AI_VISION_MODEL_DECOMMISSIONED"
+            if item == "ERR_AI_VISION_PROVIDER_UNSUPPORTED":
+                return "ERR_AI_VISION_PROVIDER_UNSUPPORTED"
             if item == "ERR_AI_REQUEST_FAILED":
                 return "ERR_AI_REQUEST_FAILED"
         return "ERR_AI_REQUEST_FAILED"
+
+    def _reset_screenshot_workspace(self) -> None:
+        screenshots_dir = Path(BrowserConfig().screenshots_dir).expanduser()
+        try:
+            if screenshots_dir.exists():
+                shutil.rmtree(screenshots_dir)
+            screenshots_dir.mkdir(parents=True, exist_ok=True)
+            debug_info("DBG_SCREENSHOT_DIR", f"Prepared screenshot workspace: {screenshots_dir}")
+        except OSError as exc:
+            warn_error = make_app_error(
+                code="ERR_POST_SCREENSHOT_CAPTURE_FAILED",
+                technical_details=f"path={screenshots_dir} error={exc}",
+            )
+            debug_app_error(warn_error)
 
 
 def _utc_now_iso() -> str:

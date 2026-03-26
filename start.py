@@ -21,8 +21,6 @@ from app.utils.debugging import (
     debug_info,
     debug_result,
     debug_step,
-    get_debug_trace_file_path,
-    is_debugging_enabled,
 )
 import settings
 
@@ -57,6 +55,7 @@ def _apply_env_override(name: str, value: Any) -> None:
 def _apply_runtime_env_overrides() -> None:
     _apply_env_override("AI_PROVIDER", settings.AI_PROVIDER_OVERRIDE)
     _apply_env_override("GROQ_MODEL_NAME", settings.GROQ_MODEL_NAME_OVERRIDE)
+    _apply_env_override("GROQ_VISION_MODEL_NAME", settings.GROQ_VISION_MODEL_NAME_OVERRIDE)
     _apply_env_override("GEMINI_MODEL_NAME", settings.GEMINI_MODEL_NAME_OVERRIDE)
     _apply_env_override("AI_TIMEOUT_SECONDS", settings.AI_TIMEOUT_SECONDS_OVERRIDE)
     _apply_env_override("AI_RETRY_ATTEMPTS", settings.AI_RETRY_ATTEMPTS_OVERRIDE)
@@ -69,6 +68,7 @@ def _apply_runtime_env_overrides() -> None:
     _apply_env_override("FB_RETRIES", settings.FB_RETRIES_OVERRIDE)
     _apply_env_override("FB_MAX_SCROLL_ROUNDS", settings.FB_MAX_SCROLL_ROUNDS_OVERRIDE)
     _apply_env_override("FB_SCROLL_PAUSE_MS", settings.FB_SCROLL_PAUSE_MS_OVERRIDE)
+    _apply_env_override("FB_SCREENSHOTS_DIR", settings.FB_SCREENSHOTS_DIR_OVERRIDE)
 
 
 def _build_runtime_input():
@@ -86,9 +86,9 @@ def _build_runtime_input():
 
     raise make_app_error(
         code="ERR_INPUT_MODE_INVALID",
-        summary_he="RUN_MODE בקובץ settings.py אינו תקין",
-        cause_he="התקבל ערך שאינו אחד מהמצבים הנתמכים",
-        action_he='הגדר RUN_MODE לאחד מהערכים: "file", "query", "interactive", "demo"',
+        summary_he="RUN_MODE in settings.py is invalid",
+        cause_he="The value is not one of the supported run modes",
+        action_he='Set RUN_MODE to one of: "file", "query", "interactive", "demo"',
         technical_details=f"RUN_MODE={settings.RUN_MODE}",
     )
 
@@ -101,8 +101,8 @@ def main() -> int:
         _apply_runtime_env_overrides()
         raw_input, source = _build_runtime_input()
 
-        debug_step("DBG_RUN_START", f"מתחיל ריצה חדשה מ-start.py במצב: {source}.")
-        debug_info("DBG_DEBUG_MODE", f"מצב DEBUGGING הוא {'פעיל' if settings.DEBUGGING else 'כבוי'}.")
+        debug_step("DBG_RUN_START", f"Starting a new run from start.py in mode: {source}.")
+        debug_info("DBG_DEBUG_MODE", f"DEBUGGING mode is {'enabled' if settings.DEBUGGING else 'disabled'}.")
 
         pipeline_options = PipelineOptions(
             max_posts=int(settings.MAX_POSTS),
@@ -117,19 +117,15 @@ def main() -> int:
             output_json=_optional_text(settings.OUTPUT_JSON),
             pipeline_options=pipeline_options,
         )
-        if is_debugging_enabled():
-            trace_path = get_debug_trace_file_path()
-            if trace_path:
-                debug_result("DBG_TRACE_FILE", f"קובץ debug trace נשמר אל: {trace_path}")
-        debug_result("DBG_RUN_END", f"הריצה הסתיימה עם קוד יציאה {exit_code}.")
+        debug_result("DBG_RUN_END", f"Run finished with exit code {exit_code}.")
         return exit_code
     except Exception as exc:  # noqa: BLE001
         app_error = normalize_app_error(
             exc,
             default_code="ERR_PIPELINE_UNEXPECTED",
-            default_summary_he="הריצה הופסקה בגלל שגיאה לא צפויה",
-            default_cause_he="רכיב פנימי זרק חריגה שלא טופלה מראש",
-            default_action_he="בדוק debug trace ו-app.log ונסה שוב",
+            default_summary_he="Run stopped because of an unexpected error",
+            default_cause_he="An internal component raised an unhandled exception",
+            default_action_he="Check debug trace and app.log, then retry",
         )
         debug_app_error(app_error)
         return 1

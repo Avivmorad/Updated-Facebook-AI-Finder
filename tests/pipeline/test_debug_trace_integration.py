@@ -23,6 +23,7 @@ class _FakeScraper:
             "post_text": "Selling iPhone 13",
             "images": ["https://img/1"],
             "publish_date": "2 hours ago",
+            "post_screenshot_path": "data/tmp/post_screenshots/post_1.png",
             "raw_post_data": {},
             "normalized_post_data": {
                 "post_link": opened_post["post_link"],
@@ -45,6 +46,10 @@ class _FakeAIService:
                 detected_item="iPhone 13",
                 match_reason="Found exact item.",
                 confidence=92,
+                is_recent_24h=True,
+                publish_date_observed="2 hours ago",
+                publish_date_reason="Visible in screenshot",
+                publish_date_confidence=94,
             ),
             success=True,
         )

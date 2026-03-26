@@ -16,8 +16,17 @@ def test_validate_ai_config_rejects_unknown_provider(monkeypatch):
 def test_validate_ai_config_requires_key_for_selected_provider(monkeypatch):
     monkeypatch.setenv("AI_PROVIDER", "groq")
     monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    monkeypatch.setenv("GROQ_VISION_MODEL_NAME", "llama-3.2-90b-vision-preview")
     result = validate_ai_config(require_api_key=True)
     assert any("GROQ_API_KEY" in item for item in result.errors)
+
+
+def test_validate_ai_config_requires_groq_vision_model(monkeypatch):
+    monkeypatch.setenv("AI_PROVIDER", "groq")
+    monkeypatch.setenv("GROQ_API_KEY", "dummy-key")
+    monkeypatch.delenv("GROQ_VISION_MODEL_NAME", raising=False)
+    result = validate_ai_config(require_api_key=True)
+    assert any("GROQ_VISION_MODEL_NAME" in item for item in result.errors)
 
 
 def test_validate_browser_config_rejects_default_chrome_root(monkeypatch, tmp_path):
@@ -40,6 +49,7 @@ def test_validate_startup_config_passes_for_valid_setup(monkeypatch, tmp_path):
 
     monkeypatch.setenv("AI_PROVIDER", "groq")
     monkeypatch.setenv("GROQ_API_KEY", "dummy-key")
+    monkeypatch.setenv("GROQ_VISION_MODEL_NAME", "llama-3.2-90b-vision-preview")
     monkeypatch.setenv("CHROME_USER_DATA_DIR", str(copied_root))
     monkeypatch.setenv("CHROME_PROFILE_DIRECTORY", "Default")
 
@@ -55,6 +65,7 @@ def test_validate_startup_config_raises_for_missing_profile(monkeypatch, tmp_pat
 
     monkeypatch.setenv("AI_PROVIDER", "groq")
     monkeypatch.setenv("GROQ_API_KEY", "dummy-key")
+    monkeypatch.setenv("GROQ_VISION_MODEL_NAME", "llama-3.2-90b-vision-preview")
     monkeypatch.setenv("CHROME_USER_DATA_DIR", str(copied_root))
     monkeypatch.setenv("CHROME_PROFILE_DIRECTORY", "Default")
 

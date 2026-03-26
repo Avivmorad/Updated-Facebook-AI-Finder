@@ -41,6 +41,15 @@ def validate_ai_config(
         else:
             outcome.warnings.append(message + " (AI requests will fail until configured)")
 
+    if provider == "groq":
+        vision_model = (cfg.groq_vision_model_name or "").strip()
+        if not vision_model:
+            message = "GROQ_VISION_MODEL_NAME is required when AI_PROVIDER=groq"
+            if require_api_key:
+                outcome.errors.append(message)
+            else:
+                outcome.warnings.append(message + " (vision-based post analysis will fail until configured)")
+
     if cfg.retry_attempts < 0:
         outcome.errors.append("AI_RETRY_ATTEMPTS must be >= 0")
 

@@ -39,7 +39,7 @@ class BrowserSessionManager:
         self._check_profile_not_locked(user_data_dir)
         attempts = max(1, self._config.retries + 1)
 
-        debug_step("DBG_BROWSER_OPEN", "פותח את Google Chrome עם הפרופיל השמור.")
+        debug_step("DBG_BROWSER_OPEN", "Opening Google Chrome using the configured profile.")
         debug_info(
             "DBG_BROWSER_PROFILE",
             f"CHROME_USER_DATA_DIR={user_data_dir} | CHROME_PROFILE_DIRECTORY={profile_directory.name}",
@@ -64,7 +64,7 @@ class BrowserSessionManager:
                     user_data_dir=str(user_data_dir),
                     **self._launch_kwargs(),
                 )
-                debug_found("DBG_BROWSER_CONTEXT_OK", f"Chrome נפתח בהצלחה (ניסיון {attempt}/{attempts}).")
+                debug_found("DBG_BROWSER_CONTEXT_OK", f"Chrome opened successfully (attempt {attempt}/{attempts}).")
                 log_event(logger, 20, "browser_context_created", pages_count=len(self._context.pages), attempt=attempt)
                 pages = self._context.pages
                 if pages:
@@ -105,10 +105,7 @@ class BrowserSessionManager:
                         technical_details=self._build_profile_startup_error_message(err_msg),
                     ) from exc
 
-                debug_warning(
-                    "DBG_BROWSER_RETRY",
-                    f"פתיחת Chrome נכשלה בניסיון {attempt}/{attempts}. מנסה שוב.",
-                )
+                debug_warning("DBG_BROWSER_RETRY", f"Chrome launch failed on attempt {attempt}/{attempts}, retrying.")
                 sleep(min(1.5, 0.3 * attempt))
         else:
             raise make_app_error(
@@ -119,7 +116,7 @@ class BrowserSessionManager:
         self._page.set_default_timeout(self._config.timeout_ms)
         self._page.set_default_navigation_timeout(self._config.timeout_ms)
         log_event(logger, 20, "browser_session_opened", timeout_ms=self._config.timeout_ms)
-        debug_found("DBG_BROWSER_READY", "Google Chrome מוכן להמשך ניווט.")
+        debug_found("DBG_BROWSER_READY", "Google Chrome is ready for navigation.")
         return self
 
     @property
@@ -160,9 +157,9 @@ class BrowserSessionManager:
         if normalized.endswith("/google/chrome/user data"):
             raise make_app_error(
                 code="ERR_BROWSER_PROFILE_INCOMPATIBLE",
-                summary_he="CHROME_USER_DATA_DIR מצביע על תיקיית ברירת המחדל של Chrome",
-                cause_he="Playwright לא תומך בשימוש ישיר בתיקיית User Data הראשית של Chrome",
-                action_he="השתמש בתיקיית פרופיל מועתקת ייעודית לפרויקט",
+                summary_he="CHROME_USER_DATA_DIR points to Chrome default User Data root",
+                cause_he="Playwright should not use the main Chrome User Data root directly",
+                action_he="Use a dedicated copied profile directory for automation",
                 technical_details=f"user_data_dir={user_data_dir}",
             )
 
@@ -226,7 +223,6 @@ class BrowserSessionManager:
             try:
                 self._context.close()
             except PlaywrightError:
-                # Ignore close failures when context/browser was already closed upstream.
                 pass
             self._context = None
 
@@ -239,7 +235,7 @@ class BrowserSessionManager:
 
         self._page = None
         log_event(logger, 20, "browser_session_closed")
-        debug_info("DBG_BROWSER_CLOSED", "סוגר את סשן הדפדפן הנוכחי.")
+        debug_info("DBG_BROWSER_CLOSED", "Closing current browser session.")
 
     def __enter__(self) -> "BrowserSessionManager":
         return self.open()

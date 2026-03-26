@@ -25,7 +25,7 @@ class AIClientResult:
 
 
 class AIClientProtocol(Protocol):
-    def generate(self, prompt: AIPromptPacket) -> AIClientResult:
+    def generate(self, prompt: AIPromptPacket, screenshot_data_url: str = "") -> AIClientResult:
         ...
 
 
@@ -34,13 +34,29 @@ class GroqClient:
         self._config = config or AIConfig()
         self._api_key = os.getenv("GROQ_API_KEY", "").strip()
 
-    def generate(self, prompt: AIPromptPacket) -> AIClientResult:
+    def generate(self, prompt: AIPromptPacket, screenshot_data_url: str = "") -> AIClientResult:
         if not self._api_key:
             return AIClientResult(
                 raw_text="",
                 raw_data={},
                 error="GROQ_API_KEY is not configured",
             )
+
+        model_name = self._config.groq_model_name
+        user_content: Any = prompt.user_prompt
+        if screenshot_data_url:
+            vision_model = (self._config.groq_vision_model_name or "").strip()
+            if not vision_model:
+                return AIClientResult(
+                    raw_text="",
+                    raw_data={},
+                    error="groq_vision_model_missing",
+                )
+            model_name = vision_model
+            user_content = [
+                {"type": "text", "text": prompt.user_prompt},
+                {"type": "image_url", "image_url": {"url": screenshot_data_url}},
+            ]
 
         try:
             from openai import OpenAI
@@ -54,12 +70,12 @@ class GroqClient:
                 timeout=self._config.timeout_seconds,
             )
             response = client.chat.completions.create(
-                model=self._config.groq_model_name,
+                model=model_name,
                 temperature=self._config.temperature,
                 max_tokens=self._config.max_output_tokens,
                 messages=[
                     {"role": "system", "content": prompt.system_prompt},
-                    {"role": "user", "content": prompt.user_prompt},
+                    {"role": "user", "content": user_content},
                 ],
             )
 
@@ -80,7 +96,14 @@ class GeminiClient:
         self._config = config or AIConfig()
         self._api_key = os.getenv("GEMINI_API_KEY", "").strip()
 
-    def generate(self, prompt: AIPromptPacket) -> AIClientResult:
+    def generate(self, prompt: AIPromptPacket, screenshot_data_url: str = "") -> AIClientResult:
+        if screenshot_data_url:
+            return AIClientResult(
+                raw_text="",
+                raw_data={},
+                error="vision_provider_unsupported:gemini",
+            )
+
         if not self._api_key:
             return AIClientResult(
                 raw_text="",

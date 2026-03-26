@@ -8,7 +8,10 @@ class _FakeExtraction:
         "images": ["https://img/1"],
         "publish_date": "",
     }
-    raw_post_data = {"post_text": "Selling iPhone 13"}
+    raw_post_data = {
+        "post_text": "Selling iPhone 13",
+        "post_screenshot_path": "data/tmp/post_screenshots/post_1.png",
+    }
     warnings = []
     error = None
     success = True
@@ -19,7 +22,7 @@ class _FakePostExtractor:
         return _FakeExtraction()
 
 
-def test_collect_post_data_falls_back_to_preview_text_for_publish_date():
+def test_collect_post_data_keeps_empty_publish_date_and_returns_screenshot_path():
     service = SearchService()
     service._post_extractor = _FakePostExtractor()
 
@@ -31,4 +34,5 @@ def test_collect_post_data_falls_back_to_preview_text_for_publish_date():
         }
     )
 
-    assert payload["publish_date"] == "\u200f6 \u05e9\u05e2\u05d5\u05ea"
+    assert payload["publish_date"] == ""
+    assert payload["post_screenshot_path"] == "data/tmp/post_screenshots/post_1.png"

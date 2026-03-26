@@ -1,4 +1,6 @@
 from datetime import datetime, timezone
+import hashlib
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 from urllib.parse import parse_qs, urlparse
 
@@ -39,21 +41,22 @@ class PostExtractor:
 
         attempts = max(1, self._config.retries + 1)
         last_error = make_app_error(code="ERR_POST_PAGE_LOAD_FAILED")
-        debug_step("DBG_POST_OPEN", "פותח את עמוד הפוסט כדי לחלץ טקסט, תמונות ותאריך פרסום.")
+        debug_step("DBG_POST_OPEN", "Opening post page to extract text, images, and publish date.")
 
         for attempt in range(1, attempts + 1):
             try:
                 with self._facebook_access.authenticated_session() as session:
                     page = session.page
-                    debug_info("DBG_POST_OPEN_ATTEMPT", f"ניסיון חילוץ פוסט {attempt}/{attempts}: {post_link}")
+                    debug_info("DBG_POST_OPEN_ATTEMPT", f"Post extraction attempt {attempt}/{attempts}: {post_link}")
                     self._open_post_page(page, post_link)
                     raw = self._extract_raw_post(page, post_link)
                     result.raw_post_data = raw
                     result.normalized_post_data = normalize_post_data(raw)
                     if attempt > 1:
                         result.warnings.append(f"post_extraction_retry_success:{attempt}")
+
                     if result.normalized_post_data.get("post_text"):
-                        debug_found("DBG_POST_TEXT_OK", "נמצא טקסט לפוסט.")
+                        debug_found("DBG_POST_TEXT_OK", "Post text was found.")
                     else:
                         missing_text = make_app_error(code="ERR_POST_TEXT_NOT_FOUND")
                         result.warnings.append(missing_text.code)
@@ -61,20 +64,20 @@ class PostExtractor:
 
                     image_count = len(result.normalized_post_data.get("images", []))
                     if image_count > 0:
-                        debug_found("DBG_POST_IMAGES_OK", f"נמצאו {image_count} תמונות.")
+                        debug_found("DBG_POST_IMAGES_OK", f"Found {image_count} image(s).")
                     else:
                         missing_images = make_app_error(code="ERR_POST_IMAGES_NOT_FOUND")
                         result.warnings.append(missing_images.code)
                         debug_missing(missing_images.code, missing_images.summary_he)
 
                     if result.normalized_post_data.get("publish_date"):
-                        debug_found("DBG_POST_DATE_OK", "נמצא תאריך פרסום לפוסט.")
+                        debug_found("DBG_POST_DATE_OK", "Publish date was found.")
                     else:
                         missing_date = make_app_error(code="ERR_POST_PUBLISH_DATE_MISSING")
                         result.warnings.append(missing_date.code)
                         debug_missing(missing_date.code, missing_date.summary_he)
 
-                    debug_found("DBG_POST_EXTRACT_OK", "חילוץ הפוסט הושלם בהצלחה.")
+                    debug_found("DBG_POST_EXTRACT_OK", "Post extraction completed successfully.")
                     return result
             except FacebookAuthenticationRequiredError as exc:
                 last_error = exc.app_error
@@ -85,14 +88,14 @@ class PostExtractor:
                 last_error = normalize_app_error(
                     exc,
                     default_code="ERR_POST_PAGE_LOAD_FAILED",
-                    default_summary_he="טעינת עמוד הפוסט נכשלה",
-                    default_cause_he="אירעה שגיאה בזמן ניווט/טעינה של עמוד הפוסט",
-                    default_action_he="נסה שוב, ואם חוזר בדוק שהקישור תקין ונגיש",
+                    default_summary_he="Post page load failed",
+                    default_cause_he="An error occurred while navigating or loading the post page",
+                    default_action_he="Retry and verify the post link is valid and accessible",
                 )
                 result.warnings.append(f"extraction_attempt_{attempt}_failed")
                 logger.warning("Post extraction attempt %s/%s failed for %s: %s", attempt, attempts, post_link, str(last_error))
                 debug_app_error(last_error)
-                debug_warning("DBG_POST_EXTRACT_RETRY", f"חילוץ הפוסט נכשל בניסיון {attempt}/{attempts}.")
+                debug_warning("DBG_POST_EXTRACT_RETRY", f"Post extraction failed on attempt {attempt}/{attempts}.")
 
         result.success = False
         result.error = last_error.code
@@ -121,11 +124,13 @@ class PostExtractor:
                 continue
 
     def _extract_raw_post(self, page: Page, post_link: str) -> Dict[str, Any]:
+        screenshot_path = self._capture_post_screenshot(page, post_link)
         return {
             "post_link": post_link,
             "post_text": self._first_text(page, self._config.selectors_post_text),
             "publish_date": self._extract_publish_date(page),
             "images": self._extract_images(page),
+            "post_screenshot_path": screenshot_path,
         }
 
     def _extract_publish_date(self, page: Page) -> str:
@@ -175,10 +180,33 @@ class PostExtractor:
                     continue
                 if not src or src in seen:
                     continue
+                if not src.startswith("http"):
+                    continue
+                lowered = src.lower()
+                if "static.xx.fbcdn.net" in lowered or "/emoji.php" in lowered or "/rsrc.php/" in lowered:
+                    continue
                 seen.add(src)
                 urls.append(src)
 
         return urls
+
+    def _capture_post_screenshot(self, page: Page, post_link: str) -> str:
+        output_dir = Path(self._config.screenshots_dir).expanduser()
+        output_dir.mkdir(parents=True, exist_ok=True)
+        digest = hashlib.sha1(post_link.encode("utf-8")).hexdigest()[:12]
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
+        path = output_dir / f"post_{stamp}_{digest}.png"
+        try:
+            page.screenshot(path=str(path), full_page=True)
+            debug_found("DBG_POST_SCREENSHOT_OK", f"Post screenshot saved: {path}")
+            return str(path)
+        except PlaywrightError as exc:
+            screenshot_error = make_app_error(
+                code="ERR_POST_SCREENSHOT_CAPTURE_FAILED",
+                technical_details=f"post_link={post_link} error={exc}",
+            )
+            debug_app_error(screenshot_error)
+            return ""
 
 
 def _extract_publish_value_from_node(node: ElementHandle) -> str:

@@ -134,6 +134,12 @@ AI_PROVIDER_OVERRIDE = None
 # - Overrides GROQ_MODEL_NAME from .env for this run only.
 GROQ_MODEL_NAME_OVERRIDE = None
 
+# Options: None or a Groq vision-capable model name string
+# What it does:
+# - Overrides GROQ_VISION_MODEL_NAME from .env for this run only.
+# - This model is used for screenshot-based analysis.
+GROQ_VISION_MODEL_NAME_OVERRIDE = None
+
 # Options: None or a Gemini model name string
 # What it does:
 # - Overrides GEMINI_MODEL_NAME from .env for this run only.
@@ -218,6 +224,12 @@ FB_MAX_SCROLL_ROUNDS_OVERRIDE = None
 # - gives Facebook more time to load more posts
 FB_SCROLL_PAUSE_MS_OVERRIDE = None
 
+# Options: None or a path string (for example "data/tmp/post_screenshots")
+# What it does:
+# - Overrides FB_SCREENSHOTS_DIR from .env for this run only.
+# - Each run recreates this directory (overwrite behavior).
+FB_SCREENSHOTS_DIR_OVERRIDE = None
+
 
 # ---------------------------------------------------------------------------
 # .env VALUES YOU STILL CHANGE IN .env
@@ -227,6 +239,7 @@ FB_SCROLL_PAUSE_MS_OVERRIDE = None
 
 # AI_PROVIDER=groq or gemini
 # GROQ_API_KEY=...
+# GROQ_VISION_MODEL_NAME=...
 # GEMINI_API_KEY=...
 # CHROME_USER_DATA_DIR=...
 # CHROME_PROFILE_DIRECTORY=Default or Profile 1

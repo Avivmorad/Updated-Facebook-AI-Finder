@@ -10,6 +10,9 @@ def test_runner_maps_time_filter_reasons_to_specific_error_codes():
 
 def test_runner_maps_ai_failure_codes():
     runner = PipelineRunner()
+    assert runner._infer_ai_failure_code(["ERR_POST_SCREENSHOT_MISSING"]) == "ERR_POST_SCREENSHOT_MISSING"
     assert runner._infer_ai_failure_code(["ERR_AI_RESPONSE_INVALID_JSON"]) == "ERR_AI_RESPONSE_INVALID_JSON"
     assert runner._infer_ai_failure_code(["ERR_AI_RESPONSE_EMPTY"]) == "ERR_AI_RESPONSE_EMPTY"
     assert runner._infer_ai_failure_code(["ERR_AI_RESPONSE_SCHEMA_INVALID"]) == "ERR_AI_RESPONSE_SCHEMA_INVALID"
+    assert runner._infer_ai_failure_code(["ERR_AI_VISION_MODEL_MISSING"]) == "ERR_AI_VISION_MODEL_MISSING"
+    assert runner._infer_ai_failure_code(["ERR_AI_VISION_MODEL_DECOMMISSIONED"]) == "ERR_AI_VISION_MODEL_DECOMMISSIONED"

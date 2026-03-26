@@ -12,6 +12,9 @@ def test_error_catalog_entries_have_required_fields():
     assert "ERR_FILTER_LAST24_NOT_FOUND" in ERROR_CATALOG
     assert "ERR_POST_PUBLISH_DATE_MISSING" in ERROR_CATALOG
     assert "ERR_AI_RESPONSE_INVALID_JSON" in ERROR_CATALOG
+    assert "ERR_POST_SCREENSHOT_MISSING" in ERROR_CATALOG
+    assert "ERR_AI_VISION_MODEL_MISSING" in ERROR_CATALOG
+    assert "ERR_AI_VISION_MODEL_DECOMMISSIONED" in ERROR_CATALOG
 
 
 def test_render_app_error_format_is_consistent():
@@ -22,6 +25,6 @@ def test_render_app_error_format_is_consistent():
     text = render_app_error_text(app_error)
 
     assert "ERR_AI_RESPONSE_INVALID_JSON" in text
-    assert "סיבה:" in text
-    assert "מה לעשות:" in text
-    assert "פרטים טכניים: raw_response=not_json" in text
+    assert "Cause:" in text
+    assert "Action:" in text
+    assert "Technical details: raw_response=not_json" in text
