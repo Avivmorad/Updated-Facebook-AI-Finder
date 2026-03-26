@@ -1,4 +1,5 @@
 from pathlib import Path
+from time import sleep
 from typing import Optional
 
 from playwright.sync_api import (
@@ -34,7 +35,7 @@ class BrowserSessionManager:
         profile_directory = self._require_profile_directory(user_data_dir)
         self._ensure_supported_user_data_dir(user_data_dir)
         self._check_profile_not_locked(user_data_dir)
-        self._playwright = sync_playwright().start()
+        attempts = max(1, self._config.retries + 1)
 
         log_event(
             logger,
@@ -44,30 +45,57 @@ class BrowserSessionManager:
             headless=self._config.headless,
             chrome_profile_directory=profile_directory.name,
             chrome_user_data_dir=user_data_dir,
+            attempts=attempts,
         )
 
-        try:
-            self._context = self._playwright.chromium.launch_persistent_context(
-                user_data_dir=str(user_data_dir),
-                **self._launch_kwargs(),
-            )
-            log_event(logger, 20, "browser_context_created", pages_count=len(self._context.pages))
-            pages = self._context.pages
-            if pages:
-                self._page = pages[0]
-                log_event(logger, 20, "browser_page_selected", source="existing", page_url=self._safe_page_url(self._page))
-            else:
-                self._page = self._context.new_page()
-                log_event(logger, 20, "browser_page_selected", source="new", page_url=self._safe_page_url(self._page))
-        except Exception as exc:
-            self.close()
-            err_msg = str(exc)
-            if "exitCode=21" in err_msg or "Target page, context or browser has been closed" in err_msg:
-                raise RuntimeError(
-                    "Chrome profile is locked by another Chrome instance. "
-                    "Close ALL Chrome windows (including system tray) and try again."
-                ) from exc
-            raise
+        last_error: Optional[Exception] = None
+        for attempt in range(1, attempts + 1):
+            self._playwright = sync_playwright().start()
+            try:
+                self._context = self._playwright.chromium.launch_persistent_context(
+                    user_data_dir=str(user_data_dir),
+                    **self._launch_kwargs(),
+                )
+                log_event(logger, 20, "browser_context_created", pages_count=len(self._context.pages), attempt=attempt)
+                pages = self._context.pages
+                if pages:
+                    self._page = pages[0]
+                    log_event(
+                        logger,
+                        20,
+                        "browser_page_selected",
+                        source="existing",
+                        page_url=self._safe_page_url(self._page),
+                        attempt=attempt,
+                    )
+                else:
+                    self._page = self._context.new_page()
+                    log_event(
+                        logger,
+                        20,
+                        "browser_page_selected",
+                        source="new",
+                        page_url=self._safe_page_url(self._page),
+                        attempt=attempt,
+                    )
+                break
+            except Exception as exc:
+                last_error = exc
+                err_msg = str(exc)
+                self.close()
+
+                if self._is_locked_profile_error(user_data_dir, err_msg):
+                    raise RuntimeError(
+                        "Chrome profile is locked by another Chrome instance. "
+                        "Close ALL Chrome windows (including system tray) and try again."
+                    ) from exc
+
+                if attempt >= attempts or not self._is_retryable_launch_error(err_msg):
+                    raise RuntimeError(self._build_profile_startup_error_message(err_msg)) from exc
+
+                sleep(min(1.5, 0.3 * attempt))
+        else:
+            raise RuntimeError("Could not open the configured Chrome profile.") from last_error
 
         self._page.set_default_timeout(self._config.timeout_ms)
         self._page.set_default_navigation_timeout(self._config.timeout_ms)
@@ -138,6 +166,30 @@ class BrowserSessionManager:
         if page is None:
             return ""
         return str(getattr(page, "url", "") or "").strip()
+
+    def _is_locked_profile_error(self, user_data_dir: Path, err_msg: str) -> bool:
+        lock_file = user_data_dir / "SingletonLock"
+        lock_file_win = user_data_dir / "lockfile"
+        if lock_file.exists() or lock_file_win.exists():
+            return True
+        return "exitCode=21" in err_msg
+
+    def _is_retryable_launch_error(self, err_msg: str) -> bool:
+        retryable_markers = (
+            "Browser.getWindowForTarget",
+            "Target page, context or browser has been closed",
+            "Target closed",
+        )
+        return any(marker in err_msg for marker in retryable_markers)
+
+    def _build_profile_startup_error_message(self, err_msg: str) -> str:
+        return (
+            "Chrome could not open the configured copied profile. "
+            "This usually means the copied profile is incompatible, incomplete, or contains data "
+            "Chrome cannot use in this automation session. Close all Chrome windows and, if needed, "
+            "recreate the copied profile and sign in again manually. "
+            f"Details: {err_msg}"
+        )
 
     def close(self) -> None:
         if self._context is not None:

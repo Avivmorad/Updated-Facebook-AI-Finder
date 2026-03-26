@@ -43,7 +43,11 @@ class SearchService:
 
     def collect_post_data(self, opened_post: Dict[str, Any]) -> Dict[str, Any]:
         extraction = self._post_extractor.extract_post(opened_post)
-        normalized = extraction.normalized_post_data
+        normalized = dict(extraction.normalized_post_data)
+        preview_publish_date = str(opened_post.get("preview_text") or "").strip()
+        if preview_publish_date and not str(normalized.get("publish_date") or "").strip():
+            normalized["publish_date"] = preview_publish_date
+
         return {
             "post_id": opened_post.get("post_id", ""),
             "post_link": normalized.get("post_link") or opened_post.get("post_link", ""),

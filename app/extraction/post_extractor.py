@@ -1,5 +1,8 @@
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Set
+from urllib.parse import parse_qs, urlparse
 
+from playwright.sync_api import ElementHandle
 from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import Page
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
@@ -86,9 +89,23 @@ class PostExtractor:
         return {
             "post_link": post_link,
             "post_text": self._first_text(page, self._config.selectors_post_text),
-            "publish_date": self._first_text(page, self._config.selectors_post_publish),
+            "publish_date": self._extract_publish_date(page),
             "images": self._extract_images(page),
         }
+
+    def _extract_publish_date(self, page: Page) -> str:
+        for selector in self._config.selectors_post_publish:
+            try:
+                nodes = page.query_selector_all(selector)
+            except PlaywrightError:
+                continue
+
+            for node in nodes:
+                candidate = _extract_publish_value_from_node(node)
+                if candidate:
+                    return candidate
+
+        return ""
 
     def _first_text(self, page: Page, selectors: List[str]) -> str:
         for selector in selectors:
@@ -127,3 +144,81 @@ class PostExtractor:
                 urls.append(src)
 
         return urls
+
+
+def _extract_publish_value_from_node(node: ElementHandle) -> str:
+    href_candidate = _extract_iso_datetime_from_href(_safe_get_attribute(node, "href"))
+    if href_candidate:
+        return href_candidate
+
+    for attr_name in ("datetime", "data-utime"):
+        candidate = _extract_iso_datetime_from_timestamp(_safe_get_attribute(node, attr_name))
+        if candidate:
+            return candidate
+
+    for attr_name in ("aria-label", "title"):
+        candidate = _clean_candidate(_safe_get_attribute(node, attr_name))
+        if candidate:
+            return candidate
+
+    for getter in (_safe_inner_text, _safe_text_content):
+        candidate = _clean_candidate(getter(node))
+        if candidate:
+            return candidate
+
+    return ""
+
+
+def _extract_iso_datetime_from_href(href: str) -> str:
+    cleaned = href.strip()
+    if not cleaned:
+        return ""
+
+    try:
+        parsed = urlparse(cleaned)
+        query = parse_qs(parsed.query)
+    except ValueError:
+        return ""
+
+    create_time_values = query.get("create_time", [])
+    if not create_time_values:
+        return ""
+
+    return _extract_iso_datetime_from_timestamp(create_time_values[0])
+
+
+def _extract_iso_datetime_from_timestamp(value: str) -> str:
+    cleaned = value.strip()
+    if not cleaned or not cleaned.isdigit():
+        return ""
+
+    try:
+        timestamp = int(cleaned)
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc).isoformat()
+    except (OverflowError, ValueError, OSError):
+        return ""
+
+
+def _safe_get_attribute(node: ElementHandle, name: str) -> str:
+    try:
+        return (node.get_attribute(name) or "").strip()
+    except PlaywrightError:
+        return ""
+
+
+def _safe_inner_text(node: ElementHandle) -> str:
+    try:
+        return (node.inner_text() or "").strip()
+    except PlaywrightError:
+        return ""
+
+
+def _safe_text_content(node: ElementHandle) -> str:
+    try:
+        return (node.text_content() or "").strip()
+    except PlaywrightError:
+        return ""
+
+
+def _clean_candidate(value: str) -> str:
+    return value.strip()

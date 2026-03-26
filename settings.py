@@ -19,7 +19,7 @@ Important:
 # What it does:
 # - True  -> prints a clear step-by-step explanation in the terminal.
 # - False -> prints a shorter terminal output.
-DEBUGGING = False
+DEBUGGING = True
 
 # Options: "query", "file", "interactive", "demo"
 # What it does:
