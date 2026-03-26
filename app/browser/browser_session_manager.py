@@ -11,6 +11,8 @@ from playwright.sync_api import (
 )
 
 from app.config.browser import BrowserConfig
+from app.utils.app_errors import make_app_error
+from app.utils.debugging import debug_found, debug_info, debug_step, debug_warning
 from app.utils.logger import get_logger, log_event
 
 
@@ -37,6 +39,12 @@ class BrowserSessionManager:
         self._check_profile_not_locked(user_data_dir)
         attempts = max(1, self._config.retries + 1)
 
+        debug_step("DBG_BROWSER_OPEN", "פותח את Google Chrome עם הפרופיל השמור.")
+        debug_info(
+            "DBG_BROWSER_PROFILE",
+            f"CHROME_USER_DATA_DIR={user_data_dir} | CHROME_PROFILE_DIRECTORY={profile_directory.name}",
+        )
+
         log_event(
             logger,
             20,
@@ -56,6 +64,7 @@ class BrowserSessionManager:
                     user_data_dir=str(user_data_dir),
                     **self._launch_kwargs(),
                 )
+                debug_found("DBG_BROWSER_CONTEXT_OK", f"Chrome נפתח בהצלחה (ניסיון {attempt}/{attempts}).")
                 log_event(logger, 20, "browser_context_created", pages_count=len(self._context.pages), attempt=attempt)
                 pages = self._context.pages
                 if pages:
@@ -85,21 +94,32 @@ class BrowserSessionManager:
                 self.close()
 
                 if self._is_locked_profile_error(user_data_dir, err_msg):
-                    raise RuntimeError(
-                        "Chrome profile is locked by another Chrome instance. "
-                        "Close ALL Chrome windows (including system tray) and try again."
+                    raise make_app_error(
+                        code="ERR_BROWSER_PROFILE_LOCKED",
+                        technical_details=err_msg,
                     ) from exc
 
                 if attempt >= attempts or not self._is_retryable_launch_error(err_msg):
-                    raise RuntimeError(self._build_profile_startup_error_message(err_msg)) from exc
+                    raise make_app_error(
+                        code="ERR_BROWSER_PROFILE_INCOMPATIBLE",
+                        technical_details=self._build_profile_startup_error_message(err_msg),
+                    ) from exc
 
+                debug_warning(
+                    "DBG_BROWSER_RETRY",
+                    f"פתיחת Chrome נכשלה בניסיון {attempt}/{attempts}. מנסה שוב.",
+                )
                 sleep(min(1.5, 0.3 * attempt))
         else:
-            raise RuntimeError("Could not open the configured Chrome profile.") from last_error
+            raise make_app_error(
+                code="ERR_BROWSER_PROFILE_INCOMPATIBLE",
+                technical_details=str(last_error),
+            ) from last_error
 
         self._page.set_default_timeout(self._config.timeout_ms)
         self._page.set_default_navigation_timeout(self._config.timeout_ms)
         log_event(logger, 20, "browser_session_opened", timeout_ms=self._config.timeout_ms)
+        debug_found("DBG_BROWSER_READY", "Google Chrome מוכן להמשך ניווט.")
         return self
 
     @property
@@ -121,43 +141,53 @@ class BrowserSessionManager:
     def _require_user_data_dir(self) -> Path:
         configured = self._config.chrome_user_data_dir.strip()
         if not configured:
-            raise ValueError("CHROME_USER_DATA_DIR is required for the Facebook Chrome profile session")
+            raise make_app_error(
+                code="ERR_BROWSER_USER_DATA_DIR_MISSING",
+                technical_details="CHROME_USER_DATA_DIR is empty",
+            )
 
         user_data_dir = Path(configured).expanduser()
         if not user_data_dir.exists():
-            raise ValueError(f"Configured CHROME_USER_DATA_DIR does not exist: {user_data_dir}")
+            raise make_app_error(
+                code="ERR_BROWSER_USER_DATA_DIR_MISSING",
+                technical_details=f"path_not_found={user_data_dir}",
+            )
 
         return user_data_dir
 
     def _ensure_supported_user_data_dir(self, user_data_dir: Path) -> None:
         normalized = str(user_data_dir).replace("\\", "/").strip().lower().rstrip("/")
         if normalized.endswith("/google/chrome/user data"):
-            raise ValueError(
-                "CHROME_USER_DATA_DIR cannot be the default Chrome User Data root for Playwright automation. "
-                "Set CHROME_USER_DATA_DIR to a dedicated copied profile root (for example: "
-                "C:/Users/Daniel/OneDrive/Desktop/AgentsTests/Facebook-AI-Finder/data/chrome-user-data)."
+            raise make_app_error(
+                code="ERR_BROWSER_PROFILE_INCOMPATIBLE",
+                summary_he="CHROME_USER_DATA_DIR מצביע על תיקיית ברירת המחדל של Chrome",
+                cause_he="Playwright לא תומך בשימוש ישיר בתיקיית User Data הראשית של Chrome",
+                action_he="השתמש בתיקיית פרופיל מועתקת ייעודית לפרויקט",
+                technical_details=f"user_data_dir={user_data_dir}",
             )
 
     def _check_profile_not_locked(self, user_data_dir: Path) -> None:
         lock_file = user_data_dir / "SingletonLock"
         lock_file_win = user_data_dir / "lockfile"
         if lock_file.exists() or lock_file_win.exists():
-            raise RuntimeError(
-                "Chrome is currently running and locking the profile directory. "
-                "Close ALL Chrome windows (check system tray near the clock too) and try again. "
-                f"Lock detected in: {user_data_dir}"
+            raise make_app_error(
+                code="ERR_BROWSER_PROFILE_LOCKED",
+                technical_details=f"lock_detected_in={user_data_dir}",
             )
 
     def _require_profile_directory(self, user_data_dir: Path) -> Path:
         configured = self._config.chrome_profile_directory.strip()
         if not configured:
-            raise ValueError("CHROME_PROFILE_DIRECTORY is required for the Facebook Chrome profile session")
+            raise make_app_error(
+                code="ERR_BROWSER_PROFILE_DIR_MISSING",
+                technical_details="CHROME_PROFILE_DIRECTORY is empty",
+            )
 
         profile_directory = user_data_dir / configured
         if not profile_directory.exists():
-            raise ValueError(
-                "Configured CHROME_PROFILE_DIRECTORY was not found inside CHROME_USER_DATA_DIR: "
-                f"{profile_directory}"
+            raise make_app_error(
+                code="ERR_BROWSER_PROFILE_DIR_MISSING",
+                technical_details=f"profile_not_found={profile_directory}",
             )
 
         return profile_directory
@@ -209,6 +239,7 @@ class BrowserSessionManager:
 
         self._page = None
         log_event(logger, 20, "browser_session_closed")
+        debug_info("DBG_BROWSER_CLOSED", "סוגר את סשן הדפדפן הנוכחי.")
 
     def __enter__(self) -> "BrowserSessionManager":
         return self.open()

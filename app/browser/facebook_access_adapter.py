@@ -7,6 +7,8 @@ from playwright.sync_api import Page
 from app.browser.browser_session_manager import BrowserSessionManager
 from app.browser.facebook_login_state_detector import FacebookLoginCheckResult, FacebookLoginStateDetector
 from app.config.browser import BrowserConfig
+from app.utils.app_errors import AppError, make_app_error
+from app.utils.debugging import debug_found, debug_step
 from app.utils.logger import get_logger, log_event
 
 
@@ -14,7 +16,9 @@ logger = get_logger(__name__)
 
 
 class FacebookAuthenticationRequiredError(RuntimeError):
-    pass
+    def __init__(self, app_error: AppError) -> None:
+        self.app_error = app_error
+        super().__init__(app_error.summary_he)
 
 
 class FacebookAccessAdapter:
@@ -38,6 +42,7 @@ class FacebookAccessAdapter:
             session.close()
 
     def open_facebook(self, page: Page) -> None:
+        debug_step("DBG_FACEBOOK_HOME", "עובר לעמוד הבית של פייסבוק.")
         current_url = str(getattr(page, "url", "") or "").strip()
         log_event(
             logger,
@@ -53,10 +58,16 @@ class FacebookAccessAdapter:
                 timeout=self._config.timeout_ms,
             )
         except PlaywrightError as exc:
-            raise RuntimeError(f"facebook home navigation failed: {str(exc)}") from exc
+            raise make_app_error(
+                code="ERR_FACEBOOK_HOME_OPEN_FAILED",
+                technical_details=str(exc),
+            ) from exc
 
         if response is not None and not response.ok:
-            raise RuntimeError(f"facebook page load failed with status {response.status}")
+            raise make_app_error(
+                code="ERR_FACEBOOK_HOME_OPEN_FAILED",
+                technical_details=f"status={response.status}",
+            )
 
         final_url = str(getattr(page, "url", "") or "").strip()
         log_event(
@@ -67,20 +78,23 @@ class FacebookAccessAdapter:
             http_status=response.status if response is not None else "none",
         )
         if final_url == "about:blank":
-            raise RuntimeError(
-                "facebook home navigation ended on about:blank. "
-                "Check CHROME_USER_DATA_DIR / CHROME_PROFILE_DIRECTORY and Chrome profile compatibility."
+            raise make_app_error(
+                code="ERR_FACEBOOK_HOME_OPEN_FAILED",
+                technical_details="facebook_navigation_ended_on_about_blank",
             )
         page.wait_for_timeout(1200)
+        debug_found("DBG_FACEBOOK_HOME_OK", "עמוד הבית של פייסבוק נפתח בהצלחה.")
 
     def ensure_logged_in(self, page: Page) -> None:
         result = self.get_login_check_result(page)
         if result.is_logged_in:
+            debug_found("DBG_FACEBOOK_LOGIN_OK", "המערכת זיהתה שהמשתמש מחובר לפייסבוק.")
             return
         raise FacebookAuthenticationRequiredError(
-            "Facebook is not logged in in the configured Chrome profile. "
-            "Sign in manually in that Chrome profile and rerun. No automatic login is performed. "
-            f"Detected state: {result.state}."
+            app_error=make_app_error(
+                code="ERR_FACEBOOK_NOT_LOGGED_IN",
+                technical_details=f"detected_state={result.state} url={result.url}",
+            ),
         )
 
     def get_login_check_result(self, page: Page) -> FacebookLoginCheckResult:
@@ -90,15 +104,22 @@ class FacebookAccessAdapter:
         return self._login_state_detector.is_logged_in_to_facebook(page)
 
     def navigate(self, page: Page, url: str) -> None:
+        debug_step("DBG_FACEBOOK_NAVIGATE", f"מנווט לכתובת: {url}")
         current_url = str(getattr(page, "url", "") or "").strip()
         log_event(logger, 20, "facebook_navigation_requested", current_url=current_url, target_url=url)
         try:
             response = page.goto(url, wait_until="domcontentloaded", timeout=self._config.timeout_ms)
         except PlaywrightError as exc:
-            raise RuntimeError(f"facebook navigation failed for {url}: {str(exc)}") from exc
+            raise make_app_error(
+                code="ERR_GROUPS_FEED_OPEN_FAILED" if "/groups/feed" in url else "ERR_FACEBOOK_HOME_OPEN_FAILED",
+                technical_details=f"url={url} error={exc}",
+            ) from exc
 
         if response is not None and not response.ok:
-            raise RuntimeError(f"facebook navigation failed with status {response.status} for {url}")
+            raise make_app_error(
+                code="ERR_GROUPS_FEED_OPEN_FAILED" if "/groups/feed" in url else "ERR_FACEBOOK_HOME_OPEN_FAILED",
+                technical_details=f"url={url} status={response.status}",
+            )
 
         final_url = str(getattr(page, "url", "") or "").strip()
         log_event(
@@ -110,4 +131,8 @@ class FacebookAccessAdapter:
             target_url=url,
         )
         if final_url == "about:blank":
-            raise RuntimeError(f"facebook navigation ended on about:blank for {url}")
+            raise make_app_error(
+                code="ERR_GROUPS_FEED_OPEN_FAILED" if "/groups/feed" in url else "ERR_FACEBOOK_HOME_OPEN_FAILED",
+                technical_details=f"url={url} ended_on=about:blank",
+            )
+        debug_found("DBG_FACEBOOK_NAVIGATE_OK", f"הניווט לכתובת הושלם: {url}")

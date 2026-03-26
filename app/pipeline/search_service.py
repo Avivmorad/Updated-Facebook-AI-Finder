@@ -3,7 +3,8 @@ from typing import Any, Dict, List
 from app.browser.groups_feed_scanner import GroupsFeedScanner
 from app.domain.input import UserQuery
 from app.extraction.post_extractor import PostExtractor
-from app.utils.debugging import debug_info, debug_warning
+from app.utils.app_errors import make_app_error
+from app.utils.debugging import debug_app_error, debug_info, debug_warning
 from app.utils.logger import get_logger, log_event
 
 
@@ -21,16 +22,20 @@ class SearchService:
 
         for warning in execution.warnings:
             logger.warning("Search warning: %s", warning)
-            debug_warning(f"Search warning: {warning}")
+            debug_warning("DBG_SEARCH_WARNING", f"אזהרת סריקה: {warning}")
 
         if execution.fatal_error:
             logger.error("Search fatal error: %s", execution.fatal_error)
-            debug_warning(f"I could not finish scanning the groups feed. Reason: {execution.fatal_error}")
-            return []
+            app_error = make_app_error(
+                code=str(execution.fatal_error).strip() or "ERR_GROUPS_SCAN_FAILED",
+                technical_details=f"fatal_error={execution.fatal_error}",
+            )
+            debug_app_error(app_error)
+            raise app_error
 
         items = [item.to_dict() for item in execution.items][:max_posts]
         log_event(logger, 20, "search_finished", found=len(items), attempts=execution.attempts)
-        debug_info(f"Finished feed scanning after {execution.attempts} attempt(s).")
+        debug_info("DBG_SEARCH_DONE", f"סריקת הפיד הסתיימה לאחר {execution.attempts} ניסיון/ניסיונות.")
         return items
 
     def open_post(self, post_summary: Dict[str, Any]) -> Dict[str, Any]:
@@ -47,6 +52,7 @@ class SearchService:
         preview_publish_date = str(opened_post.get("preview_text") or "").strip()
         if preview_publish_date and not str(normalized.get("publish_date") or "").strip():
             normalized["publish_date"] = preview_publish_date
+            debug_info("DBG_PUBLISH_FALLBACK", "לא נמצא publish_date בעמוד, נעשה fallback לתאריך מה-preview בפיד.")
 
         return {
             "post_id": opened_post.get("post_id", ""),

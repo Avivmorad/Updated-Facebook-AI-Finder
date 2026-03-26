@@ -35,6 +35,7 @@
 
 ```python
 DEBUGGING = True          # מראה בטרמינל מה התוכנה עושה, צעד אחרי צעד
+DEBUG_TRACE_FILE = "data/logs/debug_trace.txt"  # קובץ טקסט עם כל ה-debug של הריצה (נדרס בכל ריצה)
 RUN_MODE = "query"        # אומר לתוכנה להשתמש בטקסט של QUERY
 QUERY = "iphone 13"       # מה שאתה מחפש
 MAX_POSTS = 10            # כמה פוסטים לבדוק לכל היותר
@@ -125,6 +126,7 @@ python scripts/bootstrap_chrome_profile.py "C:/Users/You/AppData/Local/Google/Ch
 
 ```python
 DEBUGGING = False
+DEBUG_TRACE_FILE = "data/logs/debug_trace.txt"
 
 RUN_MODE = "file"         # אפשר: "file", "query", "interactive", "demo"
 QUERY = "iphone 13"       # בשימוש רק אם RUN_MODE = "query"
@@ -139,6 +141,10 @@ OUTPUT_JSON = "data/reports/latest.json"
 - `DEBUGGING`  
   `True` = מסביר בטרמינל מה קורה שלב־שלב.  
   `False` = פלט קצר יותר.
+
+- `DEBUG_TRACE_FILE`  
+  נתיב לקובץ טקסט של ה-debug המפורט.  
+  הקובץ נוצר רק כש־`DEBUGGING=True` ונדרס מחדש בכל ריצה.
 
 - `RUN_MODE`  
   בוחר מאיפה הקלט יגיע.
@@ -258,6 +264,11 @@ python start.py
 
 זה נועד כדי שתוכל לקרוא את הטרמינל ולהבין "מה קרה" בלי להיכנס לקוד.
 
+בנוסף, כל הודעת שגיאה מוצגת בפורמט קבוע וברור:
+- `ERR_CODE | תקציר`
+- `סיבה: ...`
+- `מה לעשות: ...`
+
 ## איך להריץ בדיקות
 
 ### בדיקה של הסביבה
@@ -346,6 +357,12 @@ data/reports/latest.json
 
 ```text
 data/logs/app.log
+```
+
+- אם `DEBUGGING=True`, נשמר גם trace אנושי מפורט ב:
+
+```text
+data/logs/debug_trace.txt
 ```
 
 - היסטוריית ריצות נשמרת ב:

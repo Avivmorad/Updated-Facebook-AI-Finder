@@ -82,7 +82,7 @@ class BrowserConfig:
     )
     selectors_last_24_hours: List[str] = field(
         default_factory=lambda: [
-            "div[role='button']:has-text('24 השעות האחרונות')",
+            "div[role='button']:has-text('24 שעות אחרונות')",
             "div[role='button']:has-text('Last 24 hours')",
             "button:has-text('Last 24 hours')",
         ]

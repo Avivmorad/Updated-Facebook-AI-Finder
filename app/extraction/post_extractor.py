@@ -11,7 +11,8 @@ from app.browser.facebook_access_adapter import FacebookAccessAdapter, FacebookA
 from app.config.browser import BrowserConfig
 from app.domain.posts import PostExtractionResult
 from app.extraction.post_normalizer import normalize_post_data
-from app.utils.debugging import debug_info, debug_warning
+from app.utils.app_errors import AppError, make_app_error, normalize_app_error
+from app.utils.debugging import debug_app_error, debug_found, debug_info, debug_missing, debug_step, debug_warning
 from app.utils.logger import get_logger
 
 
@@ -30,52 +31,86 @@ class PostExtractor:
 
         if not post_link:
             result.success = False
-            result.error = "missing_post_link"
-            result.warnings.append("Cannot open post without post_link")
+            link_error = make_app_error(code="ERR_POST_LINK_MISSING")
+            result.error = link_error.code
+            result.warnings.append(link_error.code)
+            debug_app_error(link_error, include_technical_details=False)
             return result
 
         attempts = max(1, self._config.retries + 1)
-        last_error = "post_extraction_failed"
-        debug_info("Opening the post page to extract its text, images, and publish date.")
+        last_error = make_app_error(code="ERR_POST_PAGE_LOAD_FAILED")
+        debug_step("DBG_POST_OPEN", "פותח את עמוד הפוסט כדי לחלץ טקסט, תמונות ותאריך פרסום.")
 
         for attempt in range(1, attempts + 1):
             try:
                 with self._facebook_access.authenticated_session() as session:
                     page = session.page
+                    debug_info("DBG_POST_OPEN_ATTEMPT", f"ניסיון חילוץ פוסט {attempt}/{attempts}: {post_link}")
                     self._open_post_page(page, post_link)
                     raw = self._extract_raw_post(page, post_link)
                     result.raw_post_data = raw
                     result.normalized_post_data = normalize_post_data(raw)
                     if attempt > 1:
                         result.warnings.append(f"post_extraction_retry_success:{attempt}")
-                    debug_info(
-                        f"Extraction succeeded. Text={'yes' if result.normalized_post_data.get('post_text') else 'no'}, "
-                        f"images={len(result.normalized_post_data.get('images', []))}, "
-                        f"publish_date={'yes' if result.normalized_post_data.get('publish_date') else 'no'}."
-                    )
+                    if result.normalized_post_data.get("post_text"):
+                        debug_found("DBG_POST_TEXT_OK", "נמצא טקסט לפוסט.")
+                    else:
+                        missing_text = make_app_error(code="ERR_POST_TEXT_NOT_FOUND")
+                        result.warnings.append(missing_text.code)
+                        debug_missing(missing_text.code, missing_text.summary_he)
+
+                    image_count = len(result.normalized_post_data.get("images", []))
+                    if image_count > 0:
+                        debug_found("DBG_POST_IMAGES_OK", f"נמצאו {image_count} תמונות.")
+                    else:
+                        missing_images = make_app_error(code="ERR_POST_IMAGES_NOT_FOUND")
+                        result.warnings.append(missing_images.code)
+                        debug_missing(missing_images.code, missing_images.summary_he)
+
+                    if result.normalized_post_data.get("publish_date"):
+                        debug_found("DBG_POST_DATE_OK", "נמצא תאריך פרסום לפוסט.")
+                    else:
+                        missing_date = make_app_error(code="ERR_POST_PUBLISH_DATE_MISSING")
+                        result.warnings.append(missing_date.code)
+                        debug_missing(missing_date.code, missing_date.summary_he)
+
+                    debug_found("DBG_POST_EXTRACT_OK", "חילוץ הפוסט הושלם בהצלחה.")
                     return result
             except FacebookAuthenticationRequiredError as exc:
-                last_error = str(exc)
-                result.warnings.append("facebook_authentication_required")
-                debug_warning("The saved Chrome profile is not logged in to Facebook, so extraction cannot continue.")
+                last_error = exc.app_error
+                result.warnings.append(last_error.code)
+                debug_app_error(last_error)
                 break
-            except (PlaywrightTimeoutError, PlaywrightError, RuntimeError) as exc:
-                last_error = str(exc)
+            except (PlaywrightTimeoutError, PlaywrightError, RuntimeError, AppError) as exc:
+                last_error = normalize_app_error(
+                    exc,
+                    default_code="ERR_POST_PAGE_LOAD_FAILED",
+                    default_summary_he="טעינת עמוד הפוסט נכשלה",
+                    default_cause_he="אירעה שגיאה בזמן ניווט/טעינה של עמוד הפוסט",
+                    default_action_he="נסה שוב, ואם חוזר בדוק שהקישור תקין ונגיש",
+                )
                 result.warnings.append(f"extraction_attempt_{attempt}_failed")
-                logger.warning("Post extraction attempt %s/%s failed for %s: %s", attempt, attempts, post_link, last_error)
-                debug_warning(f"Post extraction attempt {attempt}/{attempts} failed. I will retry if possible.")
+                logger.warning("Post extraction attempt %s/%s failed for %s: %s", attempt, attempts, post_link, str(last_error))
+                debug_app_error(last_error)
+                debug_warning("DBG_POST_EXTRACT_RETRY", f"חילוץ הפוסט נכשל בניסיון {attempt}/{attempts}.")
 
         result.success = False
-        result.error = last_error
-        debug_warning(f"I could not extract this post. Reason: {last_error}")
+        result.error = last_error.code
+        debug_app_error(last_error)
         return result
 
     def _open_post_page(self, page: Page, post_link: str) -> None:
         response = page.goto(post_link, wait_until="commit", timeout=self._config.timeout_ms)
         if response is not None and not response.ok:
-            raise RuntimeError(f"post page load failed with status {response.status}")
+            raise make_app_error(
+                code="ERR_POST_PAGE_LOAD_FAILED",
+                technical_details=f"post_link={post_link} status={response.status}",
+            )
         if str(getattr(page, "url", "") or "").strip() == "about:blank":
-            raise RuntimeError(f"post page navigation ended on about:blank for {post_link}")
+            raise make_app_error(
+                code="ERR_POST_PAGE_LOAD_FAILED",
+                technical_details=f"post_link={post_link} ended_on=about:blank",
+            )
 
         page.wait_for_timeout(1500)
         for selector in self._config.selectors_post_ready:

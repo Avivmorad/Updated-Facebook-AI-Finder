@@ -13,7 +13,17 @@ from app.entrypoints.cli import (
     load_input_from_file,
     run_pipeline_from_input,
 )
-from app.utils.debugging import configure_debugging, debug_info, debug_step
+from app.utils.app_errors import make_app_error, normalize_app_error
+from app.utils.debugging import (
+    close_debugging,
+    configure_debugging,
+    debug_app_error,
+    debug_info,
+    debug_result,
+    debug_step,
+    get_debug_trace_file_path,
+    is_debugging_enabled,
+)
 import settings
 
 
@@ -74,31 +84,57 @@ def _build_runtime_input():
         input_path = str(settings.INPUT_FILE).strip() or str(Path("data") / "sample_search_input.json")
         return load_input_from_file(input_path), "file"
 
-    raise ValueError("RUN_MODE must be one of: file, query, interactive, demo")
+    raise make_app_error(
+        code="ERR_INPUT_MODE_INVALID",
+        summary_he="RUN_MODE בקובץ settings.py אינו תקין",
+        cause_he="התקבל ערך שאינו אחד מהמצבים הנתמכים",
+        action_he='הגדר RUN_MODE לאחד מהערכים: "file", "query", "interactive", "demo"',
+        technical_details=f"RUN_MODE={settings.RUN_MODE}",
+    )
 
 
 def main() -> int:
-    load_dotenv()
-    _apply_runtime_env_overrides()
-    configure_debugging(bool(settings.DEBUGGING))
+    configure_debugging(bool(settings.DEBUGGING), _optional_text(getattr(settings, "DEBUG_TRACE_FILE", None)))
 
-    raw_input, source = _build_runtime_input()
-    debug_step(f"Starting the program from start.py using run mode: {source}.")
-    debug_info(f"Debugging mode is {'on' if settings.DEBUGGING else 'off'}.")
+    try:
+        load_dotenv()
+        _apply_runtime_env_overrides()
+        raw_input, source = _build_runtime_input()
 
-    pipeline_options = PipelineOptions(
-        max_posts=int(settings.MAX_POSTS),
-        continue_on_post_error=bool(settings.CONTINUE_ON_POST_ERROR),
-        stop_after_post_errors=_optional_int(settings.STOP_AFTER_POST_ERRORS),
-        save_run_history=bool(settings.SAVE_RUN_HISTORY),
-    )
+        debug_step("DBG_RUN_START", f"מתחיל ריצה חדשה מ-start.py במצב: {source}.")
+        debug_info("DBG_DEBUG_MODE", f"מצב DEBUGGING הוא {'פעיל' if settings.DEBUGGING else 'כבוי'}.")
 
-    return run_pipeline_from_input(
-        raw_input=raw_input,
-        max_posts=pipeline_options.max_posts,
-        output_json=_optional_text(settings.OUTPUT_JSON),
-        pipeline_options=pipeline_options,
-    )
+        pipeline_options = PipelineOptions(
+            max_posts=int(settings.MAX_POSTS),
+            continue_on_post_error=bool(settings.CONTINUE_ON_POST_ERROR),
+            stop_after_post_errors=_optional_int(settings.STOP_AFTER_POST_ERRORS),
+            save_run_history=bool(settings.SAVE_RUN_HISTORY),
+        )
+
+        exit_code = run_pipeline_from_input(
+            raw_input=raw_input,
+            max_posts=pipeline_options.max_posts,
+            output_json=_optional_text(settings.OUTPUT_JSON),
+            pipeline_options=pipeline_options,
+        )
+        if is_debugging_enabled():
+            trace_path = get_debug_trace_file_path()
+            if trace_path:
+                debug_result("DBG_TRACE_FILE", f"קובץ debug trace נשמר אל: {trace_path}")
+        debug_result("DBG_RUN_END", f"הריצה הסתיימה עם קוד יציאה {exit_code}.")
+        return exit_code
+    except Exception as exc:  # noqa: BLE001
+        app_error = normalize_app_error(
+            exc,
+            default_code="ERR_PIPELINE_UNEXPECTED",
+            default_summary_he="הריצה הופסקה בגלל שגיאה לא צפויה",
+            default_cause_he="רכיב פנימי זרק חריגה שלא טופלה מראש",
+            default_action_he="בדוק debug trace ו-app.log ונסה שוב",
+        )
+        debug_app_error(app_error)
+        return 1
+    finally:
+        close_debugging()
 
 
 if __name__ == "__main__":

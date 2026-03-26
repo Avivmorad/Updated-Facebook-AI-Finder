@@ -9,7 +9,8 @@ from app.ai.response_parser import parse_ai_response
 from app.config.ai import AIConfig
 from app.domain.ai import AIAnalysisEnvelope
 from app.domain.input import UserQuery
-from app.utils.debugging import debug_info, debug_warning
+from app.utils.app_errors import AppError, make_app_error
+from app.utils.debugging import debug_app_error, debug_found, debug_info, debug_step
 from app.utils.logger import get_logger, log_event
 
 
@@ -29,9 +30,9 @@ class AIAnalysisService:
         payload = build_ai_request_payload(post_data=post_data, user_query=user_query)
         prompt = build_ai_prompt(payload)
         payload_dict = payload.to_dict()
-        debug_info(
-            f"Sending a post to AI with {len(payload.image_urls)} image(s) and "
-            f"{len(payload.post_text)} characters of text."
+        debug_step(
+            "DBG_AI_SEND",
+            f"שולח ל-AI פוסט עם {len(payload.image_urls)} תמונות ו-{len(payload.post_text)} תווים של טקסט.",
         )
 
         max_attempts = max(1, self._config.retry_attempts + 1)
@@ -40,27 +41,35 @@ class AIAnalysisService:
         last_errors: list[str] = []
 
         for attempt in range(1, max_attempts + 1):
-            debug_info(f"AI attempt {attempt}/{max_attempts}.")
+            debug_info("DBG_AI_ATTEMPT", f"ניסיון AI {attempt}/{max_attempts}.")
             client_result = self._ai_client.generate(prompt)
             last_raw_text = client_result.raw_text
             last_raw_data = dict(client_result.raw_data)
 
             if client_result.error:
-                last_errors = [client_result.error]
+                request_error = make_app_error(
+                    code="ERR_AI_REQUEST_FAILED",
+                    technical_details=client_result.error,
+                )
+                last_errors = [request_error.code]
                 log_event(
                     logger,
                     logging.WARNING,
                     "ai_client_error",
                     attempt=attempt,
                     max_attempts=max_attempts,
-                    error=client_result.error,
+                    error=request_error.technical_details,
                 )
-                debug_warning(f"The AI request failed on attempt {attempt}.")
+                debug_app_error(request_error)
             else:
                 parsed, validation_errors, parsed_obj = parse_ai_response(client_result.raw_text)
                 if parsed is not None:
-                    debug_info(
-                        f"AI completed successfully. Relevant={parsed.is_relevant}, match_score={parsed.match_score}, confidence={parsed.confidence}."
+                    debug_found(
+                        "DBG_AI_DONE",
+                        (
+                            "ה-AI החזיר תשובה תקינה: "
+                            f"relevant={parsed.is_relevant}, score={parsed.match_score}, confidence={parsed.confidence}."
+                        ),
                     )
                     return AIAnalysisEnvelope(
                         result=parsed,
@@ -75,10 +84,12 @@ class AIAnalysisService:
                         success=True,
                     )
 
-                last_errors = validation_errors or ["ai_parse_failed"]
+                parse_error = _build_parse_app_error(validation_errors)
+                last_errors = [parse_error.code]
                 last_raw_data = {
                     **client_result.raw_data,
                     "parsed_response": parsed_obj,
+                    "validation_errors": validation_errors,
                 }
                 log_event(
                     logger,
@@ -86,14 +97,15 @@ class AIAnalysisService:
                     "ai_parse_error",
                     attempt=attempt,
                     max_attempts=max_attempts,
-                    errors=";".join(last_errors),
+                    errors=";".join(validation_errors),
                 )
-                debug_warning(f"The AI responded, but the response format was invalid on attempt {attempt}.")
+                debug_app_error(parse_error)
 
             if attempt < max_attempts:
                 sleep(max(0.0, self._config.retry_backoff_seconds) * attempt)
 
-        debug_warning("The AI analysis failed after all retry attempts.")
+        final_error = make_app_error(code=last_errors[0] if last_errors else "ERR_AI_REQUEST_FAILED")
+        debug_app_error(final_error)
         return AIAnalysisEnvelope(
             result=None,
             raw_response_text=last_raw_text,
@@ -104,3 +116,20 @@ class AIAnalysisService:
             validation_errors=last_errors,
             success=False,
         )
+
+
+def _build_parse_app_error(validation_errors: list[str]) -> AppError:
+    if any(item == "empty_ai_response" for item in validation_errors):
+        return make_app_error(
+            code="ERR_AI_RESPONSE_EMPTY",
+            technical_details=";".join(validation_errors),
+        )
+    if any(item.startswith("invalid_json:") for item in validation_errors):
+        return make_app_error(
+            code="ERR_AI_RESPONSE_INVALID_JSON",
+            technical_details=";".join(validation_errors),
+        )
+    return make_app_error(
+        code="ERR_AI_RESPONSE_SCHEMA_INVALID",
+        technical_details=";".join(validation_errors),
+    )

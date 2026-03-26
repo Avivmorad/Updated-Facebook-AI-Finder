@@ -70,13 +70,14 @@ class RecentPostFilter:
 
         for post in posts:
             publish_date = str(post.get("publish_date") or "").strip()
-            if self.is_recent_publish_date(publish_date, now=reference_now):
+            parsed, reason = _parse_publish_date_with_reason(publish_date, reference_now)
+            if parsed is not None and (reference_now - parsed) <= timedelta(hours=24):
                 filtered.append(post)
             else:
                 rejected.append(
                     {
                         "post_link": str(post.get("post_link") or "").strip(),
-                        "reason": "older_than_24_hours_or_unparseable_publish_date",
+                        "reason": reason,
                     }
                 )
 
@@ -84,14 +85,29 @@ class RecentPostFilter:
 
     def is_recent_publish_date(self, publish_date: str, now: Optional[datetime] = None) -> bool:
         reference_now = now or datetime.now(timezone.utc)
-        parsed = _parse_publish_date(publish_date, reference_now)
+        parsed, _ = _parse_publish_date_with_reason(publish_date, reference_now)
         if parsed is None:
             return False
         return (reference_now - parsed) <= timedelta(hours=24)
 
 
-def _parse_publish_date(value: str, reference_now: datetime) -> Optional[datetime]:
+def _parse_publish_date_with_reason(value: str, reference_now: datetime) -> tuple[Optional[datetime], str]:
     text = _normalize_publish_text(value)
+    if not text:
+        return None, "missing_publish_date"
+
+    parsed = _parse_publish_date(text, reference_now)
+    if parsed is None:
+        return None, "unparseable_publish_date"
+
+    if (reference_now - parsed) > timedelta(hours=24):
+        return parsed, "older_than_24_hours"
+
+    return parsed, "recent"
+
+
+def _parse_publish_date(value: str, reference_now: datetime) -> Optional[datetime]:
+    text = value.strip()
     if not text:
         return None
 

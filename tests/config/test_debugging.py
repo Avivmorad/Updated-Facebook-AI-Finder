@@ -1,4 +1,12 @@
-from app.utils.debugging import configure_debugging, is_debugging_enabled
+from pathlib import Path
+
+from app.utils.debugging import (
+    close_debugging,
+    configure_debugging,
+    debug_step,
+    get_debug_trace_file_path,
+    is_debugging_enabled,
+)
 
 
 def test_is_debugging_enabled_reads_env(monkeypatch):
@@ -12,4 +20,49 @@ def test_configure_debugging_overrides_env(monkeypatch):
     monkeypatch.setenv("DEBUGGING", "false")
     configure_debugging(True)
     assert is_debugging_enabled() is True
+    configure_debugging(None)
+
+
+def test_debug_trace_file_created_and_written(tmp_path, capsys):
+    trace_path = tmp_path / "debug_trace.txt"
+    configure_debugging(True, str(trace_path))
+    assert get_debug_trace_file_path() == str(trace_path)
+    debug_step("DBG_TEST_TRACE", "כותב שורת debug לדוגמה.")
+    close_debugging()
+
+    terminal_output = capsys.readouterr().out
+    assert "DBG_TEST_TRACE" in terminal_output
+    assert trace_path.exists() is True
+    assert "DBG_TEST_TRACE" in trace_path.read_text(encoding="utf-8")
+
+    configure_debugging(None)
+
+
+def test_debug_trace_file_overwritten_between_runs(tmp_path):
+    trace_path = tmp_path / "debug_trace.txt"
+    configure_debugging(True, str(trace_path))
+    debug_step("DBG_RUN_A", "שורה מהריצה הראשונה.")
+    close_debugging()
+
+    first_text = trace_path.read_text(encoding="utf-8")
+    assert "DBG_RUN_A" in first_text
+
+    configure_debugging(True, str(trace_path))
+    debug_step("DBG_RUN_B", "שורה מהריצה השנייה.")
+    close_debugging()
+
+    second_text = trace_path.read_text(encoding="utf-8")
+    assert "DBG_RUN_B" in second_text
+    assert "DBG_RUN_A" not in second_text
+
+    configure_debugging(None)
+
+
+def test_debug_trace_not_created_when_debugging_false(tmp_path):
+    trace_path = Path(tmp_path) / "debug_trace.txt"
+    configure_debugging(False, str(trace_path))
+    debug_step("DBG_DISABLED", "לא אמור להיכתב.")
+    close_debugging()
+
+    assert trace_path.exists() is False
     configure_debugging(None)

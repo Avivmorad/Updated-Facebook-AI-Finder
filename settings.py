@@ -21,6 +21,13 @@ Important:
 # - False -> prints a shorter terminal output.
 DEBUGGING = True
 
+# Options: path string (for example "data/logs/debug_trace.txt")
+# What it does:
+# - Used only when DEBUGGING=True.
+# - Stores the same human-readable debug trace that is printed to terminal.
+# - The file is overwritten on every run (fresh file per run).
+DEBUG_TRACE_FILE = "data/logs/debug_trace.txt"
+
 # Options: "query", "file", "interactive", "demo"
 # What it does:
 # - "query"       -> uses the QUERY text below

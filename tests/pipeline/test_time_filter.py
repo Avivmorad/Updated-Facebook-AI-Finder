@@ -49,3 +49,36 @@ def test_time_filter_rejects_old_hebrew_days_value():
     filter_ = RecentPostFilter()
     now = datetime(2026, 3, 26, 12, 0, tzinfo=timezone.utc)
     assert filter_.is_recent_publish_date("2 \u05d9\u05de\u05d9\u05dd", now=now) is False
+
+
+def test_time_filter_returns_missing_publish_date_reason():
+    filter_ = RecentPostFilter()
+    now = datetime(2026, 3, 26, 12, 0, tzinfo=timezone.utc)
+    _, rejected = filter_.filter_posts_with_diagnostics(
+        [{"post_link": "https://example.com/p/1", "publish_date": ""}],
+        request=None,
+        now=now,
+    )
+    assert rejected[0]["reason"] == "missing_publish_date"
+
+
+def test_time_filter_returns_unparseable_publish_date_reason():
+    filter_ = RecentPostFilter()
+    now = datetime(2026, 3, 26, 12, 0, tzinfo=timezone.utc)
+    _, rejected = filter_.filter_posts_with_diagnostics(
+        [{"post_link": "https://example.com/p/2", "publish_date": "sometime"}],
+        request=None,
+        now=now,
+    )
+    assert rejected[0]["reason"] == "unparseable_publish_date"
+
+
+def test_time_filter_returns_older_than_24_hours_reason():
+    filter_ = RecentPostFilter()
+    now = datetime(2026, 3, 26, 12, 0, tzinfo=timezone.utc)
+    _, rejected = filter_.filter_posts_with_diagnostics(
+        [{"post_link": "https://example.com/p/3", "publish_date": "2 days ago"}],
+        request=None,
+        now=now,
+    )
+    assert rejected[0]["reason"] == "older_than_24_hours"
