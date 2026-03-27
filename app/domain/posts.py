@@ -5,12 +5,20 @@ from typing import Any, Dict, List, Optional
 @dataclass
 class CollectedPost:
     post_link: str
+    post_id: str = ""
     post_text: str = ""
     images: List[str] = field(default_factory=list)
-    publish_date: str = ""
+    image_count: int = 0
+    publish_date_raw: str = ""
+    publish_date_normalized: str = ""
+    extraction_quality: str = "failed"
+    post_screenshot_path: str = ""
+    screenshot_paths: List[str] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
+        payload = asdict(self)
+        payload["publish_date"] = self.publish_date_normalized or self.publish_date_raw
+        return payload
 
 
 @dataclass(frozen=True)

@@ -166,6 +166,23 @@ def _close_writer() -> None:
 def _safe_print(line: str) -> None:
     try:
         print(line, flush=True)
+        return
     except UnicodeEncodeError:
         escaped = line.encode("ascii", "backslashreplace").decode("ascii")
-        print(escaped, flush=True)
+        try:
+            print(escaped, flush=True)
+            return
+        except OSError:
+            pass
+    except OSError:
+        pass
+
+    try:
+        import sys
+
+        escaped = line.encode("ascii", "backslashreplace").decode("ascii")
+        sys.stderr.write(escaped + "\n")
+        sys.stderr.flush()
+    except OSError:
+        # Keep runtime alive even when terminal streams become unavailable.
+        _logger.warning("Debug output stream is unavailable; skipping terminal debug line.")

@@ -69,14 +69,18 @@ class GroqClient:
                 base_url="https://api.groq.com/openai/v1",
                 timeout=self._config.timeout_seconds,
             )
-            response = client.chat.completions.create(
-                model=model_name,
-                temperature=self._config.temperature,
-                max_tokens=self._config.max_output_tokens,
-                messages=[
+            request_payload: Dict[str, Any] = {
+                "model": model_name,
+                "temperature": self._config.temperature,
+                "max_tokens": self._config.max_output_tokens,
+                "response_format": {"type": "json_object"},
+                "messages": [
                     {"role": "system", "content": prompt.system_prompt},
                     {"role": "user", "content": user_content},
                 ],
+            }
+            response = client.chat.completions.create(
+                **request_payload,
             )
 
             content = ""

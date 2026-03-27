@@ -47,7 +47,18 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Quick launcher for Facebook Groups Post Finder & Matcher")
     parser.add_argument(
         "--mode",
-        choices=["run", "demo", "interactive", "file", "doctor", "doctor-session", "test", "start", "verify-live"],
+        choices=[
+            "run",
+            "demo",
+            "interactive",
+            "file",
+            "doctor",
+            "doctor-session",
+            "test",
+            "start",
+            "verify-live",
+            "probe-links",
+        ],
         default="run",
         help="What to run",
     )
@@ -73,6 +84,8 @@ def main() -> int:
         return _run_live_gate(args.output_json)
     if args.mode == "start":
         return _run([PYTHON, "start.py"])
+    if args.mode == "probe-links":
+        return _run([PYTHON, "scripts/manual_extraction_probe.py", "--debugging"])
     if args.mode == "demo":
         return _run([PYTHON, "-m", "app.entrypoints.cli", "--demo", "--output-json", args.output_json])
     if args.mode == "interactive":

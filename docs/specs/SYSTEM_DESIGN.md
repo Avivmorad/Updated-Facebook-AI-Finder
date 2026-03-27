@@ -1,193 +1,107 @@
-# System Design Document
+# SYSTEM_DESIGN.md
 ## Facebook Groups Post Finder & Matcher
 
----
-
-## 1. Overview
-
-The system scans the user’s Facebook groups feed and matches posts against the user’s query using AI.
-
-The system does NOT perform:
-- Risk analysis
-- Seller analysis
-- Comment analysis
-
-Its sole purpose is to evaluate how well each post matches the user’s intent.
+This document defines the active runtime architecture.
+`Project_Flow.md` remains the governing workflow document.
 
 ---
 
-## 2. System Goals
+## 1. Architecture Summary
 
-- Identify relevant posts  
-- Understand post content  
-- Match posts to user intent  
-- Rank posts by match quality  
+Pipeline layers:
 
----
-
-## 3. System Boundaries
-
-The system operates only on the user’s Facebook groups feed using an existing Chrome profile.
-
-The system does NOT include:
-- Facebook login automation  
-- Seller profile analysis  
-- Comment analysis  
-- Risk detection  
-- Marketplace support  
+1. Browser access (Playwright + existing Chrome profile)
+2. Feed filtering and scan
+3. Post opening and extraction
+4. AI analysis and filtering
+5. Ranking and presentation
+6. Logging and run artifacts
 
 ---
 
-## 4. User Input
+## 2. Responsibility Split
 
-- Search query (text)
+System responsibility:
 
----
+- browser actions
+- filter selection
+- scanning
+- extraction
+- screenshot capture
+- payload construction
+- result storage
 
-## 5. System Flow
+AI responsibility:
 
-1. User enters query  
-2. Open Chrome with existing profile  
-3. Navigate to Facebook groups feed  
-4. Apply Facebook built-in filters  
-5. Scan and collect posts  
-6. Open each post  
-7. Extract data  
-8. Send data to AI  
-9. Filter non-relevant posts  
-10. Score relevant posts  
-11. Rank results  
-12. Display results  
+- semantic understanding
+- relevance decision
+- match scoring
+- recency final decision (`is_recent_24h`)
 
 ---
 
-## 6. Data Collection
+## 3. Core Data Contracts
 
-The system extracts only the following from each post:
+### 3.1 Collected Post (runtime normalized schema)
 
-- Post text  
-- Images  
-- Publish date  
-- Post link  
+- `post_link`
+- `post_id`
+- `post_text`
+- `images`
+- `image_count`
+- `publish_date_raw`
+- `publish_date_normalized`
+- `extraction_quality` (`good|partial|failed`)
+- `post_screenshot_path`
+- `screenshot_paths`
 
-The system does NOT collect:
-- Comments  
-- Seller information  
-- Likes or reactions  
+### 3.2 AI Output (active schema)
 
----
-
-## 7. Data Processing
-
-- Clean text  
-- Normalize date  
-- Organize images  
-
----
-
-## 8. Filtering Rules
-
-### Hard Conditions:
-
-- Post must be from the last 24 hours  
-- Post must be relevant to the user query  
-
-If either condition fails → the post is discarded
+- `is_relevant`
+- `match_score`
+- `detected_item`
+- `match_reason`
+- `confidence`
+- `is_recent_24h`
+- `publish_date_observed`
+- `publish_date_reason`
+- `publish_date_confidence`
 
 ---
 
-## 9. Matching Logic
+## 4. Filtering Rules
 
-The AI determines what the post actually represents based on:
+Hard runtime conditions:
 
-- Post text  
-- Images  
+- `Recent posts` must be selected and verified.
+- AI must return `is_recent_24h=true`.
+- AI must return `is_relevant=true`.
 
-Then compares it to the user query to determine relevance.
-
----
-
-## 10. AI Responsibilities
-
-The AI receives:
-
-- User query  
-- Post text  
-- Images  
-
-The AI returns:
-
-- Relevance (true / false)  
-- Detected item (what the post actually offers)  
-- Match score  
+If one condition fails, the post is discarded.
 
 ---
 
-## 11. Scoring System
+## 5. Screenshot Policy
 
-The score represents:
-
-> How well the post matches what the user is searching for
-
-The score is based on:
-
-- Understanding the product from text  
-- Understanding the product from images  
-- Consistency between text and images  
-- Match to the user query  
-
-The score does NOT include:
-
-- Risk evaluation  
-- Seller reliability  
-- Comments  
+- Screenshot is required for each processed post.
+- Preferred capture mode: post-element screenshot.
+- Fallback mode: full-page screenshot with coded warning/error path.
 
 ---
 
-## 12. Output
+## 6. Provider Policy
 
-### List View:
-- Post link  
-- Match score  
-- Short summary  
-
-### Detail View:
-- Extracted data  
-- AI analysis  
-- Match explanation  
+- Active runtime expects Groq vision-compatible configuration.
+- Missing/invalid vision model is startup/runtime error, not silent fallback.
 
 ---
 
-## 13. UI
+## 7. Runtime Interface
 
-- Search screen  
-- Start button  
-- Progress bar  
-- Results list  
-- Detail view  
+Current interface:
 
----
+- `start.py` CLI execution
+- JSON report artifact
+- debug trace artifact
 
-## 14. Constraints
-
-- Only posts from the last 24 hours  
-- Limited runtime  
-- No fake fallback data  
-
----
-
-## 15. Error Handling
-
-- If a post fails → skip and continue  
-- The process must not stop due to a single failure  
-
----
-
-## 16. Summary
-
-The system is a lightweight AI-powered matcher that:
-
-- Collects data using Playwright  
-- Delegates all understanding to AI  
-- Filters strictly by relevance  
-- Scores only based on match quality  
+Dedicated UI is future scope.

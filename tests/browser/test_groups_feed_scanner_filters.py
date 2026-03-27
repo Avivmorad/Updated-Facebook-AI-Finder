@@ -10,6 +10,21 @@ def test_apply_feed_filters_raises_when_recent_posts_filter_missing(monkeypatch)
 
     monkeypatch.setattr(scanner, "_open_filters_panel_if_needed", lambda page: None)
     monkeypatch.setattr(scanner, "_try_select_recent_posts", lambda page: False)
+    monkeypatch.setattr(scanner, "_verify_recent_filter_selected", lambda page: False)
+    monkeypatch.setattr(scanner, "_try_select_last_24_hours", lambda page: True)
+
+    with pytest.raises(AppError) as exc:
+        scanner._apply_feed_filters(dummy_page)  # type: ignore[arg-type]
+    assert exc.value.code == "ERR_FILTER_RECENT_NOT_FOUND"
+
+
+def test_apply_feed_filters_raises_when_recent_posts_not_verified(monkeypatch):
+    scanner = GroupsFeedScanner()
+    dummy_page = object()
+
+    monkeypatch.setattr(scanner, "_open_filters_panel_if_needed", lambda page: None)
+    monkeypatch.setattr(scanner, "_try_select_recent_posts", lambda page: True)
+    monkeypatch.setattr(scanner, "_verify_recent_filter_selected", lambda page: False)
     monkeypatch.setattr(scanner, "_try_select_last_24_hours", lambda page: True)
 
     with pytest.raises(AppError) as exc:
@@ -28,3 +43,15 @@ def test_normalize_post_link_removes_tracking_query_params():
     assert "__tn__" not in normalized
     assert "story_fbid=456" in normalized
     assert "id=123" in normalized
+
+
+def test_normalize_post_link_rejects_non_post_facebook_link():
+    scanner = GroupsFeedScanner()
+    normalized = scanner._normalize_post_link("https://www.facebook.com/groups/123/")
+    assert normalized == ""
+
+
+def test_normalize_post_link_rejects_external_link():
+    scanner = GroupsFeedScanner()
+    normalized = scanner._normalize_post_link("https://example.com/item")
+    assert normalized == ""

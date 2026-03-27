@@ -52,6 +52,9 @@ class AIRequestPayload:
     post_text: str
     image_urls: List[str] = field(default_factory=list)
     publish_date_text: str = ""
+    publish_date_raw: str = ""
+    extraction_quality: str = ""
+    image_count: int = 0
     parser_time_reason: str = ""
     post_screenshot_path: str = ""
 

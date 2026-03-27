@@ -46,6 +46,7 @@ def test_validate_browser_config_rejects_default_chrome_root(monkeypatch, tmp_pa
 def test_validate_startup_config_passes_for_valid_setup(monkeypatch, tmp_path):
     copied_root = tmp_path / "chrome_user_data"
     (copied_root / "Default").mkdir(parents=True)
+    (copied_root / "Local State").write_text("{}", encoding="utf-8")
 
     monkeypatch.setenv("AI_PROVIDER", "groq")
     monkeypatch.setenv("GROQ_API_KEY", "dummy-key")
@@ -57,6 +58,17 @@ def test_validate_startup_config_passes_for_valid_setup(monkeypatch, tmp_path):
         require_api_key=True, require_browser_profile=True
     )
     assert isinstance(warnings, list)
+
+
+def test_validate_browser_config_warns_when_local_state_missing(monkeypatch, tmp_path):
+    copied_root = tmp_path / "chrome_user_data"
+    (copied_root / "Default").mkdir(parents=True)
+
+    monkeypatch.setenv("CHROME_USER_DATA_DIR", str(copied_root))
+    monkeypatch.setenv("CHROME_PROFILE_DIRECTORY", "Default")
+
+    result = validate_browser_config(require_profile=True)
+    assert any("Local State" in item for item in result.warnings)
 
 
 def test_validate_startup_config_raises_for_missing_profile(monkeypatch, tmp_path):

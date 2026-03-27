@@ -210,6 +210,15 @@ class BrowserSessionManager:
         return any(marker in err_msg for marker in retryable_markers)
 
     def _build_profile_startup_error_message(self, err_msg: str) -> str:
+        if "failed to decrypt" in err_msg.lower() or "os_crypt" in err_msg.lower():
+            return (
+                "Chrome opened the copied profile but failed to decrypt session data. "
+                "This usually happens when the copied profile root is missing 'Local State' "
+                "or was copied incompletely. Rebuild the profile with "
+                "scripts/bootstrap_chrome_profile.py, make sure Local State is copied, "
+                "sign in to Facebook manually in that copied profile, then retry. "
+                f"Details: {err_msg}"
+            )
         return (
             "Chrome could not open the configured copied profile. "
             "This usually means the copied profile is incompatible, incomplete, or contains data "

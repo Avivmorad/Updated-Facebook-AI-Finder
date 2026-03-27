@@ -69,7 +69,12 @@ class RecentPostFilter:
         rejected: List[Dict[str, str]] = []
 
         for post in posts:
-            publish_date = str(post.get("publish_date") or "").strip()
+            publish_date = str(
+                post.get("publish_date_normalized")
+                or post.get("publish_date_raw")
+                or post.get("publish_date")
+                or ""
+            ).strip()
             parsed, reason = _parse_publish_date_with_reason(publish_date, reference_now)
             if parsed is not None and (reference_now - parsed) <= timedelta(hours=24):
                 filtered.append(post)

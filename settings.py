@@ -48,7 +48,7 @@ RUN_MODE = "file"
 # Example:
 # - "iphone 13"
 # - "playstation 5"
-QUERY = "iphone 13"
+QUERY = "\u05e1\u05e4\u05d4"
 
 # Used only when RUN_MODE == "file"
 # What it does:

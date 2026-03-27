@@ -37,6 +37,12 @@ ERROR_CATALOG: Dict[str, AppErrorTemplate] = {
         cause_he="The file could not be parsed as a valid JSON object",
         action_he="Fix the input JSON format and run again",
     ),
+    "ERR_STARTUP_CONFIG_INVALID": AppErrorTemplate(
+        code="ERR_STARTUP_CONFIG_INVALID",
+        summary_he="Startup configuration is invalid",
+        cause_he="One or more required startup settings are missing or invalid",
+        action_he="Fix startup settings in .env/settings and run again",
+    ),
     "ERR_BROWSER_USER_DATA_DIR_MISSING": AppErrorTemplate(
         code="ERR_BROWSER_USER_DATA_DIR_MISSING",
         summary_he="Chrome user data directory is missing",

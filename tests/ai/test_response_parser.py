@@ -45,3 +45,29 @@ def test_parse_ai_response_rejects_unexpected_field():
 
     assert parsed is None
     assert "unexpected_field:warning_signs" in errors
+
+
+def test_parse_ai_response_extracts_json_from_markdown_fence():
+    parsed, errors, _ = parse_ai_response(
+        """
+        Here is the result:
+        ```json
+        {
+          "is_relevant": false,
+          "match_score": 12,
+          "detected_item": "unknown",
+          "match_reason": "not a match",
+          "confidence": 70,
+          "is_recent_24h": false,
+          "publish_date_observed": "3 days ago",
+          "publish_date_reason": "timestamp text",
+          "publish_date_confidence": 80
+        }
+        ```
+        """
+    )
+
+    assert errors == []
+    assert parsed is not None
+    assert parsed.is_relevant is False
+    assert parsed.is_recent_24h is False

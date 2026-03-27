@@ -1,168 +1,111 @@
-# Project Development Phases
-## Facebook Groups Post Finder & Matcher
+# PROJECT_DEVELOPMENT_PHASES.md
+## Delivery Phases
+
+This phase list tracks implementation order aligned to `Project_Flow.md`.
 
 ---
 
-## Phase 1 — Specification Lock
+## Phase 1 - Spec Lock
 
-- Define system goals  
-- Define boundaries  
-- Confirm:
-  - Groups feed only  
-  - No comments  
-  - No seller analysis
-  - No risk analysis  
-  - AI used only for matching  
+- keep `Project_Flow.md` authoritative
+- align all spec docs
 
----
+## Phase 2 - Foundation
 
-## Phase 2 — Technical Foundation
+- validate config/startup
+- stable logging/debug trace
+- stable error catalog
 
-- Create project structure  
-- Define environment variables  
-- Ensure system can run  
+## Phase 3 - Facebook Access
 
----
+- browser profile startup
+- Facebook/session validation
+- groups feed navigation
 
-## Phase 3 — Facebook Access
+## Phase 4 - Feed Filters
 
-- Connect using Chrome profile  
-- Navigate to groups feed  
+- enforce and verify `Recent posts`
+- apply `Last 24 hours` best effort
 
----
+## Phase 5 - Feed Scan
 
-## Phase 4 — Facebook Filtering
+- collect canonical links
+- dedupe
+- scan telemetry by round
 
-- Use only Facebook built-in filters  
+## Phase 6 - Post Open
 
----
+- reliable post page loading
+- stable container readiness checks
 
-## Phase 5 — Feed Scanning
+## Phase 7 - DOM Extraction
 
-- Scroll feed  
-- Collect post links  
+- text, images, publish date raw/normalized, permalink, post id
 
----
+## Phase 8 - Extraction Validation
 
-## Phase 6 — Post Opening
+- derive `extraction_quality`
+- surface partial/failed extraction clearly
 
-- Open each post  
-- Wait for full load  
+## Phase 9 - Screenshot Capture
 
----
+- mandatory screenshot per post
+- element-first, fallback path coded
 
-## Phase 7 — Data Extraction
+## Phase 10 - Data Processing
 
-The system extracts:
+- normalize final post schema
+- preserve diagnostics fields
 
-- Post text  
-- Images  
-- Publish date  
-- Post link  
+## Phase 11 - Time Decision
 
-The system does NOT extract:
+- parser diagnostics retained
+- AI recency final decision enforced
 
-- Comments  
-- Seller info  
-- Likes  
+## Phase 12 - AI Input
 
----
+- build stable payload from normalized post + screenshot + diagnostics
 
-## Phase 8 — Data Processing
+## Phase 13 - AI Analysis
 
-- Clean text  
-- Normalize date  
-- Organize images  
+- parse and validate AI schema
 
----
+## Phase 14 - Relevance Filter
 
-## Phase 9 — Time Filtering
+- keep only relevant posts
 
-- Check if post is within last 24 hours  
-- If not → discard  
+## Phase 15 - Score
 
----
+- use AI match score only
 
-## Phase 10 — AI Analysis
+## Phase 16 - Rank
 
-The AI:
+- deterministic descending ranking
 
-- Understands what the post is offering  
-- Compares it to the user query  
-- Determines relevance  
-- Produces a match score  
+## Phase 17 - Result List
 
----
+- expose list fields needed for CLI/reporting
 
-## Phase 11 — Relevance Filtering
+## Phase 18 - Result Detail
 
-- If not relevant → discard  
-- If relevant → continue  
+- expose full extracted payload + AI analysis
 
----
+## Phase 19 - Logging
 
-## Phase 12 — Scoring
+- full stage observability
 
-- Assign match score only  
+## Phase 20 - Error Handling
 
----
+- per-post failure isolation
 
-## Phase 13 — Ranking
+## Phase 21 - Performance
 
-- Sort posts by score (descending)  
+- reduce scan/extraction inefficiency
 
----
+## Phase 22 - Production Gate
 
-## Phase 14 — Results Presentation
-
-- Display results list  
-- Enable detailed view  
-
----
-
-## Phase 15 — UI Layer
-
-- Search screen  
-- Start button  
-- Progress bar  
-- Results  
-
----
-
-## Phase 16 — Logging
-
-- Log execution steps  
-- Log errors  
-
----
-
-## Phase 17 — Error Handling
-
-- Skip failed posts  
-- Continue processing  
-
----
-
-## Phase 18 — Performance Optimization
-
-- Improve runtime  
-- Reduce unnecessary actions  
-
----
-
-## Phase 19 — Production Readiness
-
-- Code cleanup  
-- Final testing  
-- Stabilization  
-
----
-
-## Summary
-
-The system evolves from:
-
-- Basic Facebook access  
-→ Data extraction  
-→ AI-based matching  
-→ Ranked results display
+- pass:
+  - `pytest -q`
+  - `python scripts/doctor.py`
+  - `python scripts/doctor.py --check-facebook-session`
+  - `python start.py`

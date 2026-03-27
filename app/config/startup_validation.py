@@ -7,7 +7,7 @@ from app.config.ai import AIConfig
 from app.config.browser import BrowserConfig
 
 
-_ALLOWED_AI_PROVIDERS = {"groq", "gemini"}
+_ALLOWED_AI_PROVIDERS = {"groq"}
 
 
 @dataclass
@@ -29,7 +29,7 @@ def validate_ai_config(
 
     provider = (cfg.provider or "").strip().lower()
     if provider not in _ALLOWED_AI_PROVIDERS:
-        outcome.errors.append("AI_PROVIDER must be one of: groq, gemini")
+        outcome.errors.append("AI_PROVIDER must be: groq")
         return outcome
 
     key_env_name = "GROQ_API_KEY" if provider == "groq" else "GEMINI_API_KEY"
@@ -96,6 +96,13 @@ def validate_browser_config(
         outcome.errors.append(
             "CHROME_PROFILE_DIRECTORY was not found inside CHROME_USER_DATA_DIR: "
             f"{profile_path}"
+        )
+
+    local_state_path = user_data_dir / "Local State"
+    if not local_state_path.exists():
+        outcome.warnings.append(
+            "CHROME_USER_DATA_DIR is missing 'Local State'. Copied profile may fail to decrypt session data. "
+            "Rebuild copied profile with scripts/bootstrap_chrome_profile.py."
         )
 
     if (user_data_dir / "SingletonLock").exists() or (user_data_dir / "lockfile").exists():

@@ -41,6 +41,8 @@ data/run_history.json
 data/facebook-storage-state.json
 data/saved_searches.json
 data/search_inputs/
+data/local/
+data/tmp/
 
 # Temporary files
 tempCodeRunnerFile.py

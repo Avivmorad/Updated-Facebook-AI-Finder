@@ -1,7 +1,11 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
 from time import sleep
-from typing import List, Optional, Sequence, Set
+from typing import Dict, List, Optional, Sequence, Set
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
+from playwright.sync_api import ElementHandle
 from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import Page
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
@@ -10,18 +14,26 @@ from app.browser.facebook_access_adapter import FacebookAccessAdapter, FacebookA
 from app.config.browser import BrowserConfig
 from app.domain.posts import CandidatePostRef, SearchExecutionResult
 from app.utils.app_errors import AppError, make_app_error, normalize_app_error
-from app.utils.debugging import (
-    debug_app_error,
-    debug_found,
-    debug_info,
-    debug_missing,
-    debug_step,
-    debug_warning,
-)
+from app.utils.debugging import debug_app_error, debug_found, debug_info, debug_missing, debug_step, debug_warning
 from app.utils.logger import get_logger, log_event
 
 
 logger = get_logger(__name__)
+
+
+@dataclass
+class _RoundScanStats:
+    added: int = 0
+    duplicates: int = 0
+    invalid_links: int = 0
+    unreadable_cards: int = 0
+
+
+@dataclass
+class _RawScanCandidate:
+    href: str
+    preview_text: str
+    source: str
 
 
 class GroupsFeedScanner:
@@ -68,12 +80,7 @@ class GroupsFeedScanner:
                     default_action_he="Check connection and Facebook session, then retry",
                 )
                 result.warnings.append(app_error.code)
-                logger.warning(
-                    "Platform search attempt %s/%s failed: %s",
-                    attempt,
-                    max_attempts,
-                    app_error.code,
-                )
+                logger.warning("Platform search attempt %s/%s failed: %s", attempt, max_attempts, app_error.code)
                 debug_app_error(app_error)
 
                 if app_error.code == "ERR_FILTER_RECENT_NOT_FOUND":
@@ -97,26 +104,36 @@ class GroupsFeedScanner:
             timeout=self._config.timeout_ms,
         )
         if response is not None and not response.ok:
-            raise make_app_error(
-                code="ERR_GROUPS_FEED_OPEN_FAILED",
-                technical_details=f"status={response.status}",
-            )
+            raise make_app_error(code="ERR_GROUPS_FEED_OPEN_FAILED", technical_details=f"status={response.status}")
         if str(getattr(page, "url", "") or "").strip() == "about:blank":
             raise make_app_error(
                 code="ERR_GROUPS_FEED_OPEN_FAILED",
                 technical_details="groups_feed_ended_on_about_blank",
             )
+        page.wait_for_timeout(1800)
         debug_found("DBG_GROUPS_FEED_OPEN_OK", "Groups feed opened successfully.")
+        debug_info("DBG_GROUPS_FEED_URL", f"Groups feed current URL: {str(getattr(page, 'url', '') or '').strip()}")
 
     def _apply_feed_filters(self, page: Page) -> None:
+        self._ensure_groups_feed_page(page)
         self._open_filters_panel_if_needed(page)
         debug_step("DBG_FILTER_RECENT_TRY", "Trying to apply filter: Recent posts.")
         recent_selected = self._try_select_recent_posts(page)
-        if not recent_selected:
+        recent_verified = self._verify_recent_filter_selected(page)
+        if not recent_selected or not recent_verified:
+            debug_warning("DBG_FILTER_RECENT_URL_FALLBACK", "Recent filter click path failed, trying URL fallback.")
+            if self._apply_recent_filter_via_url(page):
+                recent_verified = self._verify_recent_filter_selected(page)
+        if not recent_selected and not recent_verified:
             recent_error = make_app_error(code="ERR_FILTER_RECENT_NOT_FOUND")
             debug_app_error(recent_error, include_technical_details=False)
             raise recent_error
-        debug_found("DBG_FILTER_RECENT_OK", "Filter 'Recent posts' was applied.")
+        if not recent_verified:
+            recent_error = make_app_error(code="ERR_FILTER_RECENT_NOT_FOUND")
+            debug_app_error(recent_error, include_technical_details=False)
+            raise recent_error
+        debug_found("DBG_FILTER_RECENT_OK", "Filter 'Recent posts' was applied and verified.")
+        self._ensure_groups_feed_page(page)
 
         debug_step("DBG_FILTER_24H_TRY", "Trying to apply filter: Last 24 hours.")
         last_24_selected = self._try_select_last_24_hours(page)
@@ -125,6 +142,7 @@ class GroupsFeedScanner:
         else:
             last24_error = make_app_error(code="ERR_FILTER_LAST24_NOT_FOUND")
             debug_missing(last24_error.code, last24_error.summary_he)
+        debug_info("DBG_FILTERS_URL", f"Feed URL after filter step: {str(getattr(page, 'url', '') or '').strip()}")
 
     def _open_filters_panel_if_needed(self, page: Page) -> None:
         for selector in self._config.selectors_filters_panel:
@@ -144,8 +162,8 @@ class GroupsFeedScanner:
             page=page,
             selectors=self._config.selectors_recent_posts,
             labels=[
-                "פוסטים אחרונים",
-                "פוסטים חדשים",
+                "\u05e4\u05d5\u05e1\u05d8\u05d9\u05dd \u05d0\u05d7\u05e8\u05d5\u05e0\u05d9\u05dd",
+                "\u05d4\u05d7\u05d3\u05e9\u05d9\u05dd \u05d1\u05d9\u05d5\u05ea\u05e8",
                 "Most recent",
                 "Recent posts",
                 "Newest",
@@ -158,8 +176,8 @@ class GroupsFeedScanner:
                 ["latest"],
                 ["newest"],
                 ["chronological"],
-                ["אחרונ"],
-                ["חדש"],
+                ["\u05d0\u05d7\u05e8\u05d5\u05e0"],
+                ["\u05d7\u05d3\u05e9"],
             ],
             selected_event="platform_recent_posts_selected",
             not_found_event="platform_recent_posts_not_found",
@@ -170,19 +188,124 @@ class GroupsFeedScanner:
             page=page,
             selectors=self._config.selectors_last_24_hours,
             labels=[
-                "24 שעות אחרונות",
-                "24 השעות האחרונות",
+                "24 \u05e9\u05e2\u05d5\u05ea \u05d0\u05d7\u05e8\u05d5\u05e0\u05d5\u05ea",
                 "Last 24 hours",
                 "Past 24 hours",
             ],
             keyword_groups=[
                 ["24", "hour"],
                 ["past", "24"],
-                ["24", "שעות"],
+                ["24", "\u05e9\u05e2\u05d5\u05ea"],
             ],
             selected_event="platform_last_24h_selected",
             not_found_event="platform_last_24h_not_found",
         )
+
+    def _verify_recent_filter_selected(self, page: Page) -> bool:
+        checks = (
+            "\u05e4\u05d5\u05e1\u05d8\u05d9\u05dd \u05d0\u05d7\u05e8\u05d5\u05e0\u05d9\u05dd",
+            "\u05d4\u05d7\u05d3\u05e9\u05d9\u05dd \u05d1\u05d9\u05d5\u05ea\u05e8",
+            "Most recent",
+            "Recent posts",
+            "Newest",
+            "Latest",
+        )
+        current_url = self._current_url(page)
+        on_groups_feed = self._is_groups_feed_url(current_url)
+        roles = ("button", "radio", "menuitem", "switch", "option")
+        for label in checks:
+            for role in roles:
+                locator = page.get_by_role(role, name=label, exact=False)
+                try:
+                    count = min(locator.count(), 3)
+                except PlaywrightError:
+                    continue
+                for index in range(count):
+                    node = locator.nth(index)
+                    if self._is_selected_node(node):
+                        return True
+        # Fallback signal: if the selected-state attributes are absent in current UI,
+        # accept visible recent-filter labels after a successful click path.
+        if on_groups_feed:
+            for label in checks:
+                try:
+                    if page.get_by_text(label, exact=False).count() > 0:
+                        return True
+                except PlaywrightError:
+                    continue
+        current_url_lower = current_url.lower()
+        if "sorting_setting=chronological" in current_url_lower and on_groups_feed:
+            return True
+        if "order=chronological" in current_url_lower and on_groups_feed:
+            return True
+        return False
+
+    def _apply_recent_filter_via_url(self, page: Page) -> bool:
+        goto = getattr(page, "goto", None)
+        if not callable(goto):
+            return False
+        current_url = self._config.base_url
+        candidates = (
+            {"sorting_setting": "CHRONOLOGICAL"},
+            {"order": "chronological"},
+        )
+        for query in candidates:
+            try:
+                parsed = urlparse(current_url)
+                merged = dict(parse_qsl(parsed.query, keep_blank_values=True))
+                merged.update(query)
+                target = urlunparse(
+                    (
+                        parsed.scheme or "https",
+                        parsed.netloc or "www.facebook.com",
+                        parsed.path or "/groups/feed/",
+                        parsed.params,
+                        urlencode(merged, doseq=True),
+                        "",
+                    )
+                )
+                goto(target, wait_until="domcontentloaded", timeout=self._config.timeout_ms)
+                page.wait_for_timeout(1200)
+                log_event(logger, 20, "platform_recent_posts_selected", selector=f"url:{query}")
+                if self._verify_recent_filter_selected(page):
+                    return True
+            except (PlaywrightError, ValueError):
+                continue
+        return False
+
+    def _ensure_groups_feed_page(self, page: Page) -> None:
+        current_url = self._current_url(page)
+        if self._is_groups_feed_url(current_url):
+            return
+        goto = getattr(page, "goto", None)
+        if not callable(goto):
+            return
+        debug_warning("DBG_GROUPS_FEED_RECOVER", f"Unexpected page during scan flow: {current_url}. Recovering to groups feed.")
+        goto(self._config.base_url, wait_until="domcontentloaded", timeout=self._config.timeout_ms)
+        page.wait_for_timeout(1200)
+
+    def _is_groups_feed_url(self, url: str) -> bool:
+        lowered = str(url or "").strip().lower()
+        return "/groups/feed" in lowered
+
+    def _current_url(self, page: Page) -> str:
+        return str(getattr(page, "url", "") or "").strip()
+
+    def _is_selected_node(self, node) -> bool:  # type: ignore[no-untyped-def]
+        attr_names = ("aria-pressed", "aria-checked", "data-checked")
+        for attr_name in attr_names:
+            try:
+                value = (node.get_attribute(attr_name) or "").strip().lower()
+            except PlaywrightError:
+                value = ""
+            if value in {"true", "1"}:
+                return True
+
+        try:
+            class_name = (node.get_attribute("class") or "").strip().lower()
+        except PlaywrightError:
+            class_name = ""
+        return any(token in class_name for token in ("selected", "checked", "active"))
 
     def _try_select_page_option(
         self,
@@ -198,6 +321,8 @@ class GroupsFeedScanner:
         if self._try_click_by_labels(page, labels, selected_event):
             return True
         if self._try_click_by_keywords(page, keyword_groups, selected_event):
+            return True
+        if self._try_click_by_dom_keywords(page, keyword_groups, selected_event):
             return True
         log_event(logger, 20, not_found_event)
         return False
@@ -270,42 +395,75 @@ class GroupsFeedScanner:
                         continue
         return False
 
+    def _try_click_by_dom_keywords(self, page: Page, keyword_groups: Sequence[Sequence[str]], selected_event: str) -> bool:
+        dom_selectors = (
+            "div[role='button']",
+            "button",
+            "label",
+            "span[dir='auto']",
+            "div[dir='auto']",
+        )
+        for selector in dom_selectors:
+            try:
+                nodes = page.query_selector_all(selector)
+            except PlaywrightError:
+                continue
+            for node in nodes[:400]:
+                try:
+                    text = (node.inner_text() or "").strip().lower()
+                except PlaywrightError:
+                    continue
+                if not text:
+                    continue
+                if not any(all(keyword.lower() in text for keyword in group) for group in keyword_groups):
+                    continue
+                try:
+                    node.click(timeout=1000)
+                    page.wait_for_timeout(1200)
+                    log_event(logger, 20, selected_event, selector=f"dom:{selector}:{text[:80]}")
+                    return True
+                except PlaywrightError:
+                    continue
+        return False
+
     def _scan_results(self, page: Page, max_posts: int) -> tuple[List[CandidatePostRef], List[str]]:
         items: List[CandidatePostRef] = []
         warnings: List[str] = []
         seen_links: Set[str] = set()
 
         for round_index in range(self._config.max_scroll_rounds):
-            cards = self._query_result_cards(page)
+            candidates = self._collect_round_candidates(page, warnings, round_index)
             before_round_count = len(items)
-            if not cards:
+            stats = _RoundScanStats()
+            if not candidates:
                 debug_missing("DBG_SCAN_NO_CARDS", "No post cards found in this scan round.")
 
-            for card in cards:
+            for candidate in candidates:
                 if len(items) >= max_posts:
                     return items, warnings
 
-                try:
-                    href = (card.get_attribute("href") or "").strip()
-                    card_text = (card.inner_text() or "").strip()
-                except PlaywrightError as exc:
-                    warnings.append(f"skipped_unreadable_card:{str(exc)}")
-                    debug_warning("DBG_CARD_UNREADABLE", "Skipping unreadable post card.")
+                normalized_url = self._normalize_post_link(candidate.href)
+                if not normalized_url:
+                    stats.invalid_links += 1
                     continue
-
-                normalized_url = self._normalize_post_link(href)
-                if not normalized_url or normalized_url in seen_links:
+                if normalized_url in seen_links:
+                    stats.duplicates += 1
                     continue
 
                 seen_links.add(normalized_url)
+                stats.added += 1
                 candidate_index = len(items) + 1
                 debug_step("DBG_SCAN_POST", f"Scanning post {candidate_index} of {max_posts}.")
                 items.append(
                     CandidatePostRef(
                         post_id=self._extract_post_id(normalized_url),
                         post_link=normalized_url,
-                        preview_text=card_text,
-                        raw={"post_link": normalized_url, "preview_text": card_text},
+                        preview_text=candidate.preview_text,
+                        raw={
+                            "post_link": normalized_url,
+                            "preview_text": candidate.preview_text,
+                            "scan_source": candidate.source,
+                        },
                     )
                 )
                 debug_found("DBG_POST_FOUND", f"Found post link: {normalized_url}")
@@ -328,10 +486,114 @@ class GroupsFeedScanner:
                     ),
                 )
 
+            debug_info(
+                "DBG_SCAN_ROUND_STATS",
+                (
+                    f"Round {round_index + 1}: added={stats.added}, duplicates={stats.duplicates}, "
+                    f"invalid_links={stats.invalid_links}, unreadable={stats.unreadable_cards}."
+                ),
+            )
+
             if not self._load_more_or_scroll(page):
                 break
 
         return items[:max_posts], warnings
+
+    def _collect_round_candidates(
+        self,
+        page: Page,
+        warnings: List[str],
+        round_index: int,
+    ) -> List[_RawScanCandidate]:
+        candidates: List[_RawScanCandidate] = []
+        seen_pairs: Set[tuple[str, str]] = set()
+        direct_count = 0
+        article_count = 0
+        global_count = 0
+
+        def _add(href: str, preview_text: str, source: str) -> None:
+            nonlocal direct_count, article_count, global_count
+            normalized_href = str(href or "").strip()
+            if not normalized_href:
+                return
+            preview = str(preview_text or "").strip()
+            key = (normalized_href, preview)
+            if key in seen_pairs:
+                return
+            seen_pairs.add(key)
+            candidates.append(_RawScanCandidate(href=normalized_href, preview_text=preview, source=source))
+            if source == "direct_selector":
+                direct_count += 1
+            elif source == "article_anchor":
+                article_count += 1
+            else:
+                global_count += 1
+
+        direct_cards = self._query_result_cards(page)
+        for card in direct_cards:
+            try:
+                href = (card.get_attribute("href") or "").strip()
+                preview = (card.inner_text() or "").strip()
+            except PlaywrightError as exc:
+                warnings.append(f"skipped_unreadable_card:{str(exc)}")
+                debug_warning("DBG_CARD_UNREADABLE", "Skipping unreadable post card.")
+                continue
+            _add(href, preview, "direct_selector")
+
+        article_nodes = self._query_article_cards(page)
+        for article in article_nodes[:400]:
+            href = self._extract_best_post_href_from_article(article)
+            if not href:
+                continue
+            try:
+                preview = (article.inner_text() or "").strip()
+            except PlaywrightError:
+                preview = ""
+            _add(href, preview, "article_anchor")
+
+        try:
+            link_nodes = page.query_selector_all("a[href]")
+        except PlaywrightError:
+            link_nodes = []
+        for node in link_nodes[:1500]:
+            try:
+                href = (node.get_attribute("href") or "").strip()
+                preview = (node.inner_text() or "").strip()
+            except PlaywrightError:
+                continue
+            if not self._looks_like_post_link(href):
+                continue
+            _add(href, preview, "global_anchor")
+
+        if round_index == 0:
+            self._debug_dom_probe(page, len(direct_cards), len(article_nodes), len(candidates))
+        debug_info(
+            "DBG_SCAN_CANDIDATE_SOURCES",
+            (
+                f"Round {round_index + 1} candidate sources: "
+                f"direct={direct_count}, article={article_count}, global={global_count}, total={len(candidates)}."
+            ),
+        )
+        return candidates
+
+    def _debug_dom_probe(
+        self,
+        page: Page,
+        direct_card_count: int,
+        article_count: int,
+        candidate_count: int,
+    ) -> None:
+        try:
+            total_anchors = len(page.query_selector_all("a[href]"))
+        except PlaywrightError:
+            total_anchors = 0
+        debug_info(
+            "DBG_SCAN_DOM_PROBE",
+            (
+                f"DOM probe: anchors={total_anchors}, direct_cards={direct_card_count}, "
+                f"articles={article_count}, post_candidates={candidate_count}."
+            ),
+        )
 
     def _load_more_or_scroll(self, page: Page) -> bool:
         for selector in self._config.selectors_load_more:
@@ -358,6 +620,74 @@ class GroupsFeedScanner:
                 return nodes
         return []
 
+    def _query_article_cards(self, page: Page):
+        selectors = (
+            "div[role='article']",
+            "div[data-pagelet*='FeedUnit']",
+            "div[aria-posinset]",
+        )
+        for selector in selectors:
+            try:
+                nodes = page.query_selector_all(selector)
+            except PlaywrightError:
+                continue
+            if nodes:
+                return nodes
+        return []
+
+    def _extract_best_post_href_from_article(self, article: ElementHandle) -> str:
+        try:
+            anchors = article.query_selector_all("a[href]")
+        except PlaywrightError:
+            return ""
+
+        best = ""
+        for anchor in anchors[:120]:
+            try:
+                href = (anchor.get_attribute("href") or "").strip()
+            except PlaywrightError:
+                continue
+            if not self._looks_like_post_link(href):
+                continue
+            if any(marker in href for marker in ("/posts/", "/permalink/", "story_fbid=", "fbid=", "/share/p/")):
+                return href
+            if not best:
+                best = href
+        return best
+
+    def _looks_like_post_link(self, href: str) -> bool:
+        text = str(href or "").strip()
+        if not text:
+            return False
+        resolved = text
+        if text.startswith("/"):
+            resolved = f"https://www.facebook.com{text}"
+        if not resolved.startswith("http"):
+            return False
+
+        try:
+            parsed = urlparse(resolved)
+        except ValueError:
+            return False
+
+        host = parsed.netloc.lower()
+        if host and "facebook.com" not in host and "fb.com" not in host:
+            return False
+
+        path = parsed.path.lower()
+        query = parsed.query.lower()
+        if "/groups/" in path and "/posts/" in path:
+            return True
+        if "/permalink/" in path or "permalink.php" in path:
+            return True
+        if "/share/p/" in path:
+            return True
+        if "story_fbid=" in query and "id=" in query:
+            return True
+        if "fbid=" in query:
+            return True
+        return False
+
     def _normalize_post_link(self, href: str) -> str:
         text = href.strip()
         if not text:
@@ -368,9 +698,14 @@ class GroupsFeedScanner:
             resolved = f"https://www.facebook.com{text}"
         if not resolved.startswith("http"):
             return ""
+        if not self._looks_like_post_link(resolved):
+            return ""
 
         try:
             parsed = urlparse(resolved)
+            host = parsed.netloc.lower()
+            if host and "facebook.com" not in host and "fb.com" not in host:
+                return ""
             query_items = parse_qsl(parsed.query, keep_blank_values=True)
             kept = [
                 (k, v)
@@ -378,12 +713,12 @@ class GroupsFeedScanner:
                 if not k.startswith("__") and k not in {"notif_id", "notif_t", "ref", "acontext"}
             ]
             clean_query = urlencode(kept, doseq=True)
-            return urlunparse((parsed.scheme, parsed.netloc, parsed.path, parsed.params, clean_query, ""))
+            return urlunparse((parsed.scheme or "https", parsed.netloc, parsed.path, parsed.params, clean_query, ""))
         except ValueError:
             return resolved
 
     def _extract_post_id(self, url: str) -> str:
-        for marker in ["/posts/", "/permalink/"]:
+        for marker in ("/posts/", "/permalink/"):
             if marker not in url:
                 continue
             suffix = url.split(marker, 1)[1]

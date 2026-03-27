@@ -56,6 +56,7 @@ class BrowserConfig:
             "a[href*='/posts/']",
             "a[href*='/permalink/']",
             "a[href*='permalink.php']",
+            "a[href*='/share/p/']",
         ]
     )
     selectors_load_more: List[str] = field(
@@ -72,27 +73,52 @@ class BrowserConfig:
             "button:has-text('Filters')",
             "div[role='button']:has-text('Filter')",
             "button:has-text('Filter')",
-            "div[role='button']:has-text('סינון')",
-            "button:has-text('סינון')",
-            "div[role='button']:has-text('פילטרים')",
-            "button:has-text('פילטרים')",
+            "div[role='button']:has-text('\u05e1\u05d9\u05e0\u05d5\u05df')",
+            "button:has-text('\u05e1\u05d9\u05e0\u05d5\u05df')",
+            "div[role='button']:has-text('\u05e4\u05d9\u05dc\u05d8\u05e8\u05d9\u05dd')",
+            "button:has-text('\u05e4\u05d9\u05dc\u05d8\u05e8\u05d9\u05dd')",
         ]
     )
     selectors_recent_posts: List[str] = field(
         default_factory=lambda: [
-            "div[role='button']:has-text('פוסטים אחרונים')",
-            "button:has-text('פוסטים אחרונים')",
+            "div[role='button']:has-text('\u05e4\u05d5\u05e1\u05d8\u05d9\u05dd \u05d0\u05d7\u05e8\u05d5\u05e0\u05d9\u05dd')",
+            "button:has-text('\u05e4\u05d5\u05e1\u05d8\u05d9\u05dd \u05d0\u05d7\u05e8\u05d5\u05e0\u05d9\u05dd')",
+            "div[role='button']:has-text('\u05d4\u05d7\u05d3\u05e9\u05d9\u05dd \u05d1\u05d9\u05d5\u05ea\u05e8')",
+            "button:has-text('\u05d4\u05d7\u05d3\u05e9\u05d9\u05dd \u05d1\u05d9\u05d5\u05ea\u05e8')",
             "div[role='button']:has-text('Most recent')",
             "button:has-text('Most recent')",
             "div[role='button']:has-text('Recent posts')",
+            "button:has-text('Recent posts')",
+            "div[role='button']:has-text('Newest')",
+            "button:has-text('Newest')",
+            "div[role='button']:has-text('Latest')",
+            "button:has-text('Latest')",
         ]
     )
     selectors_last_24_hours: List[str] = field(
         default_factory=lambda: [
-            "div[role='button']:has-text('24 שעות אחרונות')",
-            "button:has-text('24 שעות אחרונות')",
+            "div[role='button']:has-text('24 \u05e9\u05e2\u05d5\u05ea \u05d0\u05d7\u05e8\u05d5\u05e0\u05d5\u05ea')",
+            "button:has-text('24 \u05e9\u05e2\u05d5\u05ea \u05d0\u05d7\u05e8\u05d5\u05e0\u05d5\u05ea')",
             "div[role='button']:has-text('Last 24 hours')",
             "button:has-text('Last 24 hours')",
+            "div[role='button']:has-text('Past 24 hours')",
+            "button:has-text('Past 24 hours')",
+        ]
+    )
+    selectors_post_container: List[str] = field(
+        default_factory=lambda: [
+            "div[role='article']",
+            "div[data-pagelet='MainFeed'] div[role='article']",
+            "div[role='main'] div[role='article']",
+            "div[role='main']",
+        ]
+    )
+    selectors_expand_post_text: List[str] = field(
+        default_factory=lambda: [
+            "div[role='button']:has-text('See more')",
+            "span:has-text('See more')",
+            "div[role='button']:has-text('\u05e8\u05d0\u05d4 \u05e2\u05d5\u05d3')",
+            "span:has-text('\u05e8\u05d0\u05d4 \u05e2\u05d5\u05d3')",
         ]
     )
     selectors_post_ready: List[str] = field(
@@ -111,8 +137,17 @@ class BrowserConfig:
     selectors_post_publish: List[str] = field(
         default_factory=lambda: [
             "a[href*='create_time']",
+            "a[href*='/posts/'] span[dir='auto']",
             "abbr",
             "span[aria-hidden='false']",
+        ]
+    )
+    selectors_post_permalink: List[str] = field(
+        default_factory=lambda: [
+            "a[href*='/posts/']",
+            "a[href*='/permalink/']",
+            "a[href*='story_fbid=']",
+            "a[href*='fbid=']",
         ]
     )
     selectors_post_images: List[str] = field(

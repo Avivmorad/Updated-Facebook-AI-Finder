@@ -39,6 +39,11 @@ class ResultPresenter:
             "post_link": str(post.get("post_link", "")),
             "match_score": _to_float(item.get("match_score"), default=0.0),
             "short_summary": short_summary,
+            "publish_time": str(post.get("publish_date_normalized") or post.get("publish_date_raw") or post.get("publish_date", "")),
+            "extraction_status": str(post.get("extraction_quality", "")),
+            "detected_item": str(ai_match.get("detected_item", "")),
+            "confidence": _to_float(ai_match.get("confidence"), default=0.0),
+            "match_reason": str(ai_match.get("match_reason", "")),
         }
 
     def _build_detail_item(self, item: Dict[str, Any], rank: int, result_id: str) -> Dict[str, Any]:

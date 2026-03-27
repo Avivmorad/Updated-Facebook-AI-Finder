@@ -82,9 +82,11 @@ class PipelineRunner:
         try:
             user_query = self._stage_receive_user_input(raw_user_input, run_state)
             posts = self._stage_search_posts(user_query, opts, run_state)
-            relevant_posts, post_error_messages = self._stage_process_posts(posts, user_query, opts, run_state)
+            relevant_posts, post_error_messages, post_failures = self._stage_process_posts(posts, user_query, opts, run_state)
             ranked_posts = self._stage_ranking(relevant_posts, run_state)
             presented = self._stage_present_results(ranked_posts, run_state)
+            presented["post_failures"] = post_failures
+            presented["post_failure_count"] = len(post_failures)
             if run_state.status != RunStatus.STOPPED:
                 run_state.status = RunStatus.COMPLETED
             result = PipelineResult(
@@ -213,10 +215,11 @@ class PipelineRunner:
         user_query: UserQuery,
         options: PipelineOptions,
         run_state: PipelineRunState,
-    ) -> tuple[List[Dict[str, Any]], List[str]]:
+    ) -> tuple[List[Dict[str, Any]], List[str], List[Dict[str, str]]]:
         relevant_posts: List[Dict[str, Any]] = []
         post_errors = 0
         post_error_messages: List[str] = []
+        post_failures: List[Dict[str, str]] = []
         open_success = 0
         collect_success = 0
         time_filter_retained = 0
@@ -266,7 +269,8 @@ class PipelineRunner:
                     (
                         f"{post_label}: text={'yes' if collected.get('post_text') else 'no'}, "
                         f"images={len(collected.get('images', []))}, "
-                        f"publish_date={'yes' if collected.get('publish_date') else 'no'}."
+                        f"publish_date={'yes' if collected.get('publish_date') else 'no'}, "
+                        f"quality={collected.get('extraction_quality', 'unknown')}."
                     ),
                 )
 
@@ -334,6 +338,13 @@ class PipelineRunner:
                 )
                 post_errors += 1
                 post_error_messages.append(app_error.code)
+                post_failures.append(
+                    {
+                        "post_link": post_link,
+                        "post_index": str(index + 1),
+                        "error_code": app_error.code,
+                    }
+                )
                 log_event(logger, 30, "post_processing_error", index=index, error=app_error.code)
                 debug_app_error(app_error)
 
@@ -383,7 +394,7 @@ class PipelineRunner:
             ),
         )
 
-        return relevant_posts, post_error_messages
+        return relevant_posts, post_error_messages, post_failures
 
     def _stage_ranking(
         self,

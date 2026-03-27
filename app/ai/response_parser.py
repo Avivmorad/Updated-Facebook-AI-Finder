@@ -1,4 +1,5 @@
 import json
+import re
 from typing import Any, Dict, List, Tuple
 
 from app.domain.ai import AIMatchResult
@@ -15,8 +16,11 @@ def parse_ai_response(raw_text: str) -> Tuple[AIMatchResult | None, List[str], D
     try:
         parsed_json = json.loads(raw_text)
     except json.JSONDecodeError as exc:
-        logger.warning("Failed to parse AI JSON response: %s", str(exc))
-        return None, [f"invalid_json:{str(exc)}"], {}
+        extracted_json = _extract_json_object(raw_text)
+        if extracted_json is None:
+            logger.warning("Failed to parse AI JSON response: %s", str(exc))
+            return None, [f"invalid_json:{str(exc)}"], {}
+        parsed_json = extracted_json
 
     if not isinstance(parsed_json, dict):
         return None, ["ai_response_not_object"], {}
@@ -83,3 +87,29 @@ def _clamp_score(value: Any) -> float:
     except (TypeError, ValueError):
         numeric = 0.0
     return max(0.0, min(100.0, round(numeric, 2)))
+
+
+def _extract_json_object(raw_text: str) -> Dict[str, Any] | None:
+    text = str(raw_text or "").strip()
+    if not text:
+        return None
+
+    fenced = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, flags=re.DOTALL | re.IGNORECASE)
+    if fenced:
+        try:
+            parsed = json.loads(fenced.group(1))
+            if isinstance(parsed, dict):
+                return parsed
+        except json.JSONDecodeError:
+            pass
+
+    start = text.find("{")
+    end = text.rfind("}")
+    if start == -1 or end == -1 or end <= start:
+        return None
+    candidate = text[start : end + 1]
+    try:
+        parsed = json.loads(candidate)
+    except json.JSONDecodeError:
+        return None
+    return parsed if isinstance(parsed, dict) else None

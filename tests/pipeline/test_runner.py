@@ -22,14 +22,26 @@ class _FakeScraper:
             "post_link": opened_post["post_link"],
             "post_text": "Selling iPhone 13",
             "images": ["https://img/1"],
+            "image_count": 1,
+            "publish_date_raw": "2 hours ago",
+            "publish_date_normalized": "2 hours ago",
             "publish_date": "2 hours ago",
+            "extraction_quality": "good",
             "post_screenshot_path": "data/tmp/post_screenshots/post_1.png",
+            "screenshot_paths": ["data/tmp/post_screenshots/post_1.png"],
             "raw_post_data": {},
             "normalized_post_data": {
                 "post_link": opened_post["post_link"],
+                "post_id": opened_post["post_id"],
                 "post_text": "Selling iPhone 13",
                 "images": ["https://img/1"],
+                "image_count": 1,
+                "publish_date_raw": "2 hours ago",
+                "publish_date_normalized": "2 hours ago",
                 "publish_date": "2 hours ago",
+                "extraction_quality": "good",
+                "post_screenshot_path": "data/tmp/post_screenshots/post_1.png",
+                "screenshot_paths": ["data/tmp/post_screenshots/post_1.png"],
             },
             "extraction_warnings": [],
             "extraction_error": None,
@@ -76,7 +88,11 @@ class _FakeAIServiceNotRecent:
 class _FakeOldDateScraper(_FakeScraper):
     def collect_post_data(self, opened_post):
         payload = super().collect_post_data(opened_post)
+        payload["publish_date_raw"] = "2 days ago"
+        payload["publish_date_normalized"] = "2 days ago"
         payload["publish_date"] = "2 days ago"
+        payload["normalized_post_data"]["publish_date_raw"] = "2 days ago"
+        payload["normalized_post_data"]["publish_date_normalized"] = "2 days ago"
         payload["normalized_post_data"]["publish_date"] = "2 days ago"
         return payload
 

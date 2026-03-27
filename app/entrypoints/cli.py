@@ -148,7 +148,16 @@ def run_pipeline_from_input(
     pipeline_options: Optional[PipelineOptions] = None,
 ) -> int:
     debug_step("DBG_STARTUP_CHECK", "Checking startup configuration before run.")
-    warnings = validate_startup_config(require_api_key=True, require_browser_profile=True)
+    try:
+        warnings = validate_startup_config(require_api_key=True, require_browser_profile=True)
+    except ValueError as exc:
+        raise make_app_error(
+            code="ERR_STARTUP_CONFIG_INVALID",
+            summary_he="Startup configuration is invalid",
+            cause_he="One or more required startup settings are missing or invalid",
+            action_he="Fix the startup configuration listed in technical details and run again",
+            technical_details=str(exc),
+        ) from exc
     if warnings:
         for warning in warnings:
             logger.warning(warning)

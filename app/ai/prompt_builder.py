@@ -19,7 +19,8 @@ def build_ai_prompt(payload: AIRequestPayload) -> AIPromptPacket:
         "Analyze this Facebook groups post and return JSON.\n"
         "Determine whether the post is relevant to the user query, what item the post appears to offer, "
         "why it matches or does not match, the match score, your confidence, and if the post appears to be within the last 24 hours.\n"
-        "Use publish_date_text and parser_time_reason as hints only. The screenshot is the highest-priority signal for recency.\n\n"
+        "Use publish_date_text, publish_date_raw, extraction_quality, and parser_time_reason as hints only. "
+        "The screenshot is the highest-priority signal for recency.\n\n"
         "INPUT_PAYLOAD:\n"
         + json.dumps(payload.to_dict(), ensure_ascii=True, indent=2)
         + "\n\nEXPECTED_SCHEMA:\n"
