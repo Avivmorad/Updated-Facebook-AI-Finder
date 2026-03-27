@@ -6,6 +6,7 @@ from playwright.sync_api import Page
 
 from app.browser.browser_session_manager import BrowserSessionManager
 from app.browser.facebook_login_state_detector import FacebookLoginCheckResult, FacebookLoginStateDetector
+from app.browser.step_debug import capture_browser_step
 from app.config.browser import BrowserConfig
 from app.utils.app_errors import AppError, make_app_error
 from app.utils.debugging import debug_found, debug_step
@@ -84,12 +85,33 @@ class FacebookAccessAdapter:
             )
         page.wait_for_timeout(1200)
         debug_found("DBG_FACEBOOK_HOME_OK", "Facebook home page opened successfully.")
+        capture_browser_step(
+            self._config,
+            page=page,
+            step_code="FACEBOOK_HOME_OPENED",
+            message="Facebook home page opened successfully",
+            context="facebook_access",
+        )
 
     def ensure_logged_in(self, page: Page) -> None:
         result = self.get_login_check_result(page)
         if result.is_logged_in:
             debug_found("DBG_FACEBOOK_LOGIN_OK", "Facebook login is active in the selected profile.")
+            capture_browser_step(
+                self._config,
+                page=page,
+                step_code="FACEBOOK_LOGIN_OK",
+                message="Facebook authenticated session detected",
+                context="facebook_access",
+            )
             return
+        capture_browser_step(
+            self._config,
+            page=page,
+            step_code="FACEBOOK_LOGIN_MISSING",
+            message=f"Facebook authentication missing (state={result.state})",
+            context="facebook_access",
+        )
         raise FacebookAuthenticationRequiredError(
             app_error=make_app_error(
                 code="ERR_FACEBOOK_NOT_LOGGED_IN",
@@ -136,3 +158,10 @@ class FacebookAccessAdapter:
                 technical_details=f"url={url} ended_on=about:blank",
             )
         debug_found("DBG_FACEBOOK_NAVIGATE_OK", f"Navigation completed: {url}")
+        capture_browser_step(
+            self._config,
+            page=page,
+            step_code="FACEBOOK_NAVIGATE_OK",
+            message=f"Navigation completed: {url}",
+            context="facebook_access",
+        )

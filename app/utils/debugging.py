@@ -15,6 +15,7 @@ DEFAULT_TRACE_FILE = str(Path("data") / "logs" / "debug_trace.txt")
 _TRUTHY_VALUES = {"1", "true", "yes", "on"}
 _logger = get_logger(__name__)
 _override_enabled: Optional[bool] = None
+_override_terminal_output: Optional[bool] = None
 _trace_writer: Optional["_TraceWriter"] = None
 
 
@@ -49,12 +50,20 @@ class _TraceWriter:
             self.handle = None
 
 
-def configure_debugging(enabled: Optional[bool], trace_file_path: Optional[str] = None) -> None:
-    global _override_enabled
+def configure_debugging(
+    enabled: Optional[bool],
+    trace_file_path: Optional[str] = None,
+    terminal_output: Optional[bool] = None,
+) -> None:
+    global _override_enabled, _override_terminal_output
 
     _override_enabled = None if enabled is None else bool(enabled)
     if enabled is not None:
         os.environ["DEBUGGING"] = "true" if enabled else "false"
+
+    _override_terminal_output = None if terminal_output is None else bool(terminal_output)
+    if terminal_output is not None:
+        os.environ["DEBUG_TO_TERMINAL"] = "true" if terminal_output else "false"
 
     configure_debug_trace_file(trace_file_path)
 
@@ -91,6 +100,13 @@ def is_debugging_enabled() -> bool:
     if _override_enabled is not None:
         return _override_enabled
     value = str(os.getenv("DEBUGGING", "false")).strip().lower()
+    return value in _TRUTHY_VALUES
+
+
+def is_terminal_debug_enabled() -> bool:
+    if _override_terminal_output is not None:
+        return _override_terminal_output
+    value = str(os.getenv("DEBUG_TO_TERMINAL", "true")).strip().lower()
     return value in _TRUTHY_VALUES
 
 
@@ -138,7 +154,8 @@ def _emit(kind: str, code: str, message: str) -> None:
     normalized_message = str(message).strip() or "-"
     timestamp = datetime.now().strftime("%H:%M:%S")
     line = f"[DEBUG {timestamp}] {kind} {normalized_code} | {normalized_message}"
-    _safe_print(line)
+    if is_terminal_debug_enabled():
+        _safe_print(line)
 
     writer = _trace_writer
     if writer is None:
@@ -152,7 +169,8 @@ def _emit(kind: str, code: str, message: str) -> None:
             f"[DEBUG {timestamp}] WARN ERR_DEBUG_TRACE_SAVE_FAILED | "
             "Failed writing debug trace file, continuing with terminal output only."
         )
-        _safe_print(warn_line)
+        if is_terminal_debug_enabled():
+            _safe_print(warn_line)
 
 
 def _close_writer() -> None:

@@ -1,111 +1,157 @@
-# PROJECT_DEVELOPMENT_PHASES.md
+﻿# PROJECT_DEVELOPMENT_PHASES.md
 ## Delivery Phases
 
-This phase list tracks implementation order aligned to `Project_Flow.md`.
+This phase list tracks implementation order aligned to `PROJECT_RUNTIME_FLOW.md`.
+
+---
+
+## Latest Verification Snapshot (March 27, 2026)
+
+- Runtime command: `python start.py`
+- Runtime result:
+  - pipeline core status: `completed`
+  - processed posts: `20`
+  - kept ranked results: `3`
+  - elapsed seconds: `279.278`
+  - artifacts: `data/reports/latest.json`, `data/logs/debug_trace.txt`
+- Wrapper process result:
+  - `start.py` exit code: `1`
+  - terminal error after pipeline completion:
+    - `ERR_PIPELINE_UNEXPECTED`
+    - technical details: `'charmap' codec can't encode characters ...`
+
+Legend:
+- `DONE` = implemented and verified
+- `PARTIAL` = implemented but gate not fully green
+- `BLOCKED` = cannot proceed without fix/environment action
 
 ---
 
 ## Phase 1 - Spec Lock
 
-- keep `Project_Flow.md` authoritative
-- align all spec docs
+Status: `DONE`
+- [x] keep `PROJECT_RUNTIME_FLOW.md` authoritative
+- [x] align all spec docs
 
 ## Phase 2 - Foundation
 
-- validate config/startup
-- stable logging/debug trace
-- stable error catalog
+Status: `DONE`
+- [x] validate config/startup
+- [x] stable logging/debug trace
+- [x] stable error catalog
 
 ## Phase 3 - Facebook Access
 
-- browser profile startup
-- Facebook/session validation
-- groups feed navigation
+Status: `DONE`
+- [x] browser profile startup
+- [x] Facebook/session validation
+- [x] groups feed navigation
 
 ## Phase 4 - Feed Filters
 
-- enforce and verify `Recent posts`
-- apply `Last 24 hours` best effort
+Status: `DONE`
+- [x] enforce and verify `Recent posts`
+- [x] apply `Last 24 hours` best effort
 
 ## Phase 5 - Feed Scan
 
-- collect canonical links
-- dedupe
-- scan telemetry by round
+Status: `DONE`
+- [x] collect canonical links
+- [x] dedupe
+- [x] scan telemetry by round
 
 ## Phase 6 - Post Open
 
-- reliable post page loading
-- stable container readiness checks
+Status: `DONE`
+- [x] reliable post page loading
+- [x] stable container readiness checks
 
 ## Phase 7 - DOM Extraction
 
-- text, images, publish date raw/normalized, permalink, post id
+Status: `DONE`
+- [x] text, images, publish date raw/normalized, permalink, post id
 
 ## Phase 8 - Extraction Validation
 
-- derive `extraction_quality`
-- surface partial/failed extraction clearly
+Status: `DONE`
+- [x] derive `extraction_quality`
+- [x] surface partial/failed extraction clearly
 
 ## Phase 9 - Screenshot Capture
 
-- mandatory screenshot per post
-- element-first, fallback path coded
+Status: `DONE`
+- [x] mandatory screenshot per post
+- [x] element-first, fallback path coded
 
 ## Phase 10 - Data Processing
 
-- normalize final post schema
-- preserve diagnostics fields
+Status: `DONE`
+- [x] normalize final post schema
+- [x] preserve diagnostics fields
 
 ## Phase 11 - Time Decision
 
-- parser diagnostics retained
-- AI recency final decision enforced
+Status: `DONE`
+- [x] parser diagnostics retained
+- [x] AI recency final decision enforced
 
 ## Phase 12 - AI Input
 
-- build stable payload from normalized post + screenshot + diagnostics
+Status: `DONE`
+- [x] build stable payload from normalized post + screenshot + diagnostics
 
 ## Phase 13 - AI Analysis
 
-- parse and validate AI schema
+Status: `DONE`
+- [x] parse and validate AI schema
 
 ## Phase 14 - Relevance Filter
 
-- keep only relevant posts
+Status: `DONE`
+- [x] keep only relevant posts
 
 ## Phase 15 - Score
 
-- use AI match score only
+Status: `DONE`
+- [x] use AI match score only
 
 ## Phase 16 - Rank
 
-- deterministic descending ranking
+Status: `DONE`
+- [x] deterministic descending ranking
 
 ## Phase 17 - Result List
 
-- expose list fields needed for CLI/reporting
+Status: `DONE`
+- [x] expose list fields needed for CLI/reporting
 
 ## Phase 18 - Result Detail
 
-- expose full extracted payload + AI analysis
+Status: `DONE`
+- [x] expose full extracted payload + AI analysis
 
 ## Phase 19 - Logging
 
-- full stage observability
+Status: `DONE`
+- [x] full stage observability
 
 ## Phase 20 - Error Handling
 
-- per-post failure isolation
+Status: `DONE`
+- [x] per-post failure isolation
 
 ## Phase 21 - Performance
 
-- reduce scan/extraction inefficiency
+Status: `DONE`
+- [x] reduce scan/extraction inefficiency
 
 ## Phase 22 - Production Gate
 
-- pass:
-  - `pytest -q`
-  - `python scripts/doctor.py`
-  - `python scripts/doctor.py --check-facebook-session`
-  - `python start.py`
+Status: `PARTIAL`
+- [x] `pytest -q` (verified with `pytest -c pytest.ini -q`)
+- [x] `python scripts/check_runtime_setup.py`
+- [x] `python scripts/check_runtime_setup.py --check-facebook-session`
+- [ ] `python start.py` exits `0` end-to-end
+- Current blocker:
+  - pipeline completed successfully, but wrapper exits with encoding exception (`charmap`), so gate is not fully green yet.
+

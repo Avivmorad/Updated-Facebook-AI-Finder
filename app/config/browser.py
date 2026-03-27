@@ -45,6 +45,9 @@ class BrowserConfig:
     chrome_user_data_dir: str = field(default_factory=lambda: _env_text("CHROME_USER_DATA_DIR", ""))
     chrome_profile_directory: str = field(default_factory=lambda: _env_text("CHROME_PROFILE_DIRECTORY", ""))
     screenshots_dir: str = field(default_factory=lambda: _env_text("FB_SCREENSHOTS_DIR", "data/tmp/post_screenshots"))
+    step_debug_enabled: bool = field(default_factory=lambda: _env_bool("FB_STEP_DEBUG_ENABLED", False))
+    step_debug_dir: str = field(default_factory=lambda: _env_text("FB_STEP_DEBUG_DIR", "data/logs/browser_steps"))
+    slow_mo_ms: int = field(default_factory=lambda: _env_int("FB_SLOW_MO_MS", 0))
     headless: bool = field(default_factory=lambda: _env_bool("HEADLESS", False))
     timeout_ms: int = field(default_factory=lambda: _env_int("FB_TIMEOUT_MS", 15000))
     retries: int = field(default_factory=lambda: _env_int("FB_RETRIES", 2))
@@ -130,6 +133,7 @@ class BrowserConfig:
     selectors_post_text: List[str] = field(
         default_factory=lambda: [
             "div[role='main'] div[data-ad-preview='message']",
+            "div[role='article'] div[data-ad-preview='message']",
             "div[role='article'] div[dir='auto']",
             "div[role='main'] div[dir='auto']",
         ]
@@ -137,6 +141,11 @@ class BrowserConfig:
     selectors_post_publish: List[str] = field(
         default_factory=lambda: [
             "a[href*='create_time']",
+            "a[href*='/posts/'][aria-label]",
+            "a[aria-label*='ago']",
+            "a[aria-label*='\u05dc\u05e4\u05e0\u05d9']",
+            "span[aria-label*='ago']",
+            "span[aria-label*='\u05dc\u05e4\u05e0\u05d9']",
             "a[href*='/posts/'] span[dir='auto']",
             "abbr",
             "span[aria-hidden='false']",

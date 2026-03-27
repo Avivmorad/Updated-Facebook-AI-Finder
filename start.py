@@ -40,6 +40,19 @@ def _optional_int(value: Any) -> Optional[int]:
     return int(value)
 
 
+def _optional_bool(value: Any) -> Optional[bool]:
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return value
+    text = str(value).strip().lower()
+    if text in {"1", "true", "yes", "on"}:
+        return True
+    if text in {"0", "false", "no", "off"}:
+        return False
+    return None
+
+
 def _apply_env_override(name: str, value: Any) -> None:
     if value is None:
         return
@@ -63,12 +76,20 @@ def _apply_runtime_env_overrides() -> None:
     _apply_env_override("AI_MAX_OUTPUT_TOKENS", settings.AI_MAX_OUTPUT_TOKENS_OVERRIDE)
     _apply_env_override("AI_TEMPERATURE", settings.AI_TEMPERATURE_OVERRIDE)
 
-    _apply_env_override("HEADLESS", settings.HEADLESS_OVERRIDE)
+    # Default behavior: browser window is visible only while DEBUGGING is enabled.
+    # Explicit HEADLESS_OVERRIDE still wins when provided.
+    headless_override = settings.HEADLESS_OVERRIDE
+    if headless_override is None:
+        headless_override = not bool(settings.DEBUGGING)
+    _apply_env_override("HEADLESS", headless_override)
     _apply_env_override("FB_TIMEOUT_MS", settings.FB_TIMEOUT_MS_OVERRIDE)
     _apply_env_override("FB_RETRIES", settings.FB_RETRIES_OVERRIDE)
     _apply_env_override("FB_MAX_SCROLL_ROUNDS", settings.FB_MAX_SCROLL_ROUNDS_OVERRIDE)
     _apply_env_override("FB_SCROLL_PAUSE_MS", settings.FB_SCROLL_PAUSE_MS_OVERRIDE)
     _apply_env_override("FB_SCREENSHOTS_DIR", settings.FB_SCREENSHOTS_DIR_OVERRIDE)
+    _apply_env_override("FB_STEP_DEBUG_ENABLED", settings.FB_STEP_DEBUG_ENABLED_OVERRIDE)
+    _apply_env_override("FB_STEP_DEBUG_DIR", settings.FB_STEP_DEBUG_DIR_OVERRIDE)
+    _apply_env_override("FB_SLOW_MO_MS", settings.FB_SLOW_MO_MS_OVERRIDE)
 
 
 def _build_runtime_input():
@@ -94,7 +115,11 @@ def _build_runtime_input():
 
 
 def main() -> int:
-    configure_debugging(bool(settings.DEBUGGING), _optional_text(getattr(settings, "DEBUG_TRACE_FILE", None)))
+    configure_debugging(
+        bool(settings.DEBUGGING),
+        _optional_text(getattr(settings, "DEBUG_TRACE_FILE", None)),
+        terminal_output=_optional_bool(getattr(settings, "DEBUG_TERMINAL_OUTPUT", None)),
+    )
 
     try:
         load_dotenv()

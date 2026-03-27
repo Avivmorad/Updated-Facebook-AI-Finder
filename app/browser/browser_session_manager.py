@@ -11,6 +11,7 @@ from playwright.sync_api import (
 )
 
 from app.config.browser import BrowserConfig
+from app.browser.step_debug import capture_browser_step
 from app.utils.app_errors import make_app_error
 from app.utils.debugging import debug_found, debug_info, debug_step, debug_warning
 from app.utils.logger import get_logger, log_event
@@ -117,6 +118,13 @@ class BrowserSessionManager:
         self._page.set_default_navigation_timeout(self._config.timeout_ms)
         log_event(logger, 20, "browser_session_opened", timeout_ms=self._config.timeout_ms)
         debug_found("DBG_BROWSER_READY", "Google Chrome is ready for navigation.")
+        capture_browser_step(
+            self._config,
+            page=self._page,
+            step_code="BROWSER_READY",
+            message="Chrome context initialized and ready for navigation",
+            context="browser_session",
+        )
         return self
 
     @property
@@ -126,7 +134,7 @@ class BrowserSessionManager:
         return self._context
 
     def _launch_kwargs(self) -> dict:
-        return {
+        kwargs = {
             "channel": "chrome",
             "headless": self._config.headless,
             "args": [
@@ -134,6 +142,9 @@ class BrowserSessionManager:
                 f"--profile-directory={self._config.chrome_profile_directory}",
             ],
         }
+        if self._config.slow_mo_ms > 0:
+            kwargs["slow_mo"] = self._config.slow_mo_ms
+        return kwargs
 
     def _require_user_data_dir(self) -> Path:
         configured = self._config.chrome_user_data_dir.strip()

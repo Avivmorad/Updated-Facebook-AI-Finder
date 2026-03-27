@@ -5,6 +5,7 @@ from time import perf_counter
 from typing import Any, Dict, List, Optional
 
 from app.ai.ai_service import AIAnalysisService
+from app.browser.step_debug import reset_step_debug_workspace
 from app.config.browser import BrowserConfig
 from app.domain.input import UserQuery
 from app.domain.pipeline import (
@@ -76,6 +77,7 @@ class PipelineRunner:
 
         log_event(logger, 20, "pipeline_started", max_posts=opts.max_posts)
         debug_step("DBG_PIPELINE_START", "Starting a new pipeline run.")
+        reset_step_debug_workspace(BrowserConfig())
         self._reset_screenshot_workspace()
         start = perf_counter()
 

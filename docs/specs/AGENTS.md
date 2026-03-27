@@ -1,7 +1,7 @@
-# AGENTS.md
+﻿# AGENTS.md
 ## Execution Rules for Coding Agents
 
-`docs/specs/Project_Flow.md` is the source of truth.
+`docs/specs/PROJECT_RUNTIME_FLOW.md` is the source of truth.
 
 ---
 
@@ -62,11 +62,12 @@ Excluded:
 
 A change is done only if:
 
-- behavior matches `Project_Flow.md`
+- behavior matches `PROJECT_RUNTIME_FLOW.md`
 - tests pass
 - live gate passes:
   - `pytest -q`
-  - `python scripts/doctor.py`
-  - `python scripts/doctor.py --check-facebook-session`
+  - `python scripts/check_runtime_setup.py`
+  - `python scripts/check_runtime_setup.py --check-facebook-session`
   - `python start.py`
 - debug trace and JSON artifact remain readable and consistent
+

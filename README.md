@@ -1,4 +1,4 @@
-# Facebook Groups Post Finder & Matcher
+﻿# Facebook Groups Post Finder & Matcher
 
 ## מה זה?
 
@@ -276,7 +276,7 @@ python start.py
 הרץ:
 
 ```bash
-python scripts/run_app.py --mode doctor
+python scripts/project_launcher.py --mode doctor
 ```
 
 מה זה עושה:
@@ -296,7 +296,7 @@ python scripts/run_app.py --mode doctor
 הרץ:
 
 ```bash
-python scripts/run_app.py --mode doctor-session
+python scripts/project_launcher.py --mode doctor-session
 ```
 
 מה זה עושה:
@@ -311,7 +311,7 @@ python scripts/run_app.py --mode doctor-session
 הרץ:
 
 ```bash
-pytest -c tests/pytest.ini -q
+pytest -c pytest.ini -q
 ```
 
 מה אתה מצפה לראות:
@@ -327,19 +327,19 @@ pytest -c tests/pytest.ini -q
 ### הרצה דרך helper launcher
 
 ```bash
-python scripts/run_app.py --mode start
+python scripts/project_launcher.py --mode start
 ```
 
 זה פשוט מריץ את `start.py`. (נוח אם אתה אוהב לעבוד דרך launcher)
 
 ```bash
-python scripts/run_app.py --mode test
+python scripts/project_launcher.py --mode test
 ```
 
 זה מריץ את כל הטסטים.
 
 ```bash
-python scripts/run_app.py --mode file
+python scripts/project_launcher.py --mode file
 ```
 
 זה מריץ את ה־CLI במצב file.
@@ -407,7 +407,7 @@ data/run_history.json
 - משנים: `settings.py`
 - מריצים: `python start.py`
 - אם רוצים לראות הכול: `DEBUGGING = True`
-- אם רוצים לבדוק שהכול תקין: `python scripts/run_app.py --mode doctor`
+- אם רוצים לבדוק שהכול תקין: `python scripts/project_launcher.py --mode doctor`
 
 ## למפתחים
 
@@ -416,3 +416,4 @@ data/run_history.json
 - `docs/specs/SYSTEM_DESIGN.md`
 - `docs/specs/PROJECT_DEVELOPMENT_PHASES.md`
 - `docs/specs/TASKS.md`
+

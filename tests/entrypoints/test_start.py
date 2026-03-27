@@ -1,3 +1,5 @@
+import os
+
 import start
 
 
@@ -14,10 +16,31 @@ def test_start_main_does_not_emit_dbg_trace_file_line(monkeypatch, capsys):
     monkeypatch.setattr(start.settings, "SAVE_RUN_HISTORY", False)
     monkeypatch.setattr(start.settings, "OUTPUT_JSON", None)
     monkeypatch.setattr(start.settings, "DEBUG_TRACE_FILE", None)
+    monkeypatch.setattr(start.settings, "DEBUG_TERMINAL_OUTPUT", False)
 
     code = start.main()
     output = capsys.readouterr().out
 
     assert code == 0
     assert "DBG_TRACE_FILE" not in output
-    assert "DBG_RUN_END" in output
+    assert "DBG_RUN_END" not in output
+
+
+def test_apply_runtime_env_overrides_sets_headless_true_when_debugging_disabled(monkeypatch):
+    monkeypatch.setattr(start.settings, "DEBUGGING", False)
+    monkeypatch.setattr(start.settings, "HEADLESS_OVERRIDE", None)
+    monkeypatch.setenv("HEADLESS", "false")
+
+    start._apply_runtime_env_overrides()
+
+    assert os.environ["HEADLESS"] == "true"
+
+
+def test_apply_runtime_env_overrides_sets_headless_false_when_debugging_enabled(monkeypatch):
+    monkeypatch.setattr(start.settings, "DEBUGGING", True)
+    monkeypatch.setattr(start.settings, "HEADLESS_OVERRIDE", None)
+    monkeypatch.setenv("HEADLESS", "true")
+
+    start._apply_runtime_env_overrides()
+
+    assert os.environ["HEADLESS"] == "false"

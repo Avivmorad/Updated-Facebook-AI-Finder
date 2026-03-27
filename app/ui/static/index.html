@@ -1,0 +1,349 @@
+﻿<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Facebook AI Finder | ×ž×ž×©×§ ×¨×™×¦×” ×•×ž×¢×§×‘</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="hero-kicker">Facebook Groups Post Finder</p>
+          <h1>×ž×ž×©×§ ×¤×©×•×˜ ×œ×¨×™×¦×”, ×ª×•×¦××•×ª ×•Ö¾Tracking</h1>
+          <p class="hero-subtitle">
+            ×—×™×¤×•×©, ×ž×¢×§×‘ ×”×ª×§×“×ž×•×ª, ×ª×•×¦××•×ª, ×•×ª×¦×•×’×ª Debug ×‘×¨×•×¨×” ×¢× ×ª×ž×™×›×” ×ž×œ××” ×‘×¢×‘×¨×™×ª.
+          </p>
+        </div>
+      </header>
+
+      <section class="panel run-panel">
+        <div class="panel-head">
+          <div>
+            <h2>×”×¨×¦×” ×—×“×©×”</h2>
+            <p class="panel-subtitle">×”×›× ×¡ ×—×™×¤×•×©, ×”×¤×¢×œ, ×•×¨××” ××ª ×ž×¦×‘ ×”×¨×™×¦×” ×‘×–×ž×Ÿ ××ž×ª.</p>
+          </div>
+        </div>
+
+        <form id="run-form" class="run-form">
+          <div class="field field-query">
+            <label for="query-input">×—×™×¤×•×©</label>
+            <input
+              id="query-input"
+              name="query"
+              type="text"
+              dir="auto"
+              inputmode="search"
+              autocomplete="off"
+              placeholder="×œ×ž×©×œ: ×¡×¤×”â€¦"
+              required
+            />
+          </div>
+
+          <div class="field field-small">
+            <label for="max-posts-input">×ž×§×¡×™×ž×•× ×¤×•×¡×˜×™×</label>
+            <input
+              id="max-posts-input"
+              name="max_posts"
+              type="number"
+              min="1"
+              inputmode="numeric"
+              value="20"
+              required
+            />
+          </div>
+
+          <div class="field field-small">
+            <label for="slow-mo-input">Slow-mo (ms)</label>
+            <input
+              id="slow-mo-input"
+              name="slow_mo_ms"
+              type="number"
+              min="0"
+              step="50"
+              inputmode="numeric"
+              value="250"
+            />
+          </div>
+
+          <div class="field field-modes">
+            <div class="toggle-grid">
+              <label class="toggle-card" for="tracking-mode-input">
+                <span class="toggle-copy">
+                  <strong>Tracking</strong>
+                  <small>תצוגת שלבים, סטטוס ריצה, אזהרות וצילומי דפדפן מתוך האוטומציה</small>
+                </span>
+                <input id="tracking-mode-input" name="tracking_mode" type="checkbox" />
+                <span class="toggle-switch" aria-hidden="true"></span>
+              </label>
+
+              <label class="toggle-card" for="debug-log-input">
+                <span class="toggle-copy">
+                  <strong>Debug Log</strong>
+                  <small>לוג הערות ה-Debug בתוך הממשק, בלי להעמיס על הטרמינל</small>
+                </span>
+                <input id="debug-log-input" name="debug_log" type="checkbox" />
+                <span class="toggle-switch" aria-hidden="true"></span>
+              </label>
+
+              <label class="toggle-card" for="browser-visible-input">
+                <span class="toggle-copy">
+                  <strong>פתח דפדפן</strong>
+                  <small>פותח את Chrome על המסך כדי לראות בעיניים מה קורה בזמן הריצה</small>
+                </span>
+                <input id="browser-visible-input" name="browser_visible" type="checkbox" />
+                <span class="toggle-switch" aria-hidden="true"></span>
+              </label>
+            </div>
+            <p id="run-modes-note" class="input-hint">Slow-mo רלוונטי רק כש-Tracking או פתיחת הדפדפן פעילים.</p>
+          </div>
+
+          <div class="field field-actions">
+            <div class="action-row">
+              <button id="run-button" type="submit">התחל ריצה</button>
+              <button id="stop-button" class="secondary-button stop-button" type="button" disabled>עצור ריצה</button>
+            </div>
+          </div>
+        </form>
+
+        <p id="run-message" class="inline-message" aria-live="polite"></p>
+      </section>
+
+      <section class="panel overview-panel">
+        <div class="panel-head">
+          <div>
+            <h2>×ž×¦×‘ ×¨×™×¦×”</h2>
+            <p class="panel-subtitle">×ª×ž×•× ×ª ×ž×¦×‘ ×ž×”×™×¨×” ×©×œ ×”×¨×™×¦×” ×”× ×•×›×—×™×ª ××• ×”××—×¨×•× ×”.</p>
+          </div>
+        </div>
+
+        <div class="overview-top">
+          <div class="status-strip">
+            <span class="status-pill"><strong>×ž×¦×‘:</strong> <span id="status-label">×ž×ž×ª×™×Ÿ</span></span>
+            <span class="status-pill"><strong>×—×™×¤×•×©:</strong> <span id="status-query">-</span></span>
+            <span class="status-pill"><strong>Run ID:</strong> <span id="status-run-id" class="ltr-value">-</span></span>
+          </div>
+          <div class="progress-meta">
+            <span id="progress-label">0%</span>
+            <span id="progress-detail">0 / 0</span>
+          </div>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+
+        <div class="overview-grid">
+          <article class="metric-card">
+            <span>×ª×•×¦××•×ª</span>
+            <strong id="metric-total-results">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>× ×¡×¨×§×•</span>
+            <strong id="metric-processed-posts">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>×ž×©×š ×¨×™×¦×”</span>
+            <strong id="metric-elapsed-seconds">0.00</strong>
+          </article>
+          <article class="metric-card">
+            <span>×¡×™×‘×ª ×¢×¦×™×¨×”</span>
+            <strong id="metric-stop-reason">-</strong>
+          </article>
+        </div>
+
+        <div class="paths-grid">
+          <p class="path-line"><strong>×“×•×— JSON:</strong> <code id="report-path" class="ltr-value">data/reports/latest.json</code></p>
+          <p class="path-line"><strong>Debug Trace:</strong> <code id="trace-path" class="ltr-value">data/logs/debug_trace.txt</code></p>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel results-panel">
+          <div class="panel-head">
+            <div>
+              <h2>×¨×©×™×ž×ª ×ª×•×¦××•×ª</h2>
+              <p class="panel-subtitle">×‘×—×¨ ×ª×•×¦××” ×›×“×™ ×œ×¨××•×ª ×¤×™×¨×•×˜ ×ž×œ×.</p>
+            </div>
+          </div>
+          <div id="results-list" class="results-list" aria-live="polite"></div>
+        </article>
+
+        <article class="panel detail-panel">
+          <div class="panel-head">
+            <div>
+              <h2>×¤×™×¨×•×˜ ×ª×•×¦××”</h2>
+              <p class="panel-subtitle">×ž×™×“×¢ ×ž×œ× ×¢×œ ×”×¤×•×¡×˜ ×©× ×‘×—×¨.</p>
+            </div>
+          </div>
+
+          <div id="result-detail-empty" class="empty-state">××™×Ÿ ×¢×“×™×™×Ÿ ×ª×•×¦××” ×©× ×‘×—×¨×”.</div>
+
+          <div id="result-detail-card" class="detail-card is-hidden">
+            <div class="detail-top">
+              <div>
+                <p class="detail-label">×¦×™×•×Ÿ ×”×ª××ž×”</p>
+                <strong id="detail-score">0</strong>
+              </div>
+              <div>
+                <p class="detail-label">×ª××¨×™×š</p>
+                <strong id="detail-time">-</strong>
+              </div>
+              <div>
+                <p class="detail-label">××™×›×•×ª ×—×™×œ×•×¥</p>
+                <strong id="detail-quality">-</strong>
+              </div>
+            </div>
+
+            <div class="detail-block">
+              <p class="detail-label">×¡×™×›×•×</p>
+              <p id="detail-summary" class="detail-text">-</p>
+            </div>
+
+            <div class="detail-block">
+              <p class="detail-label">×¡×™×‘×ª ×”×ª××ž×”</p>
+              <p id="detail-reason" class="detail-text">-</p>
+            </div>
+
+            <div class="detail-block">
+              <p class="detail-label">×§×™×©×•×¨ ×œ×¤×•×¡×˜</p>
+              <a id="detail-link" class="detail-link ltr-value" href="#" target="_blank" rel="noopener noreferrer">-</a>
+            </div>
+
+            <details class="detail-raw">
+              <summary>JSON ×˜×›× ×™</summary>
+              <pre id="result-detail-json" class="json-box">××™×Ÿ ×¤×¨×˜×™× ×œ×”×¦×’×”.</pre>
+            </details>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel history-panel">
+        <div class="panel-head">
+          <div>
+            <h2>×”×™×¡×˜×•×¨×™×™×ª ×¨×™×¦×•×ª</h2>
+            <p class="panel-subtitle">×ª×ž×¦×™×ª ×©×œ ×”×¨×™×¦×•×ª ×”××—×¨×•× ×•×ª ×©× ×©×ž×¨×•.</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>×–×ž×Ÿ</th>
+                <th>×ž×¦×‘</th>
+                <th>×—×™×¤×•×©</th>
+                <th>×ª×•×¦××•×ª</th>
+                <th>×˜×•×¤×œ×•</th>
+              </tr>
+            </thead>
+            <tbody id="history-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tracking-panel" class="panel tracking-panel is-hidden">
+        <div class="panel-head">
+          <div>
+            <h2>כלי מעקב ו-Debug</h2>
+            <p class="panel-subtitle">הפאנלים כאן מוצגים לפי המצבים שבחרת: Tracking, לוג Debug, או שניהם.</p>
+          </div>
+          <button id="tracking-collapse-button" class="secondary-button" type="button" aria-expanded="true">
+            ×”×¡×ª×¨ ×ž×¢×§×‘
+          </button>
+        </div>
+
+        <div id="tracking-content" class="tracking-content">
+          <section id="tracking-live-sections" class="tracking-grid">
+            <article class="tracking-card browser-card">
+              <div class="card-head">
+                <h3>×ª×¦×•×’×ª ×“×¤×“×¤×Ÿ ×—×™×”</h3>
+                <span id="browser-live-step" class="mini-badge">×ž×ž×ª×™×Ÿ</span>
+              </div>
+              <div class="browser-stage">
+                <div id="browser-live-empty" class="empty-state">×ž×¦×‘ Tracking ×œ× ×”×¦×™×’ ×¢×“×™×™×Ÿ ×¦×™×œ×•×ž×™ ×“×¤×“×¤×Ÿ.</div>
+                <img id="browser-live-image" class="browser-live-image is-hidden" alt="×ª×¦×•×’×ª ×“×¤×“×¤×Ÿ ×—×™×”" />
+              </div>
+              <div class="browser-meta">
+                <p><strong>×©×œ×‘:</strong> <span id="browser-live-message">-</span></p>
+                <p><strong>×–×ž×Ÿ:</strong> <span id="browser-live-time">-</span></p>
+                <p><strong>URL:</strong> <span id="browser-live-url" class="ltr-value">-</span></p>
+              </div>
+              <div id="browser-steps-strip" class="browser-steps-strip"></div>
+            </article>
+
+            <article class="tracking-card runtime-card">
+              <div class="card-head">
+                <h3>×¡×˜×˜×•×¡ ×¨×™×¦×” ×—×™</h3>
+              </div>
+              <div class="runtime-grid">
+                <div class="runtime-item">
+                  <span>×©×œ×‘ × ×•×›×—×™</span>
+                  <strong id="runtime-stage">-</strong>
+                </div>
+                <div class="runtime-item runtime-item-wide">
+                  <span>×¤×¢×•×œ×” × ×•×›×—×™×ª</span>
+                  <strong id="runtime-action">-</strong>
+                </div>
+                <div class="runtime-item">
+                  <span>× ×¡×¨×§×•</span>
+                  <strong id="runtime-scanned">0</strong>
+                </div>
+                <div class="runtime-item">
+                  <span>×”×ª×§×‘×œ×•</span>
+                  <strong id="runtime-accepted">0</strong>
+                </div>
+                <div class="runtime-item">
+                  <span>× ×“×—×•</span>
+                  <strong id="runtime-rejected">0</strong>
+                </div>
+              </div>
+            </article>
+
+            <article class="tracking-card warnings-card">
+              <div class="card-head">
+                <h3>××–×”×¨×•×ª ×•×©×’×™××•×ª</h3>
+              </div>
+              <div id="warnings-list" class="warnings-list"></div>
+            </article>
+          </section>
+
+          <section id="tracking-log-sections" class="tracking-log-grid">
+            <article class="tracking-card action-log-card">
+              <div class="card-head">
+                <h3>×œ×•×’ ×¤×¢×•×œ×•×ª ×—×™</h3>
+                <div class="debug-controls">
+                  <label for="debug-include-info">
+                    <input type="checkbox" id="debug-include-info" />
+                    INFO
+                  </label>
+                  <label for="debug-include-technical">
+                    <input type="checkbox" id="debug-include-technical" />
+                    Technical
+                  </label>
+                  <button id="debug-clear" class="secondary-button" type="button">× ×§×”</button>
+                </div>
+              </div>
+              <div id="debug-timeline" class="timeline" aria-live="polite"></div>
+            </article>
+
+            <article class="tracking-card raw-log-card">
+              <div class="card-head">
+                <h3>Trace ×˜×›× ×™</h3>
+              </div>
+              <textarea id="debug-text-box" class="debug-text-box" readonly></textarea>
+            </article>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
+
+

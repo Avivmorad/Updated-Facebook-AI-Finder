@@ -1,6 +1,6 @@
-import json
+﻿import json
 
-from scripts.manual_extraction_probe import _load_post_links
+from scripts.extract_posts_from_saved_links import _load_post_links
 
 
 def test_load_post_links_accepts_list_payload(tmp_path):
@@ -17,3 +17,4 @@ def test_load_post_links_accepts_object_payload(tmp_path):
 
     links = _load_post_links(path)
     assert links == ["https://a"]
+

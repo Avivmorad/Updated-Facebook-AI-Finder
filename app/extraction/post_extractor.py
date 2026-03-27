@@ -5,7 +5,7 @@ import hashlib
 import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, parse_qsl, urlencode, urlparse, urlunparse
 
 from playwright.sync_api import ElementHandle
 from playwright.sync_api import Error as PlaywrightError
@@ -150,7 +150,7 @@ class PostExtractor:
     def _extract_raw_post(self, page: Page, *, post_link: str, fallback_post_id: str) -> Dict[str, Any]:
         publish_raw = self._extract_publish_date_raw(page)
         publish_normalized = _normalize_publish_date_text(publish_raw)
-        permalink = self._extract_permalink(page) or post_link
+        permalink = self._extract_permalink(page, fallback_link=post_link) or post_link
         post_id = _extract_post_id_from_link(permalink) or fallback_post_id or _extract_post_id_from_link(post_link)
         screenshot_path, screenshot_paths = self._capture_post_screenshot(page, permalink)
         return {
@@ -199,7 +199,8 @@ class PostExtractor:
                     return candidate_text
         return ""
 
-    def _extract_permalink(self, page: Page) -> str:
+    def _extract_permalink(self, page: Page, *, fallback_link: str = "") -> str:
+        candidates: List[Dict[str, Any]] = []
         for selector in self._config.selectors_post_permalink:
             try:
                 nodes = page.query_selector_all(selector)
@@ -210,30 +211,32 @@ class PostExtractor:
                     href = (node.get_attribute("href") or "").strip()
                 except PlaywrightError:
                     continue
-                if not href:
+                normalized = _normalize_post_permalink_href(href)
+                if not normalized:
                     continue
-                resolved = href
-                if href.startswith("/"):
-                    resolved = f"https://www.facebook.com{href}"
-                if "/posts/" in resolved or "/permalink/" in resolved:
-                    return resolved
-        return ""
+                candidates.append(_build_permalink_candidate(node=node, normalized_href=normalized, selector=selector))
+
+        best = _select_best_permalink_candidate(candidates)
+        if best is not None:
+            return str(best.get("href") or "").strip()
+        return _normalize_post_permalink_href(fallback_link)
 
     def _first_text(self, page: Page, selectors: List[str]) -> str:
+        candidates: List[Dict[str, Any]] = []
         for selector in selectors:
             try:
-                node = page.query_selector(selector)
+                nodes = page.query_selector_all(selector)
             except PlaywrightError:
                 continue
-            if node is None:
-                continue
-            try:
-                text = (node.inner_text() or "").strip()
-            except PlaywrightError:
-                continue
-            if text:
-                return text
-        return ""
+            for node in nodes[:20]:
+                candidate = _build_text_candidate(node=node, selector=selector)
+                if candidate is not None:
+                    candidates.append(candidate)
+
+        best = _select_best_text_candidate(candidates)
+        if best is None:
+            return ""
+        return str(best.get("text") or "").strip()
 
     def _extract_images(self, page: Page) -> List[str]:
         urls: List[str] = []
@@ -294,13 +297,26 @@ class PostExtractor:
             return "", []
 
     def _locate_post_container(self, page: Page) -> Optional[ElementHandle]:
+        candidates: List[Dict[str, Any]] = []
+        seen_signatures: Set[str] = set()
         for selector in self._config.selectors_post_container:
             try:
-                node = page.query_selector(selector)
+                nodes = page.query_selector_all(selector)
             except PlaywrightError:
                 continue
-            if node is not None:
-                return node
+            for node in nodes[:20]:
+                candidate = _build_container_candidate(node=node, selector=selector)
+                if candidate is None:
+                    continue
+                signature = str(candidate.get("signature") or "")
+                if signature in seen_signatures:
+                    continue
+                seen_signatures.add(signature)
+                candidates.append(candidate)
+
+        best = _select_best_container_candidate(candidates)
+        if best is not None:
+            return best.get("node")
         return None
 
 
@@ -368,6 +384,306 @@ def _extract_iso_datetime_from_timestamp(value: str) -> str:
         return datetime.fromtimestamp(timestamp, tz=timezone.utc).isoformat()
     except (OverflowError, ValueError, OSError):
         return ""
+
+
+def _normalize_post_permalink_href(href: str) -> str:
+    cleaned = str(href or "").strip()
+    if not cleaned:
+        return ""
+
+    resolved = cleaned
+    if cleaned.startswith("/"):
+        resolved = f"https://www.facebook.com{cleaned}"
+    if not resolved.startswith("http"):
+        return ""
+
+    try:
+        parsed = urlparse(resolved)
+    except ValueError:
+        return ""
+
+    host = parsed.netloc.lower()
+    if host and "facebook.com" not in host and "fb.com" not in host:
+        return ""
+
+    path = parsed.path.lower()
+    query = parse_qs(parsed.query)
+    if "/photo" in path or path.endswith("photo.php") or "set" in query:
+        return ""
+    if "/posts/" not in path and "/permalink/" not in path and "story_fbid" not in query and "fbid" not in query:
+        return ""
+
+    kept_items = []
+    for key, value in parse_qsl(parsed.query, keep_blank_values=True):
+        if key.startswith("__"):
+            continue
+        if key in {"comment_id", "reply_comment_id", "notif_id", "notif_t", "ref", "acontext"}:
+            continue
+        kept_items.append((key, value))
+
+    if "/groups/" in path and "/posts/" in path:
+        kept_items = [(key, value) for (key, value) in kept_items if key not in {"story_fbid", "id"}]
+
+    query_text = urlencode(kept_items, doseq=True)
+    return urlunparse((parsed.scheme or "https", parsed.netloc, parsed.path, parsed.params, query_text, ""))
+
+
+def _looks_like_permalink_text(value: str) -> bool:
+    text = str(value or "").strip()
+    if not text:
+        return False
+    lowered = text.lower()
+    if _looks_like_publish_date_hint(text):
+        return True
+    markers = ("comment", "תגובה", "share", "שיתוף", "like", "לייק")
+    return any(marker in lowered for marker in markers)
+
+
+def _safe_box(node: ElementHandle) -> Dict[str, float]:
+    try:
+        box = node.bounding_box()
+    except PlaywrightError:
+        box = None
+    if not box:
+        return {"width": 0.0, "height": 0.0}
+    return {
+        "width": float(box.get("width", 0.0) or 0.0),
+        "height": float(box.get("height", 0.0) or 0.0),
+    }
+
+
+def _safe_visible(node: ElementHandle) -> bool:
+    try:
+        return bool(node.is_visible())
+    except PlaywrightError:
+        return False
+
+
+def _safe_label_text(node: ElementHandle) -> str:
+    parts = [
+        _safe_inner_text(node),
+        _safe_get_attribute(node, "aria-label"),
+        _safe_get_attribute(node, "title"),
+    ]
+    return " ".join(part for part in parts if part).strip()
+
+
+def _build_text_candidate(node: ElementHandle, selector: str) -> Optional[Dict[str, Any]]:
+    text = _safe_inner_text(node).strip()
+    if not text:
+        return None
+
+    box = _safe_box(node)
+    visible = _safe_visible(node)
+    return {
+        "node": node,
+        "selector": selector,
+        "text": text,
+        "text_length": len(text),
+        "visible": visible,
+        "width": box["width"],
+        "height": box["height"],
+    }
+
+
+def _build_permalink_candidate(node: ElementHandle, normalized_href: str, selector: str) -> Dict[str, Any]:
+    box = _safe_box(node)
+    label = _safe_label_text(node)
+    return {
+        "node": node,
+        "selector": selector,
+        "href": normalized_href,
+        "visible": _safe_visible(node),
+        "width": box["width"],
+        "height": box["height"],
+        "label_length": len(label),
+        "label_text": label,
+    }
+
+
+def _build_container_candidate(node: ElementHandle, selector: str) -> Optional[Dict[str, Any]]:
+    box = _safe_box(node)
+    if box["width"] < 240 or box["height"] < 180:
+        return None
+
+    try:
+        metrics = node.evaluate(
+            """
+            (element) => {
+              const text = (element.innerText || "").trim();
+              const links = Array.from(element.querySelectorAll("a[href]"));
+              const images = Array.from(element.querySelectorAll("img[src^='http']"));
+              const actions = Array.from(element.querySelectorAll("div[role='button'], button"));
+              const role = element.getAttribute("role") || "";
+              const articleDescendantCount = element.querySelectorAll("div[role='article']").length;
+              const actionText = actions.map((item) => (item.innerText || "").trim()).join(" | ");
+              const permalinkCount = links.filter((item) => {
+                const href = item.getAttribute("href") || "";
+                return href.includes("/posts/") || href.includes("/permalink/") || href.includes("story_fbid=");
+              }).length;
+              const photoLinkCount = links.filter((item) => {
+                const href = item.getAttribute("href") || "";
+                return href.includes("/photo") || href.includes("photo.php") || href.includes("set=");
+              }).length;
+              return {
+                textLength: text.length,
+                permalinkCount,
+                photoLinkCount,
+                imageCount: images.length,
+                actionCount: actions.length,
+                articleDescendantCount,
+                actionText,
+                role,
+                signature: `${element.tagName}|${role}|${text.slice(0, 120)}`,
+              };
+            }
+            """
+        )
+    except PlaywrightError:
+        return None
+
+    return {
+        "node": node,
+        "selector": selector,
+        "visible": _safe_visible(node),
+        "width": box["width"],
+        "height": box["height"],
+        "text_length": int(metrics.get("textLength", 0) or 0),
+        "permalink_count": int(metrics.get("permalinkCount", 0) or 0),
+        "photo_link_count": int(metrics.get("photoLinkCount", 0) or 0),
+        "image_count": int(metrics.get("imageCount", 0) or 0),
+        "action_count": int(metrics.get("actionCount", 0) or 0),
+        "article_descendant_count": int(metrics.get("articleDescendantCount", 0) or 0),
+        "action_text": str(metrics.get("actionText", "") or ""),
+        "role": str(metrics.get("role", "") or ""),
+        "signature": str(metrics.get("signature", "") or ""),
+    }
+
+
+def _select_best_text_candidate(candidates: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    best: Optional[Dict[str, Any]] = None
+    best_score = float("-inf")
+
+    for candidate in candidates:
+        text = str(candidate.get("text") or "").strip()
+        if len(text) < 8:
+            continue
+
+        width = float(candidate.get("width", 0.0) or 0.0)
+        height = float(candidate.get("height", 0.0) or 0.0)
+        visible = bool(candidate.get("visible"))
+        selector = str(candidate.get("selector") or "")
+
+        score = 0.0
+        if visible:
+            score += 400.0
+        score += min(len(text) * 2.0, 700.0)
+        score += min((width * height) / 150.0, 500.0)
+        if width < 80 or height < 18:
+            score -= 500.0
+        if _looks_like_publish_date_hint(text):
+            score -= 450.0
+        if "data-ad-preview='message'" in selector:
+            score += 180.0
+        if "div[role='article']" in selector:
+            score += 80.0
+
+        if score > best_score:
+            best_score = score
+            best = candidate
+
+    return best
+
+
+def _select_best_permalink_candidate(candidates: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    best: Optional[Dict[str, Any]] = None
+    best_score = float("-inf")
+
+    for candidate in candidates:
+        href = str(candidate.get("href") or "").strip()
+        if not href:
+            continue
+
+        width = float(candidate.get("width", 0.0) or 0.0)
+        height = float(candidate.get("height", 0.0) or 0.0)
+        visible = bool(candidate.get("visible"))
+        selector = str(candidate.get("selector") or "")
+        label_text = str(candidate.get("label_text") or "")
+
+        score = 0.0
+        if visible:
+            score += 250.0
+        score += min(width * height, 10000.0) / 50.0
+        score += min(float(candidate.get("label_length", 0) or 0) * 6.0, 180.0)
+        if width < 24 or height < 12:
+            score -= 320.0
+        if _looks_like_publish_date_hint(label_text):
+            score += 180.0
+        elif _looks_like_permalink_text(label_text):
+            score += 80.0
+        if "/groups/" in href and "/posts/" in href:
+            score += 250.0
+        elif "/permalink/" in href:
+            score += 220.0
+        elif "story_fbid=" in href:
+            score += 180.0
+        elif "fbid=" in href:
+            score += 100.0
+        if "a[href*='/posts/']" in selector:
+            score += 60.0
+
+        if score > best_score:
+            best_score = score
+            best = candidate
+
+    return best
+
+
+def _select_best_container_candidate(candidates: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    best: Optional[Dict[str, Any]] = None
+    best_score = float("-inf")
+
+    for candidate in candidates:
+        width = float(candidate.get("width", 0.0) or 0.0)
+        height = float(candidate.get("height", 0.0) or 0.0)
+        visible = bool(candidate.get("visible"))
+        selector = str(candidate.get("selector") or "")
+        role = str(candidate.get("role") or "")
+        text_length = int(candidate.get("text_length", 0) or 0)
+        permalink_count = int(candidate.get("permalink_count", 0) or 0)
+        photo_link_count = int(candidate.get("photo_link_count", 0) or 0)
+        image_count = int(candidate.get("image_count", 0) or 0)
+        action_count = int(candidate.get("action_count", 0) or 0)
+        article_descendant_count = int(candidate.get("article_descendant_count", 0) or 0)
+        action_text = str(candidate.get("action_text") or "")
+
+        score = 0.0
+        if visible:
+            score += 500.0
+        score += min(width * height, 600000.0) / 900.0
+        score += min(text_length, 1000)
+        score += min(permalink_count * 180.0, 540.0)
+        score += min(image_count * 110.0, 330.0)
+        score += min(action_count * 20.0, 120.0)
+        score -= min(photo_link_count * 90.0, 360.0)
+        if any(label in action_text for label in ("Like", "Comment", "Share", "לייק", "תגובה", "שיתוף")):
+            score += 180.0
+        if article_descendant_count > 0:
+            score -= min(article_descendant_count * 900.0, 2700.0)
+        if selector == "div[role='main']" or role == "main":
+            score -= 2200.0
+        if selector == "div[role='article']":
+            score += 520.0
+        if width * height > 1800000.0:
+            score -= 1200.0
+        if width < 320 or height < 220:
+            score -= 500.0
+
+        if score > best_score:
+            best_score = score
+            best = candidate
+
+    return best
 
 
 def _extract_post_id_from_link(link: str) -> str:

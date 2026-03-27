@@ -25,7 +25,7 @@ def test_configure_debugging_overrides_env(monkeypatch):
 
 def test_debug_trace_file_created_and_written(tmp_path, capsys):
     trace_path = tmp_path / "debug_trace.txt"
-    configure_debugging(True, str(trace_path))
+    configure_debugging(True, str(trace_path), terminal_output=True)
     assert get_debug_trace_file_path() == str(trace_path)
     debug_step("DBG_TEST_TRACE", "writes a debug line")
     close_debugging()
@@ -40,14 +40,14 @@ def test_debug_trace_file_created_and_written(tmp_path, capsys):
 
 def test_debug_trace_file_overwritten_between_runs(tmp_path):
     trace_path = tmp_path / "debug_trace.txt"
-    configure_debugging(True, str(trace_path))
+    configure_debugging(True, str(trace_path), terminal_output=False)
     debug_step("DBG_RUN_A", "line from first run")
     close_debugging()
 
     first_text = trace_path.read_text(encoding="utf-8")
     assert "DBG_RUN_A" in first_text
 
-    configure_debugging(True, str(trace_path))
+    configure_debugging(True, str(trace_path), terminal_output=False)
     debug_step("DBG_RUN_B", "line from second run")
     close_debugging()
 
@@ -69,7 +69,7 @@ def test_debug_trace_not_created_when_debugging_false(tmp_path):
 
 
 def test_debug_step_does_not_crash_when_stdout_unavailable(monkeypatch):
-    configure_debugging(True)
+    configure_debugging(True, terminal_output=True)
 
     def _raise_oserror(*_args, **_kwargs):
         raise OSError(22, "Invalid argument")
@@ -77,4 +77,17 @@ def test_debug_step_does_not_crash_when_stdout_unavailable(monkeypatch):
     monkeypatch.setattr("builtins.print", _raise_oserror)
     debug_step("DBG_STDOUT_FAIL", "stdout unavailable should not crash")
     close_debugging()
+    configure_debugging(None)
+
+
+def test_debug_trace_can_skip_terminal_output(tmp_path, capsys):
+    trace_path = Path(tmp_path) / "debug_trace.txt"
+    configure_debugging(True, str(trace_path), terminal_output=False)
+    debug_step("DBG_NO_STDOUT", "line should go only to trace")
+    close_debugging()
+
+    terminal_output = capsys.readouterr().out
+    assert "DBG_NO_STDOUT" not in terminal_output
+    assert "DBG_NO_STDOUT" in trace_path.read_text(encoding="utf-8")
+
     configure_debugging(None)

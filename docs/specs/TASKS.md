@@ -1,7 +1,7 @@
-# TASKS.md
+﻿# TASKS.md
 ## Implementation Task List
 
-`Project_Flow.md` is authoritative.  
+`PROJECT_RUNTIME_FLOW.md` is authoritative.  
 This file is the executable task order for contributors.
 
 ---
@@ -50,11 +50,12 @@ A task is complete only if:
 Must pass in this order:
 
 1. `pytest -q`
-2. `python scripts/doctor.py`
-3. `python scripts/doctor.py --check-facebook-session`
+2. `python scripts/check_runtime_setup.py`
+3. `python scripts/check_runtime_setup.py --check-facebook-session`
 4. `python start.py`
 
 Artifacts expected:
 
 - `data/reports/latest.json`
 - `data/logs/debug_trace.txt`
+

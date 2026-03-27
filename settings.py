@@ -19,7 +19,13 @@ Important:
 # What it does:
 # - True  -> prints a clear step-by-step explanation in the terminal.
 # - False -> prints a shorter terminal output.
-DEBUGGING = True
+DEBUGGING = False
+
+# Options: True, False
+# What it does:
+# - True  -> mirrors debug lines to terminal output.
+# - False -> keeps debug lines out of terminal; they remain in debug trace/UI.
+DEBUG_TERMINAL_OUTPUT = False
 
 # Options: path string (for example "data/logs/debug_trace.txt")
 # What it does:
@@ -75,7 +81,7 @@ INPUT_FILE = "data/sample_search_input.json"
 # Recommended:
 # - 5 to 20 for quick testing
 # - 20 to 40 for wider scanning
-MAX_POSTS = 20
+MAX_POSTS = 3
 
 
 # ---------------------------------------------------------------------------
@@ -188,12 +194,14 @@ AI_TEMPERATURE_OVERRIDE = None
 
 # Options: None, True, False
 # What it does:
-# - None  -> use HEADLESS from .env
+# - None  -> auto mode:
+#            DEBUGGING=True  => HEADLESS=False (visible browser)
+#            DEBUGGING=False => HEADLESS=True (hidden browser)
 # - True  -> run Chrome hidden in the background
 # - False -> run Chrome visible on screen
 # Recommended:
-# - False for Facebook troubleshooting
-# - True only if your saved profile works reliably in headless mode
+# - Keep None for normal behavior.
+# - Set False only when you intentionally need visible browser without debugging.
 HEADLESS_OVERRIDE = None
 
 # Options: None or a positive integer
@@ -230,6 +238,24 @@ FB_SCROLL_PAUSE_MS_OVERRIDE = None
 # - Each run recreates this directory (overwrite behavior).
 FB_SCREENSHOTS_DIR_OVERRIDE = None
 
+# Options: None, True, False
+# What it does:
+# - True  -> capture visual screenshots for key browser-open/filter steps.
+# - False -> disable browser step screenshots.
+# - None  -> use FB_STEP_DEBUG_ENABLED from .env
+FB_STEP_DEBUG_ENABLED_OVERRIDE = True
+
+# Options: None or a path string (for example "data/logs/browser_steps")
+# What it does:
+# - Directory for browser-step screenshots and step metadata events file.
+FB_STEP_DEBUG_DIR_OVERRIDE = None
+
+# Options: None or an integer >= 0
+# What it does:
+# - Playwright slow motion delay in milliseconds for each browser action.
+# - Useful for visual troubleshooting while watching the browser live.
+FB_SLOW_MO_MS_OVERRIDE = None
+
 
 # ---------------------------------------------------------------------------
 # .env VALUES YOU STILL CHANGE IN .env
@@ -243,3 +269,6 @@ FB_SCREENSHOTS_DIR_OVERRIDE = None
 # GEMINI_API_KEY=...
 # CHROME_USER_DATA_DIR=...
 # CHROME_PROFILE_DIRECTORY=Default or Profile 1
+# FB_STEP_DEBUG_ENABLED=true/false
+# FB_STEP_DEBUG_DIR=data/logs/browser_steps
+# FB_SLOW_MO_MS=0

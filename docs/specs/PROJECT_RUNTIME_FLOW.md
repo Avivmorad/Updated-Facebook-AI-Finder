@@ -1,4 +1,4 @@
-# Project_Flow.md
+﻿# PROJECT_RUNTIME_FLOW.md
 ## Facebook Groups Post Finder & Matcher
 
 This file is the primary source of truth for runtime behavior.
@@ -13,7 +13,7 @@ When other spec files differ, this file wins.
 3. Screenshot capture is mandatory for each processed post before AI analysis.
 4. "Recent posts" feed filter is run-blocking. If not applied and verified, the run fails.
 5. Active provider policy is Groq vision path.
-6. UI remains future scope; current product interface is CLI + report artifacts.
+6. CLI + JSON artifacts remain the canonical interface; optional local UI dashboard is supported for run control and observability.
 
 ---
 
@@ -140,6 +140,7 @@ When other spec files differ, this file wins.
   - extraction status
   - detected item
   - confidence
+- Surface the same list output in CLI/report JSON and optional local UI.
 
 ## Phase 18 - Detail Output
 
@@ -148,6 +149,7 @@ When other spec files differ, this file wins.
   - screenshot references
   - AI analysis
   - match explanation
+- Detail payload is available in report artifacts and optional local UI detail panel.
 
 ## Phase 19 - Logging
 
@@ -172,7 +174,7 @@ When other spec files differ, this file wins.
 - Finalize schemas, prompts, config defaults, tests, and docs.
 - Require live gate:
   - `pytest -q`
-  - `python scripts/doctor.py`
-  - `python scripts/doctor.py --check-facebook-session`
+  - `python scripts/check_runtime_setup.py`
+  - `python scripts/check_runtime_setup.py --check-facebook-session`
   - `python start.py`
 

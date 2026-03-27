@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-"""Run direct post extraction for a local list of Facebook post URLs."""
+﻿#!/usr/bin/env python3
+"""Extract posts from a saved local JSON file of Facebook post URLs."""
 
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ def _save_report(path: Path, payload: Dict[str, Any]) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Manual extraction probe using local post links JSON")
+    parser = argparse.ArgumentParser(description="Extract posts from a saved JSON file of Facebook post links")
     parser.add_argument("--links-file", default="data/local/manual_post_links.json")
     parser.add_argument("--output-json", default="data/reports/manual_probe_latest.json")
     parser.add_argument("--debugging", action="store_true")
@@ -86,3 +86,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

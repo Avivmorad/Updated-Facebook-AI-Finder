@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-"""Project doctor: validate environment and runtime prerequisites."""
+﻿#!/usr/bin/env python3
+"""Validate runtime prerequisites for the Facebook pipeline."""
 
 import argparse
 import importlib
@@ -108,7 +108,7 @@ def _check_paths_writable() -> Tuple[List[str], List[str]]:
     for target in [Path("data"), Path("data") / "logs"]:
         try:
             target.mkdir(parents=True, exist_ok=True)
-            marker = target / ".doctor_write_test"
+            marker = target / ".runtime_check_write_test"
             marker.write_text("ok", encoding="utf-8")
             marker.unlink(missing_ok=True)
             _ok(f"Directory is writable: {target}")
@@ -210,3 +210,6 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+

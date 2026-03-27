@@ -1,4 +1,4 @@
-# Python cache and bytecode
+﻿# Python cache and bytecode
 __pycache__/
 *.py[cod]
 *$py.class
@@ -47,6 +47,9 @@ data/tmp/
 # Temporary files
 tempCodeRunnerFile.py
 
+HTML_Check/
+
 # OS files
 .DS_Store
 Thumbs.db
+

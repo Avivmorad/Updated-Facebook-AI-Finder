@@ -11,6 +11,7 @@ from playwright.sync_api import Page
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from app.browser.facebook_access_adapter import FacebookAccessAdapter, FacebookAuthenticationRequiredError
+from app.browser.step_debug import capture_browser_step
 from app.config.browser import BrowserConfig
 from app.domain.posts import CandidatePostRef, SearchExecutionResult
 from app.utils.app_errors import AppError, make_app_error, normalize_app_error
@@ -113,6 +114,13 @@ class GroupsFeedScanner:
         page.wait_for_timeout(1800)
         debug_found("DBG_GROUPS_FEED_OPEN_OK", "Groups feed opened successfully.")
         debug_info("DBG_GROUPS_FEED_URL", f"Groups feed current URL: {str(getattr(page, 'url', '') or '').strip()}")
+        capture_browser_step(
+            self._config,
+            page=page,
+            step_code="GROUPS_FEED_OPENED",
+            message="Facebook groups feed opened",
+            context="groups_feed_scan",
+        )
 
     def _apply_feed_filters(self, page: Page) -> None:
         self._ensure_groups_feed_page(page)
@@ -131,17 +139,45 @@ class GroupsFeedScanner:
         if not recent_verified:
             recent_error = make_app_error(code="ERR_FILTER_RECENT_NOT_FOUND")
             debug_app_error(recent_error, include_technical_details=False)
+            capture_browser_step(
+                self._config,
+                page=page,
+                step_code="RECENT_FILTER_FAILED",
+                message="Recent posts filter verification failed",
+                context="groups_feed_scan",
+            )
             raise recent_error
         debug_found("DBG_FILTER_RECENT_OK", "Filter 'Recent posts' was applied and verified.")
+        capture_browser_step(
+            self._config,
+            page=page,
+            step_code="RECENT_FILTER_OK",
+            message="Recent posts filter applied and verified",
+            context="groups_feed_scan",
+        )
         self._ensure_groups_feed_page(page)
 
         debug_step("DBG_FILTER_24H_TRY", "Trying to apply filter: Last 24 hours.")
         last_24_selected = self._try_select_last_24_hours(page)
         if last_24_selected:
             debug_found("DBG_FILTER_24H_OK", "Filter 'Last 24 hours' was applied.")
+            capture_browser_step(
+                self._config,
+                page=page,
+                step_code="LAST24_FILTER_OK",
+                message="Last 24 hours filter applied",
+                context="groups_feed_scan",
+            )
         else:
             last24_error = make_app_error(code="ERR_FILTER_LAST24_NOT_FOUND")
             debug_missing(last24_error.code, last24_error.summary_he)
+            capture_browser_step(
+                self._config,
+                page=page,
+                step_code="LAST24_FILTER_MISSING",
+                message="Last 24 hours filter not found",
+                context="groups_feed_scan",
+            )
         debug_info("DBG_FILTERS_URL", f"Feed URL after filter step: {str(getattr(page, 'url', '') or '').strip()}")
 
     def _open_filters_panel_if_needed(self, page: Page) -> None:
@@ -153,6 +189,13 @@ class GroupsFeedScanner:
                 button.click(timeout=1200)
                 page.wait_for_timeout(1000)
                 debug_found("DBG_FILTER_PANEL_OPEN", "Opened filters panel.")
+                capture_browser_step(
+                    self._config,
+                    page=page,
+                    step_code="FILTER_PANEL_OPENED",
+                    message="Filters panel opened",
+                    context="groups_feed_scan",
+                )
                 return
             except PlaywrightError:
                 continue
@@ -710,8 +753,10 @@ class GroupsFeedScanner:
             kept = [
                 (k, v)
                 for (k, v) in query_items
-                if not k.startswith("__") and k not in {"notif_id", "notif_t", "ref", "acontext"}
+                if not k.startswith("__") and k not in {"notif_id", "notif_t", "ref", "acontext", "comment_id", "reply_comment_id"}
             ]
+            if "/groups/" in parsed.path.lower() and "/posts/" in parsed.path.lower():
+                kept = [(k, v) for (k, v) in kept if k not in {"story_fbid", "id"}]
             clean_query = urlencode(kept, doseq=True)
             return urlunparse((parsed.scheme or "https", parsed.netloc, parsed.path, parsed.params, clean_query, ""))
         except ValueError:

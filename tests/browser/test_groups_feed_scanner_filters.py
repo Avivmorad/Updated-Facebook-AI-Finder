@@ -41,8 +41,18 @@ def test_normalize_post_link_removes_tracking_query_params():
     normalized = scanner._normalize_post_link(link)
     assert "__cft__" not in normalized
     assert "__tn__" not in normalized
-    assert "story_fbid=456" in normalized
-    assert "id=123" in normalized
+    assert normalized == "https://www.facebook.com/groups/123/posts/456/"
+
+
+def test_normalize_post_link_removes_comment_query_params_from_group_post_link():
+    scanner = GroupsFeedScanner()
+    link = "https://www.facebook.com/groups/123/posts/456/?comment_id=999&reply_comment_id=1000&__tn__=R"
+
+    normalized = scanner._normalize_post_link(link)
+
+    assert normalized == "https://www.facebook.com/groups/123/posts/456/"
+    assert "comment_id" not in normalized
+    assert "reply_comment_id" not in normalized
 
 
 def test_normalize_post_link_rejects_non_post_facebook_link():

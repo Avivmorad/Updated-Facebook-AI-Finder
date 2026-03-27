@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
@@ -42,8 +43,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--query", help="Search query text")
     parser.add_argument("--max-posts", type=int, default=20)
     parser.add_argument("--output-json", help="Optional path for saving run result JSON")
-    parser.add_argument("--debugging", action="store_true", help="Print a detailed human-readable run trace to the terminal")
+    parser.add_argument("--debugging", action="store_true", help="Enable detailed debug trace generation")
+    parser.add_argument(
+        "--debug-to-terminal",
+        action="store_true",
+        help="Also print debug lines to terminal output (default: debug lines stay in trace/UI only)",
+    )
     return parser.parse_args()
+
+
+def _enforce_headless_by_debug_mode(debugging_enabled: bool) -> None:
+    explicit_headless = str(os.getenv("HEADLESS", "") or "").strip().lower()
+    if explicit_headless in {"1", "0", "true", "false", "yes", "no", "on", "off"}:
+        return
+    # Browser popout is allowed only when debug mode is enabled unless HEADLESS was set explicitly.
+    os.environ["HEADLESS"] = "false" if bool(debugging_enabled) else "true"
 
 
 def build_runtime_input(args: argparse.Namespace) -> Tuple[Dict[str, Any], str]:
@@ -130,9 +144,9 @@ def save_result_json(result_payload: Dict[str, Any], output_path: Optional[str])
 
 def print_summary(result_payload: Dict[str, Any]) -> None:
     presented = result_payload.get("presented_results", {})
-    print(f"Total results: {presented.get('total_results', 0)}")
+    _safe_console_print(f"Total results: {presented.get('total_results', 0)}")
     for item in presented.get("top_results", []):
-        print(
+        _safe_console_print(
             "- score={score:.2f} | link={link} | summary={summary}".format(
                 score=float(item.get("match_score", 0.0)),
                 link=item.get("post_link", ""),
@@ -190,9 +204,30 @@ def run_pipeline_from_input(
     return 0 if status in {RunStatus.COMPLETED, RunStatus.STOPPED} else 1
 
 
+def _safe_console_print(message: str) -> None:
+    text = str(message)
+    try:
+        print(text)
+        return
+    except UnicodeEncodeError:
+        pass
+
+    newline_text = text + "\n"
+    stream = sys.stdout
+    encoding = str(getattr(stream, "encoding", "") or "utf-8")
+    buffer = getattr(stream, "buffer", None)
+    if buffer is not None:
+        buffer.write(newline_text.encode(encoding, errors="replace"))
+        buffer.flush()
+        return
+    stream.write(newline_text.encode("ascii", errors="backslashreplace").decode("ascii"))
+    stream.flush()
+
+
 def main() -> int:
     args = parse_args()
-    configure_debugging(args.debugging, os.getenv("DEBUG_TRACE_FILE"))
+    configure_debugging(args.debugging, os.getenv("DEBUG_TRACE_FILE"), terminal_output=args.debug_to_terminal)
+    _enforce_headless_by_debug_mode(args.debugging)
 
     try:
         raw_input, input_source = build_runtime_input(args)
